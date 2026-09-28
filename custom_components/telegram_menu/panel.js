@@ -619,7 +619,8 @@ class TelegramMenuPanel extends HTMLElement {
       </div>
     `;
 
-    const content = this.querySelector("#content");\n    const previewHost = this.querySelector("#preview");
+    const content = this.querySelector("#content");
+    const previewHost = this.querySelector("#preview");
 
     if (!menuEntries.length && !this._loading && !this._error) {
       content.innerHTML = `
@@ -706,7 +707,9 @@ class TelegramMenuPanel extends HTMLElement {
         typeField.appendChild(typeSelect);
         card.appendChild(typeField);
 
-        if (previewHost && !previewHost.childElementCount) previewHost.appendChild(this._renderPreview(menu));\n\n        const buttonsTitle = document.createElement("div");
+        if (previewHost && !previewHost.childElementCount) previewHost.appendChild(this._renderPreview(menu));
+
+        const buttonsTitle = document.createElement("div");
         buttonsTitle.className = "buttons-title";
         buttonsTitle.textContent = "Buttons";
         card.appendChild(buttonsTitle);
