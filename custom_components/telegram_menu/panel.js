@@ -305,7 +305,61 @@ class TelegramMenuPanel extends HTMLElement {
 
   async _previewButton(button) { const a=button?.actions?.[0]; if(!a?.action){this._error="Für diesen Button ist keine Home-Assistant-Aktion konfiguriert.";this._render();return;} try{const [d,s]=String(a.action).split(".",2); await this._hass.callService(d,s,a.data||{},a.target||{});this._error="";this._render();}catch(e){this._error=e?.message||"Aktion konnte nicht ausgeführt werden.";this._render();} }
 
-  _renderPreview(menu) { const wrap=document.createElement("div"); const phone=document.createElement("div"); phone.className="preview-phone"; const top=document.createElement("div"); top.className="preview-top"; top.innerHTML="<span>Telegram</span><span>Vorschau</span>"; const screen=document.createElement("div"); screen.className="preview-screen"; const msg=document.createElement("div"); msg.className="preview-message"; msg.textContent=menu?.message||"Bitte auswählen:"; screen.appendChild(msg); const kb=document.createElement("div"); for(const row of menu?.rows||[]){const r=document.createElement("div");r.className="preview-row";for(const b of row){const p=document.createElement("button");p.className="preview-button";p.textContent=b?.label||b?.command||"Button";p.title=b?.command||"";p.addEventListener("click",()=>this._previewButton(b));r.appendChild(p);}kb.appendChild(r);} if(!(menu?.rows||[]).length){const e=document.createElement("div");e.className="preview-empty";e.textContent="Buttons erscheinen hier als Vorschau.";kb.appendChild(e);} screen.appendChild(kb);phone.append(top,screen);wrap.appendChild(phone);const h=document.createElement("div");h.className="preview-hint";h.textContent="Vorschau-Button führt die konfigurierte Home-Assistant-Aktion direkt aus.";wrap.appendChild(h);return wrap; }
+  _renderPreview(menu) {
+    const wrap = document.createElement("div");
+    const phone = document.createElement("div");
+    phone.className = "preview-phone";
+
+    const top = document.createElement("div");
+    top.className = "preview-top";
+    top.innerHTML = "<span>Telegram</span><span>Vorschau</span>";
+
+    const screen = document.createElement("div");
+    screen.className = "preview-screen";
+
+    const msg = document.createElement("div");
+    msg.className = "preview-message";
+    msg.textContent = menu?.message || "Bitte auswählen:";
+    screen.appendChild(msg);
+
+    const kb = document.createElement("div");
+    kb.className = "preview-keyboard";
+
+    for (const row of menu?.rows || []) {
+      const rowElement = document.createElement("div");
+      rowElement.className = "preview-row";
+
+      for (const button of row) {
+        const previewButton = document.createElement("button");
+        previewButton.type = "button";
+        previewButton.className = "preview-button";
+        previewButton.textContent = button?.label || button?.command || "Button";
+        previewButton.title = button?.command || "Aktion testen";
+        previewButton.addEventListener("click", () => this._previewButton(button));
+        rowElement.appendChild(previewButton);
+      }
+
+      kb.appendChild(rowElement);
+    }
+
+    if (!(menu?.rows || []).length) {
+      const empty = document.createElement("div");
+      empty.className = "preview-empty";
+      empty.textContent = "Buttons erscheinen hier als Vorschau.";
+      kb.appendChild(empty);
+    }
+
+    screen.appendChild(kb);
+    phone.append(top, screen);
+    wrap.appendChild(phone);
+
+    const hint = document.createElement("div");
+    hint.className = "preview-hint";
+    hint.textContent = "Die Buttons sind anklickbar und führen die konfigurierte Home-Assistant-Aktion direkt aus.";
+    wrap.appendChild(hint);
+
+    return wrap;
+  }
 
   _render() {
     if (!this.isConnected) return;
@@ -330,7 +384,7 @@ class TelegramMenuPanel extends HTMLElement {
           margin: 0 auto;
         }
 
-        .editor-layout { display:grid; grid-template-columns:minmax(0,1.55fr) minmax(300px,.75fr); gap:22px; align-items:start; }\n        .preview-column { position:sticky; top:20px; }\n        .preview-card { background:color-mix(in srgb,var(--primary-color) 5%,var(--card-background-color)); border:2px solid color-mix(in srgb,var(--primary-color) 40%,var(--divider-color)); border-radius:14px; padding:16px; box-shadow:var(--ha-box-shadow); }\n        .preview-title { font-size:18px; font-weight:700; margin-bottom:4px; }\n        .preview-subtitle,.preview-hint,.preview-empty { font-size:12px; color:var(--secondary-text-color); }\n        .preview-phone { border:2px solid var(--divider-color); border-radius:18px; overflow:hidden; background:var(--primary-background-color); }\n        .preview-top { display:flex; justify-content:space-between; padding:10px 12px; font-size:12px; font-weight:700; background:color-mix(in srgb,var(--primary-color) 15%,var(--card-background-color)); border-bottom:1px solid var(--divider-color); }\n        .preview-screen { padding:14px; } .preview-message { padding:10px 12px; border-radius:12px 12px 12px 4px; background:var(--card-background-color); border:1px solid var(--divider-color); margin-bottom:14px; font-size:13px; white-space:pre-wrap; }\n        .preview-row { display:flex; gap:6px; margin-bottom:6px; } .preview-button { flex:1; min-width:0; padding:9px 7px; border-radius:8px; background:color-mix(in srgb,var(--primary-color) 13%,var(--card-background-color)); color:var(--primary-color); border:1px solid color-mix(in srgb,var(--primary-color) 38%,var(--divider-color)); font-size:12px; }\n        .preview-hint { margin-top:12px; text-align:center; }\n        .version-badge { display:inline-flex; padding:4px 9px; margin-left:8px; border-radius:999px; background:color-mix(in srgb,var(--primary-color) 15%,var(--card-background-color)); border:1px solid color-mix(in srgb,var(--primary-color) 35%,var(--divider-color)); color:var(--primary-color); font-size:12px; font-weight:700; }\n\n        h1 {
+        .editor-layout { display:grid; grid-template-columns:minmax(0,1.55fr) minmax(300px,.75fr); gap:22px; align-items:start; }\n        .preview-column { position:sticky; top:20px; }\n        .preview-card { background:var(--card-background-color); border:2px solid var(--divider-color); border-radius:16px; padding:18px; box-shadow:var(--ha-box-shadow); }\n        .preview-title { font-size:19px; font-weight:700; margin-bottom:5px; }\n        .preview-subtitle { font-size:12px; line-height:1.45; color:var(--secondary-text-color); margin-bottom:16px; }\n        .preview-phone { width:min(100%,360px); min-height:600px; margin:0 auto; box-sizing:border-box; border:8px solid var(--primary-text-color); border-radius:34px; overflow:hidden; background:var(--primary-background-color); box-shadow:0 0 0 2px var(--divider-color), 0 10px 30px rgba(0,0,0,.35); position:relative; }\n        .preview-phone::before { content:""; display:block; width:92px; height:18px; margin:0 auto; background:var(--primary-text-color); border-radius:0 0 12px 12px; position:relative; z-index:2; }\n        .preview-top { display:flex; justify-content:space-between; align-items:center; padding:12px 14px; font-size:12px; font-weight:700; background:var(--secondary-background-color); color:var(--primary-text-color); border-bottom:1px solid var(--divider-color); }\n        .preview-screen { min-height:540px; padding:16px 12px 14px; background:var(--primary-background-color); box-sizing:border-box; }\n        .preview-message { max-width:88%; padding:11px 13px; border-radius:14px 14px 14px 4px; background:var(--card-background-color); border:1px solid var(--divider-color); margin:0 auto 18px 0; font-size:13px; line-height:1.4; white-space:pre-wrap; box-shadow:0 2px 5px rgba(0,0,0,.2); }\n        .preview-row { display:flex; gap:7px; margin-bottom:7px; }\n        .preview-button { flex:1; min-width:0; padding:10px 8px; border-radius:9px; background:var(--secondary-background-color); color:var(--primary-text-color); border:2px solid var(--primary-color); font-size:12px; font-weight:600; cursor:pointer; box-shadow:0 2px 4px rgba(0,0,0,.25); transition:transform .08s ease, background .08s ease, box-shadow .08s ease; }\n        .preview-button:hover { background:var(--primary-color); color:var(--text-primary-color,white); }\n        .preview-button:active { transform:translateY(2px); box-shadow:0 0 1px rgba(0,0,0,.25); }\n        .preview-empty { padding:14px; border:1px dashed var(--divider-color); border-radius:10px; text-align:center; color:var(--secondary-text-color); font-size:12px; }\n        .preview-hint { margin-top:14px; text-align:center; font-size:12px; line-height:1.4; color:var(--secondary-text-color); }\n        .version-badge { display:inline-flex; padding:4px 9px; margin-left:8px; border-radius:999px; background:color-mix(in srgb,var(--primary-color) 15%,var(--card-background-color)); border:1px solid color-mix(in srgb,var(--primary-color) 35%,var(--divider-color)); color:var(--primary-color); font-size:12px; font-weight:700; }\n\n        h1 {
           margin: 0 0 4px;
           font-size: 28px;
         }
@@ -707,7 +761,17 @@ class TelegramMenuPanel extends HTMLElement {
         typeField.appendChild(typeSelect);
         card.appendChild(typeField);
 
-        if (previewHost && !previewHost.childElementCount) previewHost.appendChild(this._renderPreview(menu));
+        if (previewHost && !previewHost.childElementCount) {
+          previewHost.appendChild(this._renderPreview(menu));
+        }
+
+        const liveUpdate = () => {
+          if (!previewHost) return;
+          previewHost.innerHTML = "";
+          previewHost.appendChild(this._renderPreview(this._collectMenus()[name] || menu));
+        };
+        messageInput.addEventListener("input", liveUpdate);
+        typeSelect.addEventListener("change", liveUpdate);
 
         const buttonsTitle = document.createElement("div");
         buttonsTitle.className = "buttons-title";
