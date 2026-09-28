@@ -274,12 +274,12 @@ class TelegramMenuPanel extends HTMLElement {
         }
 
         .menu-card {
-          background: var(--card-background-color);
-          border-radius: 12px;
+          background: color-mix(in srgb, var(--primary-color) 4%, var(--card-background-color));
+          border-radius: 14px;
           padding: 20px;
-          margin-bottom: 20px;
+          margin-bottom: 22px;
           box-shadow: var(--ha-box-shadow);
-          border: 1px solid var(--divider-color);
+          border: 2px solid color-mix(in srgb, var(--primary-color) 45%, var(--divider-color));
         }
 
         .menu-header {
@@ -287,17 +287,21 @@ class TelegramMenuPanel extends HTMLElement {
           align-items: center;
           gap: 10px;
           flex-wrap: wrap;
-          margin-bottom: 16px;
+          margin: -20px -20px 18px;
+          padding: 12px 14px;
+          border-radius: 12px 12px 0 0;
+          background: color-mix(in srgb, var(--primary-color) 10%, var(--card-background-color));
+          border-bottom: 1px solid color-mix(in srgb, var(--primary-color) 30%, var(--divider-color));
         }
 
         .menu-title {
           font-size: 21px;
-          font-weight: 600;
+          font-weight: 700;
           flex: 1;
-          padding: 8px 12px;
+          padding: 9px 12px;
           border-radius: 8px;
-          background: color-mix(in srgb, var(--primary-color) 12%, var(--card-background-color));
-          border-left: 4px solid var(--primary-color);
+          background: color-mix(in srgb, var(--primary-color) 16%, var(--card-background-color));
+          border-left: 5px solid var(--primary-color);
         }
 
         .field {
@@ -305,6 +309,10 @@ class TelegramMenuPanel extends HTMLElement {
           flex-direction: column;
           gap: 6px;
           margin-bottom: 14px;
+        }
+
+        .field label {
+          font-weight: 600;
         }
 
         label {
@@ -325,30 +333,38 @@ class TelegramMenuPanel extends HTMLElement {
         }
 
         .buttons-title {
-          font-size: 16px;
-          font-weight: 600;
-          margin: 18px 0 10px;
+          font-size: 17px;
+          font-weight: 700;
+          margin: 20px 0 12px;
+          padding: 9px 12px;
+          border-radius: 8px;
+          background: color-mix(in srgb, var(--secondary-color, var(--primary-color)) 10%, var(--card-background-color));
+          border-left: 4px solid var(--secondary-color, var(--primary-color));
         }
 
         .button-row {
           display: flex;
           flex-wrap: wrap;
           gap: 12px;
-          margin-bottom: 12px;
+          margin-bottom: 14px;
           padding: 12px;
-          border: 1px solid rgba(128, 128, 128, 0.28);
-          border-radius: 10px;
-          background: rgba(128, 128, 128, 0.07);
+          border: 1px dashed color-mix(in srgb, var(--secondary-color, var(--primary-color)) 35%, var(--divider-color));
+          border-radius: 11px;
+          background: color-mix(in srgb, var(--secondary-color, var(--primary-color)) 4%, var(--primary-background-color));
         }
 
         .button-editor {
           flex: 1 1 280px;
           min-width: 240px;
-          padding: 14px;
-          border: 1px solid rgba(128, 128, 128, 0.38);
-          border-radius: 10px;
-          background: rgba(128, 128, 128, 0.14);
-          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+          padding: 15px;
+          border: 2px solid color-mix(in srgb, var(--secondary-color, var(--primary-color)) 32%, var(--divider-color));
+          border-radius: 11px;
+          background: color-mix(in srgb, var(--secondary-color, var(--primary-color)) 7%, var(--card-background-color));
+          box-shadow: 0 2px 7px rgba(0, 0, 0, 0.16);
+        }
+
+        .button-editor:hover {
+          border-color: color-mix(in srgb, var(--secondary-color, var(--primary-color)) 58%, var(--divider-color));
         }
 
         .button-editor .field {
@@ -357,13 +373,14 @@ class TelegramMenuPanel extends HTMLElement {
 
         .action-title {
           font-size: 14px;
-          font-weight: 600;
+          font-weight: 700;
           margin: 14px 0 8px;
-          padding: 7px 10px;
+          padding: 8px 10px;
           border-radius: 7px;
-          background: color-mix(in srgb, var(--primary-color) 14%, var(--card-background-color));
-          color: var(--primary-color);
-          border-left: 3px solid var(--primary-color);
+          background: color-mix(in srgb, var(--warning-color, #ff9800) 12%, var(--card-background-color));
+          color: var(--warning-color, #ff9800);
+          border: 1px solid color-mix(in srgb, var(--warning-color, #ff9800) 30%, var(--divider-color));
+          border-left: 4px solid var(--warning-color, #ff9800);
         }
 
         .action-help {
@@ -379,21 +396,32 @@ class TelegramMenuPanel extends HTMLElement {
 
         .button-editor .action-input,
         .button-editor .target-input {
-          border-color: color-mix(in srgb, var(--primary-color) 35%, var(--divider-color));
+          border: 1px solid color-mix(in srgb, var(--warning-color, #ff9800) 40%, var(--divider-color));
+          background: color-mix(in srgb, var(--warning-color, #ff9800) 4%, var(--secondary-background-color));
+        }
+
+        .button-editor .action-input:focus,
+        .button-editor .target-input:focus {
+          outline: 2px solid color-mix(in srgb, var(--warning-color, #ff9800) 35%, transparent);
+          outline-offset: 1px;
         }
 
         .save-footer {
           display: flex;
           justify-content: flex-end;
-          margin: 28px 0 12px;
+          margin: 30px 0 12px;
           padding: 16px;
-          border-top: 1px solid var(--divider-color);
+          border: 2px solid color-mix(in srgb, var(--success-color, var(--primary-color)) 35%, var(--divider-color));
+          border-radius: 12px;
+          background: color-mix(in srgb, var(--success-color, var(--primary-color)) 6%, var(--card-background-color));
         }
 
         .save-footer button {
-          min-width: 160px;
+          min-width: 180px;
           font-size: 15px;
           font-weight: 700;
+          background: var(--success-color, var(--primary-color));
+          color: var(--text-primary-color, white);
         }
 
         .empty {
