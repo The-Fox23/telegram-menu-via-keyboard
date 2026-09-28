@@ -145,8 +145,8 @@ Als Nächstes soll geprüft werden:
 Wenn das funktioniert, beginnt Schritt 4 mit den Button-Aktionen.
 
 ## 9. Bekannte offene Punkte
-- Native Home-Assistant-Action-Editor-Integration fehlt noch; aktuell gibt es eine durchsuchbare Entity-Auswahl per Browser-Datalist.
-- Button-Aktionen werden ausgeführt; aktuell wird pro Button die erste konfigurierte Aktion verwendet.
+- Native Home-Assistant-Action-Editor-Integration fehlt noch; Dienst/Aktion kann jetzt über eine Liste der aktuell verfügbaren Home-Assistant-Dienste ausgewählt werden. Die Entity-Auswahl verwendet weiterhin die Browser-Datalist.
+- Button-Aktionen werden ausgeführt; aktuell wird pro Button die erste konfigurierte Aktion verwendet. Die neue Menü-Vorschau kann konfigurierte Aktionen direkt aus dem Panel testen.
 - Mehrere Aktionen pro Button fehlen noch.
 - Untermenüs fehlen noch.
 - Bedingungen fehlen noch.
