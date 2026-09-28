@@ -5,7 +5,7 @@ from typing import Any
 
 from homeassistant.components import websocket_api
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant, ServiceCall, callback
+from homeassistant.core import Event, HomeAssistant, ServiceCall, callback
 from homeassistant.helpers import config_validation as cv
 import voluptuous as vol
 
@@ -22,6 +22,22 @@ WS_SAVE_CONFIG = f"{DOMAIN}/save_config"
 async def async_setup(hass: HomeAssistant, config: dict[str, Any]) -> bool:
     """Set up the Telegram Menu integration."""
     hass.data.setdefault(DOMAIN, {})
+
+    async def handle_telegram_event(event: Event) -> None:
+        """Execute a configured button action for a Telegram command."""
+        command = str(event.data.get("command", "")).strip()
+        if not command:
+            return
+
+        chat_id = str(event.data.get("chat_id", ""))
+        for manager in hass.data[DOMAIN].values():
+            if chat_id != manager.default_chat_id:
+                continue
+
+            action = manager.find_action(command)
+            if action:
+                await manager.execute_action(action)
+                return
 
     async def handle_show(call: ServiceCall) -> None:
         """Show a configured Telegram menu."""
@@ -64,6 +80,9 @@ async def async_setup(hass: HomeAssistant, config: dict[str, Any]) -> bool:
             }
         ),
     )
+
+    hass.bus.async_listen("telegram_command", handle_telegram_event)
+    hass.bus.async_listen("telegram_callback", handle_telegram_event)
 
     websocket_api.async_register_command(hass, ws_get_config)
     websocket_api.async_register_command(hass, ws_save_config)
