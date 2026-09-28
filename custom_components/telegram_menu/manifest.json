@@ -1,7 +1,7 @@
 {
   "domain": "telegram_menu",
   "name": "Telegram Menu via Keyboard",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "config_flow": true,
   "documentation": "https://github.com/The-Fox23/telegram-menu-via-keyboard",
   "issue_tracker": "https://github.com/The-Fox23/telegram-menu-via-keyboard/issues",
