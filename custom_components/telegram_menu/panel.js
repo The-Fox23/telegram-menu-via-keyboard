@@ -77,9 +77,19 @@ class TelegramMenuPanel extends HTMLElement {
         for (const button of row.querySelectorAll(".button-editor")) {
           const label = button.querySelector(".label-input")?.value.trim() || "";
           const command = button.querySelector(".command-input")?.value.trim() || "";
+          const action = button.querySelector(".action-input")?.value.trim() || "";
+          const target = button.querySelector(".target-input")?.value.trim() || "";
+
+          const buttonConfig = { label, command };
+          if (action) {
+            buttonConfig.actions = [{
+              action,
+              ...(target ? { target: { entity_id: [target] } } : {}),
+            }];
+          }
 
           if (label || command) {
-            rowButtons.push({ label, command });
+            rowButtons.push(buttonConfig);
           }
         }
 
@@ -340,6 +350,18 @@ class TelegramMenuPanel extends HTMLElement {
           margin-bottom: 8px;
         }
 
+        .action-title {
+          font-size: 14px;
+          font-weight: 600;
+          margin: 14px 0 8px;
+        }
+
+        .action-help {
+          font-size: 12px;
+          color: var(--secondary-text-color);
+          margin-bottom: 8px;
+        }
+
         .button-actions {
           display: flex;
           justify-content: flex-end;
@@ -509,6 +531,41 @@ class TelegramMenuPanel extends HTMLElement {
             commandInput.value = button?.command || "";
             commandField.appendChild(commandInput);
 
+            const actionTitle = document.createElement("div");
+            actionTitle.className = "action-title";
+            actionTitle.textContent = "Home-Assistant-Aktion";
+
+            const actionHelp = document.createElement("div");
+            actionHelp.className = "action-help";
+            actionHelp.textContent = "Optional: einen Home-Assistant-Dienst direkt mit diesem Button ausführen.";
+
+            const actionField = document.createElement("div");
+            actionField.className = "field";
+
+            const actionLabel = document.createElement("label");
+            actionLabel.textContent = "Dienst / Aktion";
+
+            const actionInput = document.createElement("input");
+            actionInput.className = "action-input";
+            actionInput.placeholder = "z. B. light.turn_on";
+            actionInput.value = button?.actions?.[0]?.action || "";
+
+            actionField.append(actionLabel, actionInput);
+
+            const targetField = document.createElement("div");
+            targetField.className = "field";
+
+            const targetLabel = document.createElement("label");
+            targetLabel.textContent = "Ziel-Entity";
+
+            const targetInput = document.createElement("input");
+            targetInput.className = "target-input";
+            targetInput.placeholder = "z. B. light.garage";
+            targetInput.value =
+              button?.actions?.[0]?.target?.entity_id?.[0] || "";
+
+            targetField.append(targetLabel, targetInput);
+
             const actions = document.createElement("div");
             actions.className = "button-actions";
 
@@ -521,7 +578,15 @@ class TelegramMenuPanel extends HTMLElement {
             );
 
             actions.appendChild(removeButton);
-            editor.append(labelField, commandField, actions);
+            editor.append(
+              labelField,
+              commandField,
+              actionTitle,
+              actionHelp,
+              actionField,
+              targetField,
+              actions,
+            );
             rowElement.appendChild(editor);
           }
 
