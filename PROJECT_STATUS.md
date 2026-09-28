@@ -7,7 +7,7 @@
 - Geplanter Zielname: `telegram-menu-via-keyboard`
 - Integration Domain: `telegram_menu`
 - Anzeigename: **Telegram Menu via Keyboard**
-- Aktuelle Version: 0.0.14
+- Aktuelle Version: 0.0.15
 - Home Assistant Mindestversion laut `hacs.json`: **2026.1.0**
 - Abhängigkeiten: `telegram_bot`, `websocket_api`, `http`, `frontend`
 - Integrationstyp: `service`
@@ -129,9 +129,9 @@ Beispiel:
 ## 8. Aktueller Test
 Der Benutzer hat bestätigt, dass das **Sidebar-Icon jetzt sichtbar ist** und der grafische Editor korrekt geladen wird.
 
-Der grafische Editor wurde erfolgreich getestet. Die Darstellung der einzelnen Buttons wurde anschließend optisch verbessert: Jeder Button-Editor befindet sich jetzt in einem dezent grauen Kasten mit Rahmen, abgerundeten Ecken und leichtem Schatten. Die Funktionalität des Editors und der Telegram-Anbindung wurde dabei nicht verändert.
+Der grafische Editor wurde erfolgreich getestet. Die Darstellung wurde anschließend optisch erweitert: Menüs, Button-Reihen, Button-Editoren, Aktionsbereiche und der Speichern-Bereich besitzen jetzt farbige Rahmen, dezente Kontrastflächen und klarere Abschnittsgrenzen. Die Farben verwenden Home-Assistant-Variablen und passen sich damit an Light/Dark Mode an. Die Funktionalität des Editors und der Telegram-Anbindung wurde dabei nicht verändert.
 
-Der aktuelle Entwicklungsstand ist **v0.0.14**. Die nächste Entwicklungsphase ist die direkte Zuordnung von Home-Assistant-Aktionen zu einzelnen Telegram-Buttons.
+Der aktuelle Entwicklungsstand ist **v0.0.15**. Die nächste Entwicklungsphase ist die direkte Zuordnung von Home-Assistant-Aktionen zu einzelnen Telegram-Buttons.
 
 Als Nächstes soll geprüft werden:
 1. Wird das Panel korrekt geladen?
@@ -165,6 +165,6 @@ Die Integrationsversion wird bei jedem veröffentlichten Entwicklungsstand erhö
 
 **Letzte Aktualisierung:** 2026-09-28
 
-**Release:** v0.0.14
+**Release:** v0.0.15
 
-**Aktueller Fokus:** UI für Entity-Auswahl, visuelle Hervorhebung und Start der gespeicherten Tastatur testen. Danach native/komfortablere Aktionseingabe und mehrere Aktionen erweitern.
+**Aktueller Fokus:** Farblich kontrastreiche UI testen. Danach native/komfortablere Aktionseingabe und mehrere Aktionen erweitern.
