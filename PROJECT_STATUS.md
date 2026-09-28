@@ -7,7 +7,7 @@
 - Geplanter Zielname: `telegram-menu-via-keyboard`
 - Integration Domain: `telegram_menu`
 - Anzeigename: **Telegram Menu via Keyboard**
-- Aktuelle Version: 0.0.15
+- Aktuelle Version: 0.0.16
 - Home Assistant Mindestversion laut `hacs.json`: **2026.1.0**
 - Abhängigkeiten: `telegram_bot`, `websocket_api`, `http`, `frontend`
 - Integrationstyp: `service`
@@ -44,7 +44,13 @@ Die bestehende Integration kann:
 - Menü-Nachricht und Tastaturtyp grafisch ändern
 - Buttons grafisch erstellen, bearbeiten und löschen
 - Änderungen über die Home-Assistant-WebSocket-API speichern
-- Button-Editor optisch überarbeitet: graue Button-Kästen mit Rahmen, abgerundeten Ecken, Abstand und dezenter Schattenwirkung
+- Button-Editor optisch überarbeitet: farbige/abgesetzte Button-Kästen mit Rahmen, abgerundeten Ecken, Abstand und dezenter Schattenwirkung
+- eine Live-Vorschau der Telegram-Tastatur direkt im Sidebar-Panel anzeigen
+- Vorschau-Buttons direkt aus dem Panel testen und die konfigurierte Home-Assistant-Aktion ausführen
+- verfügbare Home-Assistant-Dienste in einem Dropdown auswählen
+- eine native Home-Assistant-Entity-Auswahl verwenden, sofern der HA-Frontend-Selector geladen ist
+- bei noch nicht geladenem Selector auf eine komfortable durchsuchbare Entity-Auswahl mit Anzeigenamen und Entity-ID zurückfallen
+- die Integrationsversion im Panel anzeigen
 
 ## 5. Grafischer Editor
 Das Panel bietet jetzt ausdrücklich:
@@ -57,9 +63,14 @@ Das Panel bietet jetzt ausdrücklich:
 - Menü-Nachricht
 - Tastaturtyp
 - Menü umbenennen/löschen
-- **Speichern**
+- **Dienst / Aktion** als Dropdown mit den aktuell verfügbaren Home-Assistant-Diensten
+- freie Eingabe einer gespeicherten/benutzerdefinierten Aktion
+- komfortable **Ziel-Entity-Auswahl**
+- **Live-Vorschau** der Telegram-Nachricht und Tastatur auf der rechten Seite
+- Vorschau-Button zum direkten Testen der konfigurierten Aktion
+- **Speichern** am unteren Ende
 
-Home Assistant Custom Panels erhalten ihre Konfiguration über die `panel`-Property und `panel.config`; das Panel nutzt zusätzlich eine WebSocket-Verbindung, um die aktuelle Config Entry zu laden und zu speichern. citeturn0search0
+Die native Entity-Auswahl orientiert sich an Home Assistants aktuellem `ha-selector`-/Entity-Selector-Prinzip. Home Assistant verwendet den Entity-Selector auch in seinen eigenen grafischen Editoren. citeturn0search0turn0search2
 
 ## 6. Wichtige technische Dateien
 Unter `custom_components/telegram_menu/`:
@@ -75,50 +86,40 @@ Der klassische Config Flow bleibt zunächst erhalten.
 
 ## 7. Entwicklungsplan
 ### Schritt 1 – Grafisches Home-Assistant-Panel
-**Status: IMPLEMENTIERT / TESTEN**
+**Status: IMPLEMENTIERT**
 
-Das Panel wird jetzt nach dem bewährten Switch-Manager-Prinzip als eingebautes Custom-Panel registriert. Die Panel-JavaScript-Datei wird statisch ausgeliefert und mit der Integrationsversion über die Panel-Konfiguration versioniert, damit Browser- und Frontend-Caches bei neuen Releases nicht dauerhaft die alte Oberfläche verwenden.
+Das Panel wird als eingebautes Custom-Panel registriert. Die Panel-JavaScript-Datei wird statisch ausgeliefert und mit der Integrationsversion über die Panel-Konfiguration versioniert.
 
 ### Schritt 2 – Menü-Editor
-- Menü erstellen
-- Menü umbenennen
-- Menü löschen
-- Nachricht bearbeiten
-- Tastaturtyp auswählen
+**Status: IMPLEMENTIERT**
 
-**Status: IMPLEMENTIERT / TESTEN**
+Menüs können erstellt, umbenannt, gelöscht und mit Nachricht sowie Tastaturtyp konfiguriert werden.
 
 ### Schritt 3 – Button-Editor
-- Button erstellen
-- Anzeigename
-- Telegram Command
-- Position/Reihe
-- bearbeiten
-- löschen
-- übersichtliche Darstellung der Buttons in abgesetzten grauen Kästen
+**Status: IMPLEMENTIERT**
 
-**Status: IMPLEMENTIERT / TESTEN**
+Buttons können erstellt, bearbeitet und gelöscht werden. Anzeigename, Telegram-Command und Position/Reihe werden grafisch konfiguriert. Die Darstellung verwendet klar abgesetzte Bereiche.
 
 ### Schritt 4 – Aktionen direkt am Button
-Jeder Button soll einen eigenen Action-Bereich erhalten. Möglichst soll der native Home-Assistant-Action-Editor verwendet werden.
+**Status: IMPLEMENTIERT / ERSTE AUSBAUSTUFE**
 
-**Status: IN ARBEIT / ERSTER TESTSCHRITT IMPLEMENTIERT**
+Jeder Button kann eine optionale Home-Assistant-Aktion erhalten. Der Dienst kann über ein Dropdown ausgewählt oder als freier Wert eingegeben werden. Zusätzlich kann eine Ziel-Entity ausgewählt werden.
 
 ### Schritt 5 – Aktionen ohne zusätzliche Automation
-Telegram-Befehl → Button suchen → gespeicherte Aktionen ausführen.
+**Status: IMPLEMENTIERT / GETESTET**
 
-**Status: IN ARBEIT**
+Telegram-Befehl → Button suchen → gespeicherte Aktion ausführen.
 
-Die erste Ausbaustufe speichert pro Button eine optionale Home-Assistant-Aktion und führt sie bei einem passenden Telegram-Befehl aus. Zunächst wird bewusst nur die erste Aktion eines Buttons ausgeführt. Der Chat wird dabei auf die konfigurierte Standard-Chat-ID begrenzt.
+Die erste Ausbaustufe führt bei einem passenden Telegram-Befehl die erste konfigurierte Aktion des Buttons aus. Der Benutzer hat erfolgreich getestet, dass damit ein Licht eingeschaltet werden konnte. Die Ausführung ist weiterhin auf die konfigurierte Standard-Chat-ID begrenzt.
 
 ### Schritt 6 – Mehrere Aktionen
+**Status: GEPLANT**
+
 Beispiel:
 - Garage öffnen
 - 1 Sekunde warten
 - Licht einschalten
 - Telegram-Nachricht senden
-
-**Status: GEPLANT**
 
 ### Schritt 7 – Untermenüs
 **Status: GEPLANT**
@@ -126,34 +127,42 @@ Beispiel:
 ### Schritt 8 – Bedingungen
 **Status: SPÄTER / OPTIONAL**
 
-## 8. Aktueller Test
-Der Benutzer hat bestätigt, dass das **Sidebar-Icon jetzt sichtbar ist** und der grafische Editor korrekt geladen wird.
+## 8. Aktueller Teststand v0.0.16
+In v0.0.16 wurden die nächsten UI-Schritte umgesetzt:
 
-Der grafische Editor wurde erfolgreich getestet. Die Darstellung wurde anschließend optisch erweitert: Menüs, Button-Reihen, Button-Editoren, Aktionsbereiche und der Speichern-Bereich besitzen jetzt farbige Rahmen, dezente Kontrastflächen und klarere Abschnittsgrenzen. Die Farben verwenden Home-Assistant-Variablen und passen sich damit an Light/Dark Mode an. Die Funktionalität des Editors und der Telegram-Anbindung wurde dabei nicht verändert.
+1. **Live-Vorschau korrigiert und sichtbar eingebunden**
+   - Vorschau erscheint rechts neben dem Editor auf breiten Bildschirmen.
+   - Auf schmalen Bildschirmen wandert sie unter den Editor.
+   - Telegram-Nachricht und Button-Reihen werden visuell dargestellt.
+   - Ein Klick auf einen Vorschau-Button führt die konfigurierte erste Home-Assistant-Aktion direkt aus.
 
-Der aktuelle Entwicklungsstand ist **v0.0.15**. Die nächste Entwicklungsphase ist die direkte Zuordnung von Home-Assistant-Aktionen zu einzelnen Telegram-Buttons.
+2. **Dienst/Aktion**
+   - Dropdown enthält die aktuell von Home Assistant gemeldeten Dienste.
+   - Eine gespeicherte Aktion, die nicht in der aktuellen Dienstliste vorhanden ist, bleibt auswählbar und wird als „gespeichert“ gekennzeichnet.
 
-Als Nächstes soll geprüft werden:
-1. Wird das Panel korrekt geladen?
-2. Wird ein bestehendes Menü angezeigt?
-3. Gibt es sichtbar die Schaltfläche **+ Menü erstellen**?
-4. Kann ein Menü angelegt werden?
-5. Erscheint darin **+ Button erstellen**?
-6. Kann ein Button gespeichert werden?
-7. Bleibt die Konfiguration nach Neustart erhalten?
+3. **Entity-Auswahl**
+   - Der Editor verwendet bevorzugt den nativen Home-Assistant-`ha-selector` mit `entity`-Selector.
+   - Da Home Assistant Teile des Frontends lazy lädt, wird versucht, den nativen Selector über bereits registrierte HA-Editor-Komponenten nachzuladen.
+   - Falls der native Selector zu diesem Zeitpunkt nicht verfügbar ist, gibt es eine komfortable Suchauswahl als Fallback. Diese durchsucht Anzeigenamen und Entity-IDs und zeigt bis zu 25 Treffer an.
 
-Wenn das funktioniert, beginnt Schritt 4 mit den Button-Aktionen.
+4. **Versionsanzeige**
+   - Die Version wird über `panel.py` aus `version.py` bereitgestellt.
+   - `version.py` liest die Version direkt aus `manifest.json`.
+   - Für v0.0.16 ist damit die Anzeige im Panel auf die Integrationsversion gekoppelt.
 
 ## 9. Bekannte offene Punkte
-- Native Home-Assistant-Action-Editor-Integration fehlt noch; Dienst/Aktion kann jetzt über eine Liste der aktuell verfügbaren Home-Assistant-Dienste ausgewählt werden. Die Entity-Auswahl verwendet weiterhin die Browser-Datalist.
-- Button-Aktionen werden ausgeführt; aktuell wird pro Button die erste konfigurierte Aktion verwendet. Die neue Menü-Vorschau kann konfigurierte Aktionen direkt aus dem Panel testen.
 - Mehrere Aktionen pro Button fehlen noch.
+- Aktuell wird pro Button nur die erste konfigurierte Aktion gespeichert/ausgeführt.
+- Service-Datenfelder (z. B. Helligkeit, Farbe, Nachrichtentext) werden noch nicht grafisch bearbeitet.
 - Untermenüs fehlen noch.
 - Bedingungen fehlen noch.
+- Die native HA-Entity-Auswahl hängt vom aktuellen Lazy-Loading-Zustand des Home-Assistant-Frontends ab; der Such-Fallback verhindert dabei eine unbrauchbare leere Auswahl.
 
 ## 10. Release-Prinzip
 
-Die Integrationsversion wird bei jedem veröffentlichten Entwicklungsstand erhöht. Für HACS ist die GitHub-Release/Tag-Version maßgeblich. Wenn das automatische Anlegen bzw. Verschieben von Releases über die verfügbaren GitHub-Schnittstellen nicht möglich ist, wird der Release-Tag manuell auf den aktuellen `main`-Stand angelegt. Das ist der bevorzugte Fallback und verhindert, dass die Entwicklung am Release-Management hängen bleibt.
+Die Integrationsversion wird bei jedem veröffentlichten Entwicklungsstand erhöht. Für HACS ist die GitHub-Release/Tag-Version maßgeblich. Wenn das automatische Anlegen bzw. Verschieben von Releases über die verfügbaren GitHub-Schnittstellen nicht möglich ist, wird der Release-Tag manuell auf den aktuellen `main`-Stand angelegt.
+
+Für diesen Stand ist die Integrationsversion **0.0.16** gesetzt. Der GitHub-Release/Tag kann anschließend manuell als **v0.0.16** auf `main` erstellt werden.
 
 ## 11. Entwicklungsprinzipien
 - Funktionierende Telegram-Anbindung nicht unnötig verändern.
@@ -165,6 +174,6 @@ Die Integrationsversion wird bei jedem veröffentlichten Entwicklungsstand erhö
 
 **Letzte Aktualisierung:** 2026-09-28
 
-**Release:** v0.0.15
+**Release:** v0.0.16
 
-**Aktueller Fokus:** Farblich kontrastreiche UI testen. Danach native/komfortablere Aktionseingabe und mehrere Aktionen erweitern.
+**Aktueller Fokus:** v0.0.16 testen: Live-Vorschau, Dienst-Dropdown, native/komfortable Entity-Auswahl und Versionsanzeige. Danach mehrere Aktionen pro Button erweitern.
