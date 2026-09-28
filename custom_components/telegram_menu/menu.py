@@ -104,8 +104,10 @@ class MenuManager:
     @staticmethod
     def _render_reply_keyboard(menu: dict[str, Any]) -> list[list[str]]:
         """Render a Telegram Reply Keyboard."""
-        keyboard: list[list[str]] = []
+        keyboard: list[str] = []
 
+        # Home Assistant's current telegram_bot.send_message action expects
+        # each reply-keyboard row as one comma-separated string.
         for row in menu.get("rows", []):
             rendered_row: list[str] = []
             for button in row:
@@ -116,7 +118,7 @@ class MenuManager:
                 elif isinstance(button, str) and button.strip():
                     rendered_row.append(button.strip())
             if rendered_row:
-                keyboard.append(rendered_row)
+                keyboard.append(", ".join(rendered_row))
 
         return keyboard
 
