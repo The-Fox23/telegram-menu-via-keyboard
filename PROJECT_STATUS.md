@@ -190,3 +190,10 @@ Für diesen Stand ist die Integrationsversion **0.0.16** gesetzt. Der GitHub-Rel
 - Telegram-Buttons in der Vorschau sind echte anklickbare Buttons mit Hover-/Pressed-Effekt.
 - Vorschau aktualisiert sich bei Änderungen an Nachricht, Tastaturtyp, Anzeigename, Telegram-Befehl, Dienst/Aktion und Ziel-Entity.
 - Vorschau-Buttons führen weiterhin die konfigurierte Home-Assistant-Aktion direkt aus.
+
+
+### v0.0.18 – Vereinfachter Einrichtungsassistent
+- Config Flow fragt nur noch Telegram-Bot/Notify-Entity und Chat-ID ab.
+- Menüname, Nachricht, Tastaturtyp und Buttons werden nicht mehr während der Integrationseinrichtung abgefragt.
+- Nach der Einrichtung wird automatisch ein leeres `main`-Menü angelegt.
+- Die weitere Konfiguration erfolgt vollständig im grafischen Telegram-Menu-Editor.
