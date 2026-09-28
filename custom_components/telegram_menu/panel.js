@@ -279,6 +279,7 @@ class TelegramMenuPanel extends HTMLElement {
           padding: 20px;
           margin-bottom: 20px;
           box-shadow: var(--ha-box-shadow);
+          border: 1px solid var(--divider-color);
         }
 
         .menu-header {
@@ -293,6 +294,10 @@ class TelegramMenuPanel extends HTMLElement {
           font-size: 21px;
           font-weight: 600;
           flex: 1;
+          padding: 8px 12px;
+          border-radius: 8px;
+          background: color-mix(in srgb, var(--primary-color) 12%, var(--card-background-color));
+          border-left: 4px solid var(--primary-color);
         }
 
         .field {
@@ -354,6 +359,11 @@ class TelegramMenuPanel extends HTMLElement {
           font-size: 14px;
           font-weight: 600;
           margin: 14px 0 8px;
+          padding: 7px 10px;
+          border-radius: 7px;
+          background: color-mix(in srgb, var(--primary-color) 14%, var(--card-background-color));
+          color: var(--primary-color);
+          border-left: 3px solid var(--primary-color);
         }
 
         .action-help {
@@ -365,6 +375,25 @@ class TelegramMenuPanel extends HTMLElement {
         .button-actions {
           display: flex;
           justify-content: flex-end;
+        }
+
+        .button-editor .action-input,
+        .button-editor .target-input {
+          border-color: color-mix(in srgb, var(--primary-color) 35%, var(--divider-color));
+        }
+
+        .save-footer {
+          display: flex;
+          justify-content: flex-end;
+          margin: 28px 0 12px;
+          padding: 16px;
+          border-top: 1px solid var(--divider-color);
+        }
+
+        .save-footer button {
+          min-width: 160px;
+          font-size: 15px;
+          font-weight: 700;
         }
 
         .empty {
@@ -415,7 +444,6 @@ class TelegramMenuPanel extends HTMLElement {
 
         <div class="toolbar">
           <button id="add-menu">+ Menü erstellen</button>
-          <button id="save">Speichern</button>
         </div>
 
         ${this._loading ? '<div class="status">Konfiguration wird geladen …</div>' : ""}
@@ -423,6 +451,9 @@ class TelegramMenuPanel extends HTMLElement {
         ${this._saved ? '<div class="status success">Änderungen gespeichert.</div>' : ""}
 
         <div id="content"></div>
+        <div class="save-footer">
+          <button id="save">Speichern</button>
+        </div>
       </div>
     `;
 
@@ -461,12 +492,27 @@ class TelegramMenuPanel extends HTMLElement {
         rename.textContent = "Umbenennen";
         rename.addEventListener("click", () => this._renameMenu(name));
 
+        const start = document.createElement("button");
+        start.className = "secondary";
+        start.textContent = "▶ Tastatur starten";
+        start.addEventListener("click", async () => {
+          try {
+            await this._hass.callService("telegram_menu", "show", { menu: name });
+            this._error = "";
+            this._started = name;
+            this._render();
+          } catch (error) {
+            this._error = error?.message || "Tastatur konnte nicht gestartet werden.";
+            this._render();
+          }
+        });
+
         const remove = document.createElement("button");
         remove.className = "danger";
         remove.textContent = "Löschen";
         remove.addEventListener("click", () => this._deleteMenu(name));
 
-        header.append(title, rename, remove);
+        header.append(title, start, rename, remove);
         card.appendChild(header);
 
         const help = document.createElement("div");
@@ -560,7 +606,8 @@ class TelegramMenuPanel extends HTMLElement {
 
             const targetInput = document.createElement("input");
             targetInput.className = "target-input";
-            targetInput.placeholder = "z. B. light.garage";
+            targetInput.placeholder = "Entity suchen oder auswählen …";
+            targetInput.setAttribute("list", "entity-list");
             targetInput.value =
               button?.actions?.[0]?.target?.entity_id?.[0] || "";
 
@@ -612,6 +659,17 @@ class TelegramMenuPanel extends HTMLElement {
       "click",
       () => this._saveConfig(),
     );
+
+    const entityList = document.createElement("datalist");
+    entityList.id = "entity-list";
+    for (const [entityId, state] of Object.entries(this._hass?.states || {})) {
+      const option = document.createElement("option");
+      option.value = entityId;
+      const friendlyName = state?.attributes?.friendly_name;
+      if (friendlyName) option.label = friendlyName;
+      entityList.appendChild(option);
+    }
+    this.appendChild(entityList);
   }
 
   _escape(value) {
