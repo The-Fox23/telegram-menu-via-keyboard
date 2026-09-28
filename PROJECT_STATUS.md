@@ -7,7 +7,7 @@
 - Geplanter Zielname: `telegram-menu-via-keyboard`
 - Integration Domain: `telegram_menu`
 - Anzeigename: **Telegram Menu via Keyboard**
-- Aktuelle Version: 0.0.11
+- Aktuelle Version: 0.0.12
 - Home Assistant Mindestversion laut `hacs.json`: **2026.1.0**
 - Abhängigkeiten: `telegram_bot`, `websocket_api`, `http`, `frontend`
 - Integrationstyp: `service`
@@ -102,12 +102,14 @@ Das Panel wird jetzt nach dem bewährten Switch-Manager-Prinzip als eingebautes 
 ### Schritt 4 – Aktionen direkt am Button
 Jeder Button soll einen eigenen Action-Bereich erhalten. Möglichst soll der native Home-Assistant-Action-Editor verwendet werden.
 
-**Status: ALS NÄCHSTES**
+**Status: IN ARBEIT / ERSTER TESTSCHRITT IMPLEMENTIERT**
 
 ### Schritt 5 – Aktionen ohne zusätzliche Automation
 Telegram-Befehl → Button suchen → gespeicherte Aktionen ausführen.
 
-**Status: GEPLANT**
+**Status: IN ARBEIT**
+
+Die erste Ausbaustufe speichert pro Button eine optionale Home-Assistant-Aktion und führt sie bei einem passenden Telegram-Befehl aus. Zunächst wird bewusst nur die erste Aktion eines Buttons ausgeführt. Der Chat wird dabei auf die konfigurierte Standard-Chat-ID begrenzt.
 
 ### Schritt 6 – Mehrere Aktionen
 Beispiel:
@@ -161,8 +163,8 @@ Die Integrationsversion wird bei jedem veröffentlichten Entwicklungsstand erhö
 - Bestehenden Config Flow zunächst erhalten.
 - Home-Assistant-native UI nach Möglichkeit verwenden.
 
-**Letzte Aktualisierung:** 2026-09-25
+**Letzte Aktualisierung:** 2026-09-28
 
-**Release:** v0.0.11
+**Release:** v0.0.12
 
-**Aktueller Fokus:** Pause nach erfolgreicher Überarbeitung des Button-Editors. Nächster Schritt: direkte Home-Assistant-Aktionen für Telegram-Buttons integrieren.
+**Aktueller Fokus:** Erste Ausbaustufe der direkten Home-Assistant-Aktionen testen. Danach mehrere Aktionen und eine komfortablere Aktionseingabe erweitern.
