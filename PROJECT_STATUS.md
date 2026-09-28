@@ -197,3 +197,9 @@ Für diesen Stand ist die Integrationsversion **0.0.16** gesetzt. Der GitHub-Rel
 - Menüname, Nachricht, Tastaturtyp und Buttons werden nicht mehr während der Integrationseinrichtung abgefragt.
 - Nach der Einrichtung wird automatisch ein leeres `main`-Menü angelegt.
 - Die weitere Konfiguration erfolgt vollständig im grafischen Telegram-Menu-Editor.
+
+
+### v0.0.19 – Vorschau- und CSS-Korrektur
+- Fehlerhafte literale \\n-Sequenzen im Panel-CSS entfernt.
+- Handyrahmen der Live-Vorschau wird wieder korrekt dargestellt.
+- Speichern-Button im hellen und dunklen Theme deutlich sichtbar gestaltet.
