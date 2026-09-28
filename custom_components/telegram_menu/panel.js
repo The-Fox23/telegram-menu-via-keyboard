@@ -14,6 +14,28 @@ class TelegramMenuPanel extends HTMLElement {
   connectedCallback() {
     this._render();
     this._loadConfig();
+    this._ensureNativeEntitySelector();
+  }
+
+  async _ensureNativeEntitySelector() {
+    if (customElements.get("ha-selector")) return;
+
+    // Home Assistant lazy-loads the native selector. This mirrors the
+    // pattern used by HA's own/custom frontend editors to trigger loading.
+    for (const tag of ["hui-entities-card", "hui-tile-card"]) {
+      const element = customElements.get(tag);
+      if (element?.getConfigElement) {
+        try {
+          await element.getConfigElement();
+        } catch (_error) {
+          // Fall back to the searchable HTML picker below.
+        }
+        if (customElements.get("ha-selector")) {
+          this._render();
+          return;
+        }
+      }
+    }
   }
 
   async _loadConfig() {
@@ -191,7 +213,95 @@ class TelegramMenuPanel extends HTMLElement {
     this._render();
   }
 
-  _getServices() { const out=[]; for (const [d,s] of Object.entries(this._hass?.services||{})) for (const n of Object.keys(s||{})) out.push({value:d+"."+n,label:d+"."+n}); return out.sort((a,b)=>a.label.localeCompare(b.label)); }
+  _getServices() {
+    const out = [];
+    for (const [domain, services] of Object.entries(this._hass?.services || {})) {
+      for (const name of Object.keys(services || {})) {
+        out.push({ value: domain + "." + name, label: domain + "." + name });
+      }
+    }
+    return out.sort((a, b) => a.label.localeCompare(b.label));
+  }
+
+  _createEntityPicker(value) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "entity-picker-wrapper";
+
+    const hidden = document.createElement("input");
+    hidden.type = "hidden";
+    hidden.className = "target-input";
+    hidden.value = value || "";
+    wrapper.appendChild(hidden);
+
+    if (customElements.get("ha-selector")) {
+      const selector = document.createElement("ha-selector");
+      selector.hass = this._hass;
+      selector.selector = { entity: { multiple: false } };
+      selector.value = value || "";
+      selector.label = "Ziel-Entity";
+      selector.helper = "Nach Anzeigename oder Entity-ID suchen.";
+      selector.addEventListener("value-changed", (event) => {
+        hidden.value = event.detail?.value || "";
+      });
+      wrapper.appendChild(selector);
+      return wrapper;
+    }
+
+    // Fallback for frontend states where HA has not lazy-loaded ha-selector yet.
+    const input = document.createElement("input");
+    input.className = "entity-search-fallback";
+    input.placeholder = "Entity suchen …";
+    input.value = value || "";
+
+    const list = document.createElement("div");
+    list.className = "entity-search-list";
+
+    const entities = Object.entries(this._hass?.states || {})
+      .map(([entityId, state]) => ({
+        entityId,
+        name: state?.attributes?.friendly_name || entityId,
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    const renderMatches = () => {
+      const query = input.value.trim().toLowerCase();
+      list.innerHTML = "";
+      const matches = entities
+        .filter((item) =>
+          !query ||
+          item.entityId.toLowerCase().includes(query) ||
+          item.name.toLowerCase().includes(query)
+        )
+        .slice(0, 25);
+
+      for (const item of matches) {
+        const option = document.createElement("button");
+        option.type = "button";
+        option.className = "entity-search-option";
+        option.innerHTML = "<strong>" + this._escape(item.name) +
+          "</strong><span>" + this._escape(item.entityId) + "</span>";
+        option.addEventListener("click", () => {
+          input.value = item.entityId;
+          hidden.value = item.entityId;
+          list.hidden = true;
+        });
+        list.appendChild(option);
+      }
+      list.hidden = matches.length === 0;
+    };
+
+    input.addEventListener("input", () => {
+      hidden.value = input.value.trim();
+      renderMatches();
+    });
+    input.addEventListener("focus", renderMatches);
+    input.addEventListener("blur", () => {
+      setTimeout(() => { list.hidden = true; }, 150);
+    });
+
+    wrapper.append(input, list);
+    return wrapper;
+  }
 
   async _previewButton(button) { const a=button?.actions?.[0]; if(!a?.action){this._error="Für diesen Button ist keine Home-Assistant-Aktion konfiguriert.";this._render();return;} try{const [d,s]=String(a.action).split(".",2); await this._hass.callService(d,s,a.data||{},a.target||{});this._error="";this._render();}catch(e){this._error=e?.message||"Aktion konnte nicht ausgeführt werden.";this._render();} }
 
@@ -401,17 +511,26 @@ class TelegramMenuPanel extends HTMLElement {
         }
 
         .button-editor .action-input,
-        .button-editor .target-input {
+        .button-editor .target-input,
+        .button-editor .entity-search-fallback {
           border: 1px solid color-mix(in srgb, var(--warning-color, #ff9800) 40%, var(--divider-color));
           background: color-mix(in srgb, var(--warning-color, #ff9800) 4%, var(--secondary-background-color));
         }
 
         .button-editor .action-input:focus,
-        .button-editor .target-input:focus {
+        .button-editor .target-input:focus,
+        .button-editor .entity-search-fallback:focus {
           outline: 2px solid color-mix(in srgb, var(--warning-color, #ff9800) 35%, transparent);
           outline-offset: 1px;
         }
 
+        .entity-picker-wrapper { position:relative; width:100%; }
+        .entity-picker-wrapper ha-selector { display:block; width:100%; }
+        .entity-search-list { position:absolute; z-index:20; left:0; right:0; top:calc(100% + 4px); max-height:260px; overflow:auto; background:var(--card-background-color); border:1px solid var(--divider-color); border-radius:8px; box-shadow:var(--ha-box-shadow); }
+        .entity-search-option { display:flex; flex-direction:column; align-items:flex-start; width:100%; padding:9px 11px; border:0; border-bottom:1px solid var(--divider-color); border-radius:0; background:transparent; color:var(--primary-text-color); text-align:left; }
+        .entity-search-option:hover { background:var(--secondary-background-color); }
+        .entity-search-option span { font-size:11px; color:var(--secondary-text-color); margin-top:2px; }
+        
         .save-footer {
           display: flex;
           justify-content: flex-end;
@@ -484,7 +603,16 @@ class TelegramMenuPanel extends HTMLElement {
         ${this._error ? `<div class="status error">${this._escape(this._error)}</div>` : ""}
         ${this._saved ? '<div class="status success">Änderungen gespeichert.</div>' : ""}
 
-        <div id="content"></div>
+        <div class="editor-layout">
+          <div id="content"></div>
+          <div class="preview-column">
+            <div class="preview-card">
+              <div class="preview-title">Live-Vorschau</div>
+              <div class="preview-subtitle">So sieht die Telegram-Tastatur aus. Vorschau-Buttons können die konfigurierte Aktion direkt testen.</div>
+              <div id="preview"></div>
+            </div>
+          </div>
+        </div>
         <div class="save-footer">
           <button id="save">Speichern</button>
         </div>
@@ -638,14 +766,11 @@ class TelegramMenuPanel extends HTMLElement {
             const targetLabel = document.createElement("label");
             targetLabel.textContent = "Ziel-Entity";
 
-            const targetInput = document.createElement("input");
-            targetInput.className = "target-input";
-            targetInput.placeholder = "Entity suchen oder auswählen …";
-            targetInput.setAttribute("list", "entity-list");
-            targetInput.value =
-              button?.actions?.[0]?.target?.entity_id?.[0] || "";
+            const targetPicker = this._createEntityPicker(
+              button?.actions?.[0]?.target?.entity_id?.[0] || "",
+            );
 
-            targetField.append(targetLabel, targetInput);
+            targetField.append(targetLabel, targetPicker);
 
             const actions = document.createElement("div");
             actions.className = "button-actions";
@@ -694,16 +819,6 @@ class TelegramMenuPanel extends HTMLElement {
       () => this._saveConfig(),
     );
 
-    const entityList = document.createElement("datalist");
-    entityList.id = "entity-list";
-    for (const [entityId, state] of Object.entries(this._hass?.states || {})) {
-      const option = document.createElement("option");
-      option.value = entityId;
-      const friendlyName = state?.attributes?.friendly_name;
-      if (friendlyName) option.label = friendlyName;
-      entityList.appendChild(option);
-    }
-    this.appendChild(entityList);
   }
 
   _escape(value) {
