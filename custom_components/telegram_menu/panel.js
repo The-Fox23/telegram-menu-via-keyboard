@@ -384,7 +384,25 @@ class TelegramMenuPanel extends HTMLElement {
           margin: 0 auto;
         }
 
-        .editor-layout { display:grid; grid-template-columns:minmax(0,1.55fr) minmax(300px,.75fr); gap:22px; align-items:start; }\n        .preview-column { position:sticky; top:20px; }\n        .preview-card { background:var(--card-background-color); border:2px solid var(--divider-color); border-radius:16px; padding:18px; box-shadow:var(--ha-box-shadow); }\n        .preview-title { font-size:19px; font-weight:700; margin-bottom:5px; }\n        .preview-subtitle { font-size:12px; line-height:1.45; color:var(--secondary-text-color); margin-bottom:16px; }\n        .preview-phone { width:min(100%,360px); min-height:600px; margin:0 auto; box-sizing:border-box; border:8px solid var(--primary-text-color); border-radius:34px; overflow:hidden; background:var(--primary-background-color); box-shadow:0 0 0 2px var(--divider-color), 0 10px 30px rgba(0,0,0,.35); position:relative; }\n        .preview-phone::before { content:""; display:block; width:92px; height:18px; margin:0 auto; background:var(--primary-text-color); border-radius:0 0 12px 12px; position:relative; z-index:2; }\n        .preview-top { display:flex; justify-content:space-between; align-items:center; padding:12px 14px; font-size:12px; font-weight:700; background:var(--secondary-background-color); color:var(--primary-text-color); border-bottom:1px solid var(--divider-color); }\n        .preview-screen { min-height:540px; padding:16px 12px 14px; background:var(--primary-background-color); box-sizing:border-box; }\n        .preview-message { max-width:88%; padding:11px 13px; border-radius:14px 14px 14px 4px; background:var(--card-background-color); border:1px solid var(--divider-color); margin:0 auto 18px 0; font-size:13px; line-height:1.4; white-space:pre-wrap; box-shadow:0 2px 5px rgba(0,0,0,.2); }\n        .preview-row { display:flex; gap:7px; margin-bottom:7px; }\n        .preview-button { flex:1; min-width:0; padding:10px 8px; border-radius:9px; background:var(--secondary-background-color); color:var(--primary-text-color); border:2px solid var(--primary-color); font-size:12px; font-weight:600; cursor:pointer; box-shadow:0 2px 4px rgba(0,0,0,.25); transition:transform .08s ease, background .08s ease, box-shadow .08s ease; }\n        .preview-button:hover { background:var(--primary-color); color:var(--text-primary-color,white); }\n        .preview-button:active { transform:translateY(2px); box-shadow:0 0 1px rgba(0,0,0,.25); }\n        .preview-empty { padding:14px; border:1px dashed var(--divider-color); border-radius:10px; text-align:center; color:var(--secondary-text-color); font-size:12px; }\n        .preview-hint { margin-top:14px; text-align:center; font-size:12px; line-height:1.4; color:var(--secondary-text-color); }\n        .version-badge { display:inline-flex; padding:4px 9px; margin-left:8px; border-radius:999px; background:color-mix(in srgb,var(--primary-color) 15%,var(--card-background-color)); border:1px solid color-mix(in srgb,var(--primary-color) 35%,var(--divider-color)); color:var(--primary-color); font-size:12px; font-weight:700; }\n\n        h1 {
+        .editor-layout { display:grid; grid-template-columns:minmax(0,1.55fr) minmax(300px,.75fr); gap:22px; align-items:start; }
+        .preview-column { position:sticky; top:20px; }
+        .preview-card { background:var(--card-background-color); border:2px solid var(--divider-color); border-radius:16px; padding:18px; box-shadow:var(--ha-box-shadow); }
+        .preview-title { font-size:19px; font-weight:700; margin-bottom:5px; }
+        .preview-subtitle { font-size:12px; line-height:1.45; color:var(--secondary-text-color); margin-bottom:16px; }
+        .preview-phone { width:min(100%,360px); min-height:600px; margin:0 auto; box-sizing:border-box; border:8px solid var(--primary-text-color); border-radius:34px; overflow:hidden; background:var(--primary-background-color); box-shadow:0 0 0 2px var(--divider-color), 0 10px 30px rgba(0,0,0,.35); position:relative; }
+        .preview-phone::before { content:""; display:block; width:92px; height:18px; margin:0 auto; background:var(--primary-text-color); border-radius:0 0 12px 12px; position:relative; z-index:2; }
+        .preview-top { display:flex; justify-content:space-between; align-items:center; padding:12px 14px; font-size:12px; font-weight:700; background:var(--secondary-background-color); color:var(--primary-text-color); border-bottom:1px solid var(--divider-color); }
+        .preview-screen { min-height:540px; padding:16px 12px 14px; background:var(--primary-background-color); box-sizing:border-box; }
+        .preview-message { max-width:88%; padding:11px 13px; border-radius:14px 14px 14px 4px; background:var(--card-background-color); border:1px solid var(--divider-color); margin:0 auto 18px 0; font-size:13px; line-height:1.4; white-space:pre-wrap; box-shadow:0 2px 5px rgba(0,0,0,.2); }
+        .preview-row { display:flex; gap:7px; margin-bottom:7px; }
+        .preview-button { flex:1; min-width:0; padding:10px 8px; border-radius:9px; background:var(--secondary-background-color); color:var(--primary-text-color); border:2px solid var(--primary-color); font-size:12px; font-weight:600; cursor:pointer; box-shadow:0 2px 4px rgba(0,0,0,.25); transition:transform .08s ease, background .08s ease, box-shadow .08s ease; }
+        .preview-button:hover { background:var(--primary-color); color:var(--text-primary-color,white); }
+        .preview-button:active { transform:translateY(2px); box-shadow:0 0 1px rgba(0,0,0,.25); }
+        .preview-empty { padding:14px; border:1px dashed var(--divider-color); border-radius:10px; text-align:center; color:var(--secondary-text-color); font-size:12px; }
+        .preview-hint { margin-top:14px; text-align:center; font-size:12px; line-height:1.4; color:var(--secondary-text-color); }
+        .version-badge { display:inline-flex; padding:4px 9px; margin-left:8px; border-radius:999px; background:color-mix(in srgb,var(--primary-color) 15%,var(--card-background-color)); border:1px solid color-mix(in srgb,var(--primary-color) 35%,var(--divider-color)); color:var(--primary-color); font-size:12px; font-weight:700; }
+
+        h1 {
           margin: 0 0 4px;
           font-size: 28px;
         }
@@ -597,10 +615,19 @@ class TelegramMenuPanel extends HTMLElement {
 
         .save-footer button {
           min-width: 180px;
+          min-height: 44px;
+          padding: 10px 22px;
           font-size: 15px;
           font-weight: 700;
-          background: var(--success-color, var(--primary-color));
-          color: var(--text-primary-color, white);
+          background: var(--primary-color) !important;
+          color: #fff !important;
+          border: 2px solid var(--primary-color) !important;
+          border-radius: 8px;
+          cursor: pointer;
+          box-shadow: var(--ha-box-shadow);
+        }
+        .save-footer button:hover {
+          filter: brightness(1.08);
         }
 
         .empty {
@@ -630,7 +657,9 @@ class TelegramMenuPanel extends HTMLElement {
           margin-bottom: 16px;
         }
 
-        @media (max-width: 900px) { .editor-layout{grid-template-columns:1fr;} .preview-column{position:static;} }\n\n        @media (max-width: 600px) {
+        @media (max-width: 900px) { .editor-layout{grid-template-columns:1fr;} .preview-column{position:static;} }
+
+        @media (max-width: 600px) {
           :host {
             padding: 12px;
           }
