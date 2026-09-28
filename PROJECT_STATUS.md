@@ -127,8 +127,8 @@ Beispiel:
 ### Schritt 8 – Bedingungen
 **Status: SPÄTER / OPTIONAL**
 
-## 8. Aktueller Teststand v0.0.16
-In v0.0.16 wurden die nächsten UI-Schritte umgesetzt:
+## 8. Aktueller Teststand v0.0.17
+In v0.0.17 wurden die nächsten UI-Schritte umgesetzt:
 
 1. **Live-Vorschau korrigiert und sichtbar eingebunden**
    - Vorschau erscheint rechts neben dem Editor auf breiten Bildschirmen.
@@ -148,7 +148,7 @@ In v0.0.16 wurden die nächsten UI-Schritte umgesetzt:
 4. **Versionsanzeige**
    - Die Version wird über `panel.py` aus `version.py` bereitgestellt.
    - `version.py` liest die Version direkt aus `manifest.json`.
-   - Für v0.0.16 ist damit die Anzeige im Panel auf die Integrationsversion gekoppelt.
+   - Für v0.0.17 ist damit die Anzeige im Panel auf die Integrationsversion gekoppelt.
 
 ## 9. Bekannte offene Punkte
 - Mehrere Aktionen pro Button fehlen noch.
@@ -162,7 +162,7 @@ In v0.0.16 wurden die nächsten UI-Schritte umgesetzt:
 
 Die Integrationsversion wird bei jedem veröffentlichten Entwicklungsstand erhöht. Für HACS ist die GitHub-Release/Tag-Version maßgeblich. Wenn das automatische Anlegen bzw. Verschieben von Releases über die verfügbaren GitHub-Schnittstellen nicht möglich ist, wird der Release-Tag manuell auf den aktuellen `main`-Stand angelegt.
 
-Für diesen Stand ist die Integrationsversion **0.0.16** gesetzt. Der GitHub-Release/Tag kann anschließend manuell als **v0.0.16** auf `main` erstellt werden.
+Für diesen Stand ist die Integrationsversion **0.0.16** gesetzt. Der GitHub-Release/Tag kann anschließend manuell als **v0.0.17** auf `main` erstellt werden.
 
 ## 11. Entwicklungsprinzipien
 - Funktionierende Telegram-Anbindung nicht unnötig verändern.
@@ -174,6 +174,12 @@ Für diesen Stand ist die Integrationsversion **0.0.16** gesetzt. Der GitHub-Rel
 
 **Letzte Aktualisierung:** 2026-09-28
 
-**Release:** v0.0.16
+**Release:** v0.0.17
 
-**Aktueller Fokus:** v0.0.16 testen: Live-Vorschau, Dienst-Dropdown, native/komfortable Entity-Auswahl und Versionsanzeige. Danach mehrere Aktionen pro Button erweitern.
+**Aktueller Fokus:** v0.0.17 testen: Live-Vorschau, Dienst-Dropdown, native/komfortable Entity-Auswahl und Versionsanzeige. Danach mehrere Aktionen pro Button erweitern.
+
+
+### v0.0.17 Fehlerbehebung
+- `panel.js`: Ungültige literale `\\n`-Sequenzen außerhalb des Template-Literals entfernt, die zu einem JavaScript-Syntaxfehler und damit zur schwarzen/leeren Panel-Seite führten.
+- Keine Änderungen an der funktionierenden Telegram-Aktionslogik.
+- v0.0.17 ist für den Test vor dem Release vorgesehen.
