@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Telegram Menu – Telegram-Verbindung",
-        "description": "Wähle die vorhandene Telegram-Notify-Entität und den Standard-Chat aus.",
+        "description": "Wähle den vorhandenen Telegram-Bot und gib die Chat-ID ein. Menüs und Buttons werden anschließend im grafischen Editor eingerichtet.",
         "data": {
           "notify_entity": "Telegram Notify-Entität",
           "chat_id": "Standard-Chat-ID"
@@ -12,42 +12,7 @@
           "notify_entity": "Die vorhandene notify.telegram_bot_* Entität deiner Home-Assistant-Telegram-Integration.",
           "chat_id": "Telegram Chat-ID, an die das Menü gesendet werden soll."
         }
-      },
-      "menu": {
-        "title": "Telegram Menu – Menü",
-        "description": "Lege jetzt das Menü und die Art der Telegram-Tastatur fest.",
-        "data": {
-          "menu_name": "Menüname",
-          "message": "Nachricht über der Tastatur",
-          "keyboard_type": "Tastaturtyp"
-        },
-        "data_description": {
-          "menu_name": "Interner Name des Menüs, z. B. main.",
-          "message": "Text, der zusammen mit der Tastatur gesendet wird.",
-          "keyboard_type": "Normale Tastatur bleibt mit bestehenden telegram_command-Automationen kompatibel. Inline-Tastatur ist für separate Button-Beschriftungen vorgesehen."
-        }
-      },
-      "button": {
-        "title": "Telegram Menu – Button {button_number}",
-        "description": "Füge einen Button hinzu. Tastaturtyp: {keyboard_type}. Du kannst bis zu {max_buttons} Buttons anlegen.",
-        "data": {
-          "label": "Anzeigename",
-          "command": "Telegram-Befehl",
-          "row": "Reihe",
-          "add_another": "Weiteren Button hinzufügen"
-        },
-        "data_description": {
-          "label": "Beschriftung des Buttons, z. B. 🚪 Haustür.",
-          "command": "Der Telegram-Befehl, z. B. /Haustuer. Bei der normalen Tastatur bleibt dieser Befehl als sichtbarer Button-Text erhalten.",
-          "row": "Buttons mit derselben Reihennummer werden nebeneinander angezeigt.",
-          "add_another": "Ja wählen, um direkt den nächsten Button anzulegen."
-        }
       }
-    },
-    "error": {
-      "invalid_button": "Der Anzeigename darf nicht leer sein.",
-      "invalid_command": "Der Telegram-Befehl muss mit / beginnen.",
-      "duplicate_command": "Dieser Telegram-Befehl wurde bereits verwendet."
     }
   }
 }
