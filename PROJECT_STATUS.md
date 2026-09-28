@@ -7,7 +7,7 @@
 - Geplanter Zielname: `telegram-menu-via-keyboard`
 - Integration Domain: `telegram_menu`
 - Anzeigename: **Telegram Menu via Keyboard**
-- Aktuelle Version: 0.0.12
+- Aktuelle Version: 0.0.13
 - Home Assistant Mindestversion laut `hacs.json`: **2026.1.0**
 - Abhängigkeiten: `telegram_bot`, `websocket_api`, `http`, `frontend`
 - Integrationstyp: `service`
@@ -131,7 +131,7 @@ Der Benutzer hat bestätigt, dass das **Sidebar-Icon jetzt sichtbar ist** und de
 
 Der grafische Editor wurde erfolgreich getestet. Die Darstellung der einzelnen Buttons wurde anschließend optisch verbessert: Jeder Button-Editor befindet sich jetzt in einem dezent grauen Kasten mit Rahmen, abgerundeten Ecken und leichtem Schatten. Die Funktionalität des Editors und der Telegram-Anbindung wurde dabei nicht verändert.
 
-Der aktuelle Entwicklungsstand ist **v0.0.11**. Die nächste Entwicklungsphase ist die direkte Zuordnung von Home-Assistant-Aktionen zu einzelnen Telegram-Buttons.
+Der aktuelle Entwicklungsstand ist **v0.0.13**. Die nächste Entwicklungsphase ist die direkte Zuordnung von Home-Assistant-Aktionen zu einzelnen Telegram-Buttons.
 
 Als Nächstes soll geprüft werden:
 1. Wird das Panel korrekt geladen?
@@ -145,8 +145,8 @@ Als Nächstes soll geprüft werden:
 Wenn das funktioniert, beginnt Schritt 4 mit den Button-Aktionen.
 
 ## 9. Bekannte offene Punkte
-- Native Home-Assistant-Action-Editor-Integration fehlt noch.
-- Button-Aktionen werden noch nicht ausgeführt.
+- Native Home-Assistant-Action-Editor-Integration fehlt noch; aktuell gibt es eine durchsuchbare Entity-Auswahl per Browser-Datalist.
+- Button-Aktionen werden ausgeführt; aktuell wird pro Button die erste konfigurierte Aktion verwendet.
 - Mehrere Aktionen pro Button fehlen noch.
 - Untermenüs fehlen noch.
 - Bedingungen fehlen noch.
@@ -165,6 +165,6 @@ Die Integrationsversion wird bei jedem veröffentlichten Entwicklungsstand erhö
 
 **Letzte Aktualisierung:** 2026-09-28
 
-**Release:** v0.0.12
+**Release:** v0.0.13
 
-**Aktueller Fokus:** Erste Ausbaustufe der direkten Home-Assistant-Aktionen testen. Danach mehrere Aktionen und eine komfortablere Aktionseingabe erweitern.
+**Aktueller Fokus:** UI für Entity-Auswahl, visuelle Hervorhebung und Start der gespeicherten Tastatur testen. Danach native/komfortablere Aktionseingabe und mehrere Aktionen erweitern.
