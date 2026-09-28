@@ -191,6 +191,12 @@ class TelegramMenuPanel extends HTMLElement {
     this._render();
   }
 
+  _getServices() { const out=[]; for (const [d,s] of Object.entries(this._hass?.services||{})) for (const n of Object.keys(s||{})) out.push({value:d+"."+n,label:d+"."+n}); return out.sort((a,b)=>a.label.localeCompare(b.label)); }
+
+  async _previewButton(button) { const a=button?.actions?.[0]; if(!a?.action){this._error="Für diesen Button ist keine Home-Assistant-Aktion konfiguriert.";this._render();return;} try{const [d,s]=String(a.action).split(".",2); await this._hass.callService(d,s,a.data||{},a.target||{});this._error="";this._render();}catch(e){this._error=e?.message||"Aktion konnte nicht ausgeführt werden.";this._render();} }
+
+  _renderPreview(menu) { const wrap=document.createElement("div"); const phone=document.createElement("div"); phone.className="preview-phone"; const top=document.createElement("div"); top.className="preview-top"; top.innerHTML="<span>Telegram</span><span>Vorschau</span>"; const screen=document.createElement("div"); screen.className="preview-screen"; const msg=document.createElement("div"); msg.className="preview-message"; msg.textContent=menu?.message||"Bitte auswählen:"; screen.appendChild(msg); const kb=document.createElement("div"); for(const row of menu?.rows||[]){const r=document.createElement("div");r.className="preview-row";for(const b of row){const p=document.createElement("button");p.className="preview-button";p.textContent=b?.label||b?.command||"Button";p.title=b?.command||"";p.addEventListener("click",()=>this._previewButton(b));r.appendChild(p);}kb.appendChild(r);} if(!(menu?.rows||[]).length){const e=document.createElement("div");e.className="preview-empty";e.textContent="Buttons erscheinen hier als Vorschau.";kb.appendChild(e);} screen.appendChild(kb);phone.append(top,screen);wrap.appendChild(phone);const h=document.createElement("div");h.className="preview-hint";h.textContent="Vorschau-Button führt die konfigurierte Home-Assistant-Aktion direkt aus.";wrap.appendChild(h);return wrap; }
+
   _render() {
     if (!this.isConnected) return;
 
@@ -210,11 +216,11 @@ class TelegramMenuPanel extends HTMLElement {
         }
 
         .container {
-          max-width: 1100px;
+          max-width: 1500px;
           margin: 0 auto;
         }
 
-        h1 {
+        .editor-layout { display:grid; grid-template-columns:minmax(0,1.55fr) minmax(300px,.75fr); gap:22px; align-items:start; }\n        .preview-column { position:sticky; top:20px; }\n        .preview-card { background:color-mix(in srgb,var(--primary-color) 5%,var(--card-background-color)); border:2px solid color-mix(in srgb,var(--primary-color) 40%,var(--divider-color)); border-radius:14px; padding:16px; box-shadow:var(--ha-box-shadow); }\n        .preview-title { font-size:18px; font-weight:700; margin-bottom:4px; }\n        .preview-subtitle,.preview-hint,.preview-empty { font-size:12px; color:var(--secondary-text-color); }\n        .preview-phone { border:2px solid var(--divider-color); border-radius:18px; overflow:hidden; background:var(--primary-background-color); }\n        .preview-top { display:flex; justify-content:space-between; padding:10px 12px; font-size:12px; font-weight:700; background:color-mix(in srgb,var(--primary-color) 15%,var(--card-background-color)); border-bottom:1px solid var(--divider-color); }\n        .preview-screen { padding:14px; } .preview-message { padding:10px 12px; border-radius:12px 12px 12px 4px; background:var(--card-background-color); border:1px solid var(--divider-color); margin-bottom:14px; font-size:13px; white-space:pre-wrap; }\n        .preview-row { display:flex; gap:6px; margin-bottom:6px; } .preview-button { flex:1; min-width:0; padding:9px 7px; border-radius:8px; background:color-mix(in srgb,var(--primary-color) 13%,var(--card-background-color)); color:var(--primary-color); border:1px solid color-mix(in srgb,var(--primary-color) 38%,var(--divider-color)); font-size:12px; }\n        .preview-hint { margin-top:12px; text-align:center; }\n        .version-badge { display:inline-flex; padding:4px 9px; margin-left:8px; border-radius:999px; background:color-mix(in srgb,var(--primary-color) 15%,var(--card-background-color)); border:1px solid color-mix(in srgb,var(--primary-color) 35%,var(--divider-color)); color:var(--primary-color); font-size:12px; font-weight:700; }\n\n        h1 {
           margin: 0 0 4px;
           font-size: 28px;
         }
@@ -451,7 +457,7 @@ class TelegramMenuPanel extends HTMLElement {
           margin-bottom: 16px;
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 900px) { .editor-layout{grid-template-columns:1fr;} .preview-column{position:static;} }\n\n        @media (max-width: 600px) {
           :host {
             padding: 12px;
           }
@@ -485,7 +491,7 @@ class TelegramMenuPanel extends HTMLElement {
       </div>
     `;
 
-    const content = this.querySelector("#content");
+    const content = this.querySelector("#content");\n    const previewHost = this.querySelector("#preview");
 
     if (!menuEntries.length && !this._loading && !this._error) {
       content.innerHTML = `
@@ -572,7 +578,7 @@ class TelegramMenuPanel extends HTMLElement {
         typeField.appendChild(typeSelect);
         card.appendChild(typeField);
 
-        const buttonsTitle = document.createElement("div");
+        if (previewHost && !previewHost.childElementCount) previewHost.appendChild(this._renderPreview(menu));\n\n        const buttonsTitle = document.createElement("div");
         buttonsTitle.className = "buttons-title";
         buttonsTitle.textContent = "Buttons";
         card.appendChild(buttonsTitle);
@@ -624,7 +630,7 @@ class TelegramMenuPanel extends HTMLElement {
             actionInput.placeholder = "z. B. light.turn_on";
             actionInput.value = button?.actions?.[0]?.action || "";
 
-            actionField.append(actionLabel, actionInput);
+            const actionSelect=document.createElement("select"); actionSelect.className="action-select"; actionSelect.innerHTML="<option value=\"\">Dienst/Aktion auswählen …</option>"; const currentAction=actionInput.value; for(const service of this._getServices()){const o=document.createElement("option");o.value=service.value;o.textContent=service.label;actionSelect.appendChild(o);} if(currentAction && ![...actionSelect.options].some(o=>o.value===currentAction)){const o=document.createElement("option");o.value=currentAction;o.textContent=currentAction+" (gespeichert)";actionSelect.appendChild(o);} actionSelect.value=currentAction; actionSelect.addEventListener("change",()=>actionInput.value=actionSelect.value); actionInput.style.marginTop="6px"; actionField.append(actionLabel,actionSelect,actionInput);
 
             const targetField = document.createElement("div");
             targetField.className = "field";
