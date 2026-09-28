@@ -827,6 +827,9 @@ class TelegramMenuPanel extends HTMLElement {
 
             const actionSelect=document.createElement("select"); actionSelect.className="action-select"; actionSelect.innerHTML="<option value=\"\">Dienst/Aktion auswählen …</option>"; const currentAction=actionInput.value; for(const service of this._getServices()){const o=document.createElement("option");o.value=service.value;o.textContent=service.label;actionSelect.appendChild(o);} if(currentAction && ![...actionSelect.options].some(o=>o.value===currentAction)){const o=document.createElement("option");o.value=currentAction;o.textContent=currentAction+" (gespeichert)";actionSelect.appendChild(o);} actionSelect.value=currentAction; actionSelect.addEventListener("change",()=>actionInput.value=actionSelect.value); actionInput.style.marginTop="6px"; actionField.append(actionLabel,actionSelect,actionInput);
 
+            actionSelect.addEventListener("change", liveUpdate);
+            actionInput.addEventListener("input", liveUpdate);
+
             const targetField = document.createElement("div");
             targetField.className = "field";
 
@@ -838,6 +841,10 @@ class TelegramMenuPanel extends HTMLElement {
             );
 
             targetField.append(targetLabel, targetPicker);
+            labelInput.addEventListener("input", liveUpdate);
+            commandInput.addEventListener("input", liveUpdate);
+            targetPicker.addEventListener("value-changed", liveUpdate);
+            targetPicker.addEventListener("input", liveUpdate);
 
             const actions = document.createElement("div");
             actions.className = "button-actions";
