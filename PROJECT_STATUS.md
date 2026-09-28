@@ -183,3 +183,10 @@ Für diesen Stand ist die Integrationsversion **0.0.16** gesetzt. Der GitHub-Rel
 - `panel.js`: Ungültige literale `\\n`-Sequenzen außerhalb des Template-Literals entfernt, die zu einem JavaScript-Syntaxfehler und damit zur schwarzen/leeren Panel-Seite führten.
 - Keine Änderungen an der funktionierenden Telegram-Aktionslogik.
 - v0.0.17 ist für den Test vor dem Release vorgesehen.
+
+
+### Live-Vorschau v0.0.17
+- Vorschau erhält einen deutlich sichtbaren Handy-Rahmen, auch im Dark Mode.
+- Telegram-Buttons in der Vorschau sind echte anklickbare Buttons mit Hover-/Pressed-Effekt.
+- Vorschau aktualisiert sich bei Änderungen an Nachricht, Tastaturtyp, Anzeigename, Telegram-Befehl, Dienst/Aktion und Ziel-Entity.
+- Vorschau-Buttons führen weiterhin die konfigurierte Home-Assistant-Aktion direkt aus.
