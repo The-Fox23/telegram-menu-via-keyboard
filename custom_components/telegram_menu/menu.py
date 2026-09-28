@@ -31,6 +31,47 @@ class MenuManager:
     def default_chat_id(self) -> str:
         return str(self.entry.data[CONF_CHAT_ID])
 
+    def find_action(self, command: str) -> dict[str, Any] | None:
+        """Find the first configured action for a Telegram command."""
+        for menu in self.menus.values():
+            if not isinstance(menu, dict):
+                continue
+            for row in menu.get("rows", []):
+                for button in row:
+                    if not isinstance(button, dict):
+                        continue
+                    if str(button.get("command", "")).strip() != command:
+                        continue
+                    actions = button.get("actions", [])
+                    if isinstance(actions, list) and actions:
+                        action = actions[0]
+                        if isinstance(action, dict):
+                            return action
+        return None
+
+    async def execute_action(self, action: dict[str, Any]) -> None:
+        """Execute one configured Home Assistant service action."""
+        service = str(action.get("action", "")).strip()
+        if not service or "." not in service:
+            return
+
+        domain, service_name = service.split(".", 1)
+        data = action.get("data", {})
+        target = action.get("target", {})
+
+        if not isinstance(data, dict):
+            data = {}
+        if not isinstance(target, dict):
+            target = {}
+
+        await self.hass.services.async_call(
+            domain,
+            service_name,
+            data,
+            target=target,
+            blocking=True,
+        )
+
     async def show_menu(self, menu_name: str, chat_id: str | None = None) -> None:
         """Show a configured Telegram keyboard."""
         menu = self.menus.get(menu_name)
