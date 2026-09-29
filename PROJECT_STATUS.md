@@ -203,3 +203,11 @@ Für diesen Stand ist die Integrationsversion **0.0.16** gesetzt. Der GitHub-Rel
 - Fehlerhafte literale \\n-Sequenzen im Panel-CSS entfernt.
 - Handyrahmen der Live-Vorschau wird wieder korrekt dargestellt.
 - Speichern-Button im hellen und dunklen Theme deutlich sichtbar gestaltet.
+
+
+### v0.0.20 – Telegram-Button-Funktion korrigiert
+- Inline-Tastatur wird jetzt im von Home Assistant erwarteten Format `Beschriftung:/command` übertragen.
+- Telegram-Callbacks werden über `data` bzw. `command` verarbeitet.
+- Reply-Keyboards werden zusätzlich über `telegram_text` verarbeitet.
+- Button-Aktionen können über Telegram-Befehl, Button-Text oder Inline-Callback gefunden werden.
+- Optionaler Bot-Namenszusatz bei Telegram-Kommandos wird berücksichtigt.
