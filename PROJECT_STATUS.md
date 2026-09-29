@@ -225,3 +225,14 @@ Für diesen Stand ist die Integrationsversion **0.0.16** gesetzt. Der GitHub-Rel
 **Letzte Aktualisierung:** 2026-09-29
 
 **Release:** v0.0.21
+
+
+### v0.0.22 – Telegram-Logik auf funktionierenden v0.0.17-Stand zurückgesetzt
+- `__init__.py` und `menu.py` wurden vollständig auf die nachweislich funktionierende v0.0.17-Logik zurückgesetzt.
+- Keine Änderungen an der bewährten `telegram_command`-Verarbeitung.
+- Die aktuelle Oberfläche bleibt beim reinen Telegram-Command ohne Anzeigename.
+- Ziel: Funktionalität von v0.0.17 wiederherstellen und UI-Änderung davon getrennt testen.
+
+**Letzte Aktualisierung:** 2026-09-29
+
+**Release:** v0.0.22
