@@ -12,17 +12,10 @@ PANEL_URL = f"/api/{DOMAIN}/panel.js"
 PANEL_FRONTEND_URL_PATH = "telegram_menu"
 PANEL_NAME = "telegram-menu-panel"
 PANEL_ICON = "mdi:keyboard"
-
-PANEL_TITLES = {
-    "de": "Telegram Menü",
-    "en": "Telegram Menu",
-    "fr": "Menu Telegram",
-}
+PANEL_TITLE = "Telegram Menu"
 
 
-async def async_register_panel(
-    hass: HomeAssistant, menus: dict, language: str = "en"
-) -> None:
+async def async_register_panel(hass: HomeAssistant, menus: dict) -> None:
     """Register the Telegram Menu sidebar panel."""
     panel_path = hass.config.path("custom_components", DOMAIN, "panel.js")
 
@@ -33,7 +26,7 @@ async def async_register_panel(
     async_register_built_in_panel(
         hass,
         component_name="custom",
-        sidebar_title=PANEL_TITLES.get(language, PANEL_TITLES["en"]),
+        sidebar_title=PANEL_TITLE,
         sidebar_icon=PANEL_ICON,
         frontend_url_path=PANEL_FRONTEND_URL_PATH,
         require_admin=True,
@@ -45,7 +38,6 @@ async def async_register_panel(
             },
             "version": VERSION,
             "menus": menus,
-            "language": language,
         },
     )
 
