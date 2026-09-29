@@ -4,27 +4,24 @@
       "user": {
         "title": "Select your language",
         "description": "Choose the language for Telegram Menu. This first step is always shown in English.",
-        "data": {"language": "Language"},
-        "data_description": {"language": "Choose German, English or French."}
+        "data": {
+          "language": "Language"
+        },
+        "data_description": {
+          "language": "Choose German, English or French."
+        }
       },
       "connection": {
         "title": "Telegram Menu – Telegram connection",
         "description": "Select the existing Telegram bot and enter the chat ID. Menus and buttons are configured afterwards in the graphical editor.",
-        "data": {"notify_entity": "Telegram bot", "chat_id": "Chat ID"},
+        "data": {
+          "notify_entity": "Telegram bot",
+          "chat_id": "Chat ID"
+        },
         "data_description": {
           "notify_entity": "Select the existing notify.telegram_bot_* entity from your Home Assistant Telegram integration.",
           "chat_id": "Telegram chat ID to which the menu should be sent."
         }
-      }
-    }
-  },
-  "options": {
-    "step": {
-      "init": {
-        "title": "Telegram Menu – Language",
-        "description": "Change the language of the Telegram Menu interface.",
-        "data": {"language": "Language"},
-        "data_description": {"language": "Choose German, English or French."}
       }
     }
   }
