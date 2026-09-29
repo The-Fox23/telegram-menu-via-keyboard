@@ -7,7 +7,7 @@
 - Geplanter Zielname: `telegram-menu-via-keyboard`
 - Integration Domain: `telegram_menu`
 - Anzeigename: **Telegram Menu via Keyboard**
-- Aktuelle Version: 0.0.16
+- Aktuelle Version: 0.0.23
 - Home Assistant Mindestversion laut `hacs.json`: **2026.1.0**
 - Abhängigkeiten: `telegram_bot`, `websocket_api`, `http`, `frontend`
 - Integrationstyp: `service`
@@ -236,3 +236,24 @@ Für diesen Stand ist die Integrationsversion **0.0.16** gesetzt. Der GitHub-Rel
 **Letzte Aktualisierung:** 2026-09-29
 
 **Release:** v0.0.22
+
+
+### v0.0.23 – Mehrsprachige Oberfläche
+- Die Ersteinrichtung beginnt jetzt mit einer **englischen Sprachauswahl**.
+- Verfügbare Sprachen: **Deutsch, English und Français**.
+- Die gewählte Sprache wird in der Config Entry gespeichert.
+- Die Sidebar-Bezeichnung wird entsprechend der gewählten Sprache angezeigt:
+  - Deutsch: **Telegram Menü**
+  - English: **Telegram Menu**
+  - Français: **Menu Telegram**
+- Das grafische Sidebar-Panel wurde für Deutsch, Englisch und Französisch lokalisiert.
+- Über **Konfigurieren** kann die Sprache später geändert werden, ohne die Integration neu einzurichten.
+- Bestehende Telegram-Tastatur-, Command- und Action-Logik aus v0.0.22 wurde nicht verändert.
+- Config-Entry-Migration auf Version 4 ergänzt.
+- Integrationsversion in `manifest.json` auf **0.0.23** erhöht.
+
+**Letzte Aktualisierung:** 2026-09-29
+
+**Release:** v0.0.23
+
+**Aktueller Fokus:** v0.0.23 testen: neue Installation, englische Sprachauswahl, Sprachumschaltung und Sidebar-/Panel-Übersetzungen.
