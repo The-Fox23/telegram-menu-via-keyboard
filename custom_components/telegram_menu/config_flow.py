@@ -5,7 +5,6 @@ from typing import Any
 
 import voluptuous as vol
 from homeassistant import config_entries
-from homeassistant.core import callback
 from homeassistant.helpers import selector
 
 from .const import (
@@ -29,14 +28,6 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self._notify_entity = ""
         self._chat_id = ""
 
-    @staticmethod
-    @callback
-    def async_get_options_flow(
-        config_entry: config_entries.ConfigEntry,
-    ) -> config_entries.OptionsFlow:
-        """Return the options flow."""
-        return OptionsFlowHandler()
-
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
     ) -> config_entries.ConfigFlowResult:
@@ -49,7 +40,13 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             {
                 vol.Required(
                     CONF_LANGUAGE, default=DEFAULT_LANGUAGE
-                ): vol.In({"de": "German", "en": "English", "fr": "French"})
+                ): vol.In(
+                    {
+                        "de": "German",
+                        "en": "English",
+                        "fr": "French",
+                    }
+                )
             }
         )
         return self.async_show_form(step_id="user", data_schema=schema)
@@ -64,11 +61,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
             menus = {
                 "main": {
-                    "message": {
-                        "de": "🏠 Bitte Funktion auswählen:",
-                        "en": "🏠 Please select a function:",
-                        "fr": "🏠 Veuillez sélectionner une fonction :",
-                    }.get(self._language, "🏠 Please select a function:"),
+                    "message": "🏠 Bitte Funktion auswählen:",
                     "keyboard_type": "reply",
                     "rows": [],
                 }
@@ -92,28 +85,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 vol.Required(CONF_CHAT_ID): str,
             }
         )
-        return self.async_show_form(step_id="connection", data_schema=schema)
-
-
-class OptionsFlowHandler(config_entries.OptionsFlow):
-    """Handle Telegram Menu options."""
-
-    async def async_step_init(
-        self, user_input: dict[str, Any] | None = None
-    ) -> config_entries.ConfigFlowResult:
-        """Allow changing the language later."""
-        current = self.config_entry.options.get(
-            CONF_LANGUAGE,
-            self.config_entry.data.get(CONF_LANGUAGE, DEFAULT_LANGUAGE),
+        return self.async_show_form(
+            step_id="connection",
+            data_schema=schema,
         )
-        if user_input is not None:
-            return self.async_create_entry(data=user_input)
-
-        schema = vol.Schema(
-            {
-                vol.Required(
-                    CONF_LANGUAGE, default=current
-                ): vol.In({"de": "German", "en": "English", "fr": "French"})
-            }
-        )
-        return self.async_show_form(step_id="init", data_schema=schema)
