@@ -1,7 +1,31 @@
 {
   "config": {
     "step": {
-      "connection": {
+      "connection_de": {
+        "title": "Telegram Menü – Telegram-Verbindung",
+        "description": "Wähle den vorhandenen Telegram-Bot und gib die Chat-ID ein. Menüs und Buttons werden anschließend im grafischen Editor eingerichtet.",
+        "data": {
+          "notify_entity": "Telegram-Bot",
+          "chat_id": "Chat-ID"
+        },
+        "data_description": {
+          "notify_entity": "Wähle die vorhandene notify.telegram_bot_* Entity deiner Telegram-Integration.",
+          "chat_id": "Telegram-Chat-ID, an die das Menü gesendet werden soll."
+        }
+      },
+      "connection_en": {
+        "title": "Telegram Menu – Telegram connection",
+        "description": "Select the existing Telegram bot and enter the chat ID. Menus and buttons are configured afterwards in the graphical editor.",
+        "data": {
+          "notify_entity": "Telegram bot",
+          "chat_id": "Chat ID"
+        },
+        "data_description": {
+          "notify_entity": "Select the existing notify.telegram_bot_* entity from your Home Assistant Telegram integration.",
+          "chat_id": "Telegram chat ID to which the menu should be sent."
+        }
+      },
+      "connection_fr": {
         "title": "Menu Telegram – Connexion Telegram",
         "description": "Sélectionnez le bot Telegram existant et saisissez l’ID du chat. Les menus et boutons seront ensuite configurés dans l’éditeur graphique.",
         "data": {
