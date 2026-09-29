@@ -9,7 +9,7 @@ from homeassistant.core import Event, HomeAssistant, ServiceCall, callback
 from homeassistant.helpers import config_validation as cv
 import voluptuous as vol
 
-from .const import CONF_CHAT_ID, CONF_LANGUAGE, CONF_MENUS, CONF_NOTIFY_ENTITY, DEFAULT_LANGUAGE, DOMAIN
+from .const import CONF_CHAT_ID, CONF_MENUS, CONF_NOTIFY_ENTITY, DOMAIN
 from .menu import MenuManager
 from .panel import async_register_panel, async_unregister_panel
 
@@ -164,9 +164,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up a Telegram Menu config entry."""
     manager = MenuManager(hass, entry)
     hass.data[DOMAIN][entry.entry_id] = manager
-    language = entry.options.get(CONF_LANGUAGE, entry.data.get(CONF_LANGUAGE, DEFAULT_LANGUAGE))
-    await async_register_panel(hass, manager.menus, language)
-    entry.async_on_unload(entry.add_update_listener(async_update_options))
+    await async_register_panel(hass, manager.menus)
     return True
 
 
@@ -178,15 +176,6 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry) ->
             version=4,
         )
     return True
-
-
-async def async_update_options(hass: HomeAssistant, entry: ConfigEntry) -> None:
-    """Apply option changes."""
-    language = entry.options.get(CONF_LANGUAGE, entry.data.get(CONF_LANGUAGE, DEFAULT_LANGUAGE))
-    manager = hass.data[DOMAIN].get(entry.entry_id)
-    if manager:
-        async_unregister_panel(hass)
-        await async_register_panel(hass, manager.menus, language)
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
