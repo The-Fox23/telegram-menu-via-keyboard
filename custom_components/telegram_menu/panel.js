@@ -20,7 +20,18 @@ class TelegramMenuPanel extends HTMLElement {
 
   _setLanguage(language) {
     const normalized = String(language || "").toLowerCase().trim();
-    this._language = ["de", "en", "fr"].includes(normalized) ? normalized : "en";
+    const aliases = {
+      de: "de",
+      deutsch: "de",
+      german: "de",
+      en: "en",
+      english: "en",
+      fr: "fr",
+      french: "fr",
+      français: "fr",
+      francais: "fr",
+    };
+    this._language = aliases[normalized] || "en";
   }
 
   _localize() {
@@ -482,7 +493,23 @@ class TelegramMenuPanel extends HTMLElement {
           font-size: 14px;
           cursor: pointer;
           background: var(--primary-color);
-          color: var(--text-primary-color, white);
+          color: var(--text-primary-color, var(--primary-text-color));
+          transition:
+            background-color 180ms ease,
+            border-color 180ms ease,
+            color 180ms ease,
+            box-shadow 180ms ease,
+            transform 140ms ease,
+            filter 180ms ease;
+        }
+
+        button:hover:not(:disabled) {
+          filter: brightness(1.06);
+          transform: translateY(-1px);
+        }
+
+        button:active:not(:disabled) {
+          transform: translateY(0);
         }
 
         button.secondary {
@@ -524,6 +551,20 @@ class TelegramMenuPanel extends HTMLElement {
           margin-bottom: 22px;
           box-shadow: var(--ha-box-shadow);
           border: 2px solid color-mix(in srgb, var(--primary-color) 45%, var(--divider-color));
+          transition:
+            background-color 180ms ease,
+            border-color 180ms ease,
+            box-shadow 180ms ease,
+            transform 180ms ease;
+        }
+
+        .menu-card:hover {
+          border-color: color-mix(
+            in srgb,
+            var(--primary-color) 62%,
+            var(--divider-color)
+          );
+          box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
         }
 
         .menu-header {
@@ -574,6 +615,31 @@ class TelegramMenuPanel extends HTMLElement {
           background: var(--secondary-background-color);
           color: var(--primary-text-color);
           font: inherit;
+          transition:
+            background-color 180ms ease,
+            border-color 180ms ease,
+            color 180ms ease,
+            box-shadow 180ms ease;
+        }
+
+        input:hover,
+        select:hover {
+          border-color: color-mix(
+            in srgb,
+            var(--primary-color) 45%,
+            var(--divider-color)
+          );
+        }
+
+        input:focus,
+        select:focus {
+          outline: 2px solid color-mix(
+            in srgb,
+            var(--primary-color) 32%,
+            transparent
+          );
+          outline-offset: 1px;
+          border-color: var(--primary-color);
         }
 
         .buttons-title {
@@ -607,8 +673,18 @@ class TelegramMenuPanel extends HTMLElement {
           box-shadow: 0 2px 7px rgba(0, 0, 0, 0.16);
         }
 
+        .button-editor {
+          transition:
+            background-color 180ms ease,
+            border-color 180ms ease,
+            box-shadow 180ms ease,
+            transform 180ms ease;
+        }
+
         .button-editor:hover {
           border-color: color-mix(in srgb, var(--secondary-color, var(--primary-color)) 58%, var(--divider-color));
+          box-shadow: 0 5px 14px rgba(0, 0, 0, 0.18);
+          transform: translateY(-1px);
         }
 
         .button-editor .field {
@@ -675,15 +751,31 @@ class TelegramMenuPanel extends HTMLElement {
           padding: 10px 22px;
           font-size: 15px;
           font-weight: 700;
-          background: var(--primary-color) !important;
-          color: #fff !important;
+          background: var(--secondary-background-color) !important;
+          color: var(--primary-text-color) !important;
           border: 2px solid var(--primary-color) !important;
           border-radius: 8px;
           cursor: pointer;
           box-shadow: var(--ha-box-shadow);
+          transition:
+            background-color 180ms ease,
+            border-color 180ms ease,
+            color 180ms ease,
+            box-shadow 180ms ease,
+            transform 140ms ease;
         }
-        .save-footer button:hover {
-          filter: brightness(1.08);
+        .save-footer button:hover:not(:disabled) {
+          background: color-mix(
+            in srgb,
+            var(--primary-color) 12%,
+            var(--secondary-background-color)
+          ) !important;
+          color: var(--primary-text-color) !important;
+          border-color: var(--primary-color) !important;
+          transform: translateY(-1px);
+        }
+        .save-footer button:active:not(:disabled) {
+          transform: translateY(0);
         }
 
         .empty {
