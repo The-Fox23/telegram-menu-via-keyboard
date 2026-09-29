@@ -9,7 +9,7 @@ from homeassistant.core import Event, HomeAssistant, ServiceCall, callback
 from homeassistant.helpers import config_validation as cv
 import voluptuous as vol
 
-from .const import CONF_CHAT_ID, CONF_MENUS, CONF_NOTIFY_ENTITY, DOMAIN
+from .const import CONF_CHAT_ID, CONF_LANGUAGE, CONF_MENUS, CONF_NOTIFY_ENTITY, DOMAIN
 from .menu import MenuManager
 from .panel import async_register_panel, async_unregister_panel
 
@@ -116,6 +116,7 @@ def ws_get_config(
         {
             "notify_entity": manager.notify_entity,
             "chat_id": manager.default_chat_id,
+            "language": manager.entry.data.get(CONF_LANGUAGE, "en"),
             "menus": manager.menus,
         },
     )
@@ -164,7 +165,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up a Telegram Menu config entry."""
     manager = MenuManager(hass, entry)
     hass.data[DOMAIN][entry.entry_id] = manager
-    await async_register_panel(hass, manager.menus)
+    await async_register_panel(
+        hass,
+        manager.menus,
+        manager.entry.data.get(CONF_LANGUAGE, "en"),
+    )
     return True
 
 
