@@ -278,3 +278,32 @@ Für diesen Stand ist die Integrationsversion **0.0.16** gesetzt. Der GitHub-Rel
 **Letzte Aktualisierung:** 2026-09-29
 
 **Status:** v0.0.23 für manuellen Release/Tag vorbereitet.
+
+
+### v0.0.24 bis v0.0.28 – UI-Ausbau und Stabilisierung
+- Der grafische Editor wurde weiter ausgebaut und die Button-Karten erhielten eine klar abgesetzte Darstellung mit Rahmen, Hintergrund und Schatten.
+- Die bestehende Telegram-Command-/Action-Logik blieb unangetastet.
+- Die Mehrsprachigkeit wurde weitergeführt; die UI verwendet die in der Config Entry gespeicherte Sprache Deutsch, English oder Français. Eine Sprachänderung innerhalb der UI ist bewusst nicht vorgesehen.
+- Die Panel-Registrierung wurde stabilisiert: Der Status der registrierten statischen Panel-Route wird jetzt außerhalb von `hass.data[DOMAIN]` gespeichert. Damit wird verhindert, dass der Manager-Lookup durch ein zusätzliches Flag verfälscht wird.
+- Ein JavaScript-Syntaxfehler in der Sprachinitialisierung wurde korrigiert, der zu einer leeren/nicht ladenden UI führen konnte.
+- WebSocket-Registrierung und Config-Flow wurden geprüft und unverändert als funktionierende Basis beibehalten.
+- v0.0.28 wurde als stabiler Zwischenstand veröffentlicht.
+
+**Release:** v0.0.28
+
+### v0.0.29 – Französische UI und Theme-Überarbeitung
+- Die Sprachauflösung im Panel wurde robuster gemacht und akzeptiert jetzt neben den Sprachcodes auch Bezeichnungen wie `French`, `french`, `français` und `francais`.
+- Die französische UI-Lokalisierung bleibt auf Basis des bestehenden Übersetzungsmodells erhalten.
+- Der **Speichern**-Button wurde für den normalen/hellen Modus überarbeitet: Text und Hintergrund haben jetzt einen ausreichenden Kontrast und bleiben auch bei unterschiedlichen Home-Assistant-Themes lesbar.
+- Buttons besitzen jetzt sanfte Hover-, Active- und Fokus-Übergänge.
+- Eingabefelder und Auswahlfelder erhalten flüssige Hover-/Focus-Übergänge.
+- Menü-Karten und Button-Karten reagieren mit dezenten Übergängen und Schatten auf Hover.
+- Die Dark-Mode-Darstellung wurde dadurch optisch ruhiger und konsistenter gestaltet.
+- Keine Änderungen an der funktionierenden Telegram-Command-/Action-Ausführung.
+- `manifest.json` wurde auf **0.0.29** erhöht.
+
+**Letzte Aktualisierung:** 2026-09-29
+
+**Status:** v0.0.29 ist auf `main` vorbereitet und kann als GitHub-Tag/Release **v0.0.29** erstellt werden.
+
+**Aktueller Fokus:** v0.0.29 in Home Assistant testen – Französisch, Speichern-Button im Light Mode sowie Übergänge und Hover-Effekte im Dark Mode.
