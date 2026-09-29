@@ -211,3 +211,17 @@ Für diesen Stand ist die Integrationsversion **0.0.16** gesetzt. Der GitHub-Rel
 - Reply-Keyboards werden zusätzlich über `telegram_text` verarbeitet.
 - Button-Aktionen können über Telegram-Befehl, Button-Text oder Inline-Callback gefunden werden.
 - Optionaler Bot-Namenszusatz bei Telegram-Kommandos wird berücksichtigt.
+
+
+### v0.0.21 – Testmodus: reine Telegram-Commands
+- Anzeigename/Label wurde aus dem Button-Editor entfernt.
+- Jeder Button besteht jetzt nur noch aus einem Telegram-Command, z. B. `/licht_an`.
+- Fehlt beim Eingeben der führende `/`, ergänzt die Oberfläche ihn automatisch.
+- Reply-Keyboard sendet ausschließlich den Command als Button-Text.
+- Inline-Keyboard verwendet ebenfalls Command als sichtbaren Text und als Callback-Daten.
+- Die Command-Suche im Backend normalisiert fehlende führende `/` und optionale Bot-Namen.
+- Ziel dieses Schrittes: zuerst die Telegram-Command-Auslösung und die direkte Home-Assistant-Aktion mit möglichst einfacher Button-Struktur testen.
+
+**Letzte Aktualisierung:** 2026-09-29
+
+**Release:** v0.0.21
