@@ -45,6 +45,7 @@ async def async_register_panel(
                 "embed_iframe": True,
             },
             "version": VERSION,
+            "language": language,
             "menus": menus,
         },
     )
