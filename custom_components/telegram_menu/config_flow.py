@@ -34,7 +34,9 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Select the language first."""
         if user_input is not None:
             self._language = str(user_input[CONF_LANGUAGE])
-            return await self.async_step_connection()
+            return await getattr(
+                self, f"async_step_connection_{self._language}"
+            )()
 
         schema = vol.Schema(
             {
@@ -51,10 +53,12 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         )
         return self.async_show_form(step_id="user", data_schema=schema)
 
-    async def async_step_connection(
-        self, user_input: dict[str, Any] | None = None
+    async def _async_step_connection(
+        self,
+        step_id: str,
+        user_input: dict[str, Any] | None = None,
     ) -> config_entries.ConfigFlowResult:
-        """Configure the Telegram connection."""
+        """Configure the Telegram connection in the selected language."""
         if user_input is not None:
             self._notify_entity = user_input[CONF_NOTIFY_ENTITY]
             self._chat_id = str(user_input[CONF_CHAT_ID])
@@ -86,6 +90,24 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             }
         )
         return self.async_show_form(
-            step_id="connection",
+            step_id=step_id,
             data_schema=schema,
         )
+
+    async def async_step_connection_de(
+        self, user_input: dict[str, Any] | None = None
+    ) -> config_entries.ConfigFlowResult:
+        """Configure the Telegram connection in German."""
+        return await self._async_step_connection("connection_de", user_input)
+
+    async def async_step_connection_en(
+        self, user_input: dict[str, Any] | None = None
+    ) -> config_entries.ConfigFlowResult:
+        """Configure the Telegram connection in English."""
+        return await self._async_step_connection("connection_en", user_input)
+
+    async def async_step_connection_fr(
+        self, user_input: dict[str, Any] | None = None
+    ) -> config_entries.ConfigFlowResult:
+        """Configure the Telegram connection in French."""
+        return await self._async_step_connection("connection_fr", user_input)
