@@ -1,0 +1,31 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Choisir la langue",
+        "description": "Choisissez la langue de Telegram Menu.",
+        "data": {"language": "Langue"},
+        "data_description": {"language": "Choisissez allemand, anglais ou français."}
+      },
+      "connection": {
+        "title": "Menu Telegram – Connexion Telegram",
+        "description": "Sélectionnez le bot Telegram existant et saisissez l’ID du chat. Les menus et boutons seront ensuite configurés dans l’éditeur graphique.",
+        "data": {"notify_entity": "Bot Telegram", "chat_id": "ID du chat"},
+        "data_description": {
+          "notify_entity": "Sélectionnez l’entité notify.telegram_bot_* existante de votre intégration Telegram Home Assistant.",
+          "chat_id": "ID du chat Telegram auquel le menu doit être envoyé."
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Menu Telegram – Langue",
+        "description": "Modifiez ici la langue de l’interface Telegram Menu.",
+        "data": {"language": "Langue"},
+        "data_description": {"language": "Choisissez allemand, anglais ou français."}
+      }
+    }
+  }
+}
