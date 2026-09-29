@@ -19,7 +19,7 @@ class TelegramMenuPanel extends HTMLElement {
 
 
   _setLanguage(language) {
-    this._language = ["de", "en", "fr"].includes(language) ? language : "en";
+    const normalized = String(language || "").toLowerCase().trim();\n    this._language = ["de", "en", "fr"].includes(normalized) ? normalized : "en";
   }
 
   _localize() {
