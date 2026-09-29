@@ -17,6 +17,58 @@ class TelegramMenuPanel extends HTMLElement {
     this._ensureNativeEntitySelector();
   }
 
+
+  _setLanguage(language) {
+    this._language = ["de", "en", "fr"].includes(language) ? language : "en";
+  }
+
+  _localize() {
+    if (this._language === "de") return;
+    const map = {
+      en: {
+        "Telegram Menu": "Telegram Menu",
+        "Menüs und Buttons grafisch bearbeiten – jeder Button verwendet ausschließlich den Telegram-Command.": "Edit menus and buttons graphically – each button uses only the Telegram command.",
+        "+ Menü erstellen": "+ Create menu", "Konfiguration wird geladen …": "Loading configuration …", "Änderungen gespeichert.": "Changes saved.",
+        "Noch kein Telegram-Menü vorhanden": "No Telegram menu yet", "Erstelle zuerst ein Menü. Danach kannst du darin beliebig viele Telegram-Buttons anlegen.": "Create a menu first. You can then add as many Telegram buttons as you like.",
+        "+ Erstes Menü erstellen": "+ Create first menu", "Umbenennen": "Rename", "▶ Tastatur starten": "▶ Start keyboard", "Löschen": "Delete",
+        "Hier kannst du die Menü-Nachricht, den Tastaturtyp und die Telegram-Buttons konfigurieren.": "Configure the menu message, keyboard type and Telegram buttons here.",
+        "Nachricht über der Tastatur": "Message above keyboard", "Tastaturtyp": "Keyboard type", "Normale Telegram-Tastatur": "Normal Telegram keyboard", "Inline-Tastatur": "Inline keyboard",
+        "Telegram-Befehl": "Telegram command", "Home-Assistant-Aktion": "Home Assistant action", "Optional: einen Home-Assistant-Dienst direkt mit diesem Button ausführen.": "Optional: execute a Home Assistant service directly with this button.",
+        "Dienst / Aktion": "Service / action", "Dienst/Aktion auswählen …": "Select service/action …", "Ziel-Entity": "Target entity", "Button löschen": "Delete button", "+ Button erstellen": "+ Create button",
+        "Live-Vorschau": "Live preview", "Die Buttons zeigen und senden ausschließlich den konfigurierten Telegram-Command.": "Buttons display and send only the configured Telegram command.",
+        "Buttons erscheinen hier als Vorschau.": "Buttons will appear here as a preview.", "Die Buttons sind anklickbar und führen die konfigurierte Home-Assistant-Aktion direkt aus.": "Buttons are clickable and directly execute the configured Home Assistant action.",
+        "Speichern": "Save", "Speichern …": "Saving …", "Bitte auswählen:": "Please select:", "Entity suchen …": "Search entity …", "Nach Anzeigename oder Entity-ID suchen.": "Search by display name or entity ID.", " (gespeichert)": " (saved)"
+      },
+      fr: {
+        "Telegram Menu": "Menu Telegram",
+        "Menüs und Buttons grafisch bearbeiten – jeder Button verwendet ausschließlich den Telegram-Command.": "Modifiez les menus et les boutons graphiquement – chaque bouton utilise uniquement la commande Telegram.",
+        "+ Menü erstellen": "+ Créer un menu", "Konfiguration wird geladen …": "Chargement de la configuration …", "Änderungen gespeichert.": "Modifications enregistrées.",
+        "Noch kein Telegram-Menü vorhanden": "Aucun menu Telegram", "Erstelle zuerst ein Menü. Danach kannst du darin beliebig viele Telegram-Buttons anlegen.": "Créez d'abord un menu. Vous pourrez ensuite ajouter autant de boutons Telegram que nécessaire.",
+        "+ Erstes Menü erstellen": "+ Créer le premier menu", "Umbenennen": "Renommer", "▶ Tastatur starten": "▶ Démarrer le clavier", "Löschen": "Supprimer",
+        "Hier kannst du die Menü-Nachricht, den Tastaturtyp und die Telegram-Buttons konfigurieren.": "Configurez ici le message du menu, le type de clavier et les boutons Telegram.",
+        "Nachricht über der Tastatur": "Message au-dessus du clavier", "Tastaturtyp": "Type de clavier", "Normale Telegram-Tastatur": "Clavier Telegram normal", "Inline-Tastatur": "Clavier inline",
+        "Telegram-Befehl": "Commande Telegram", "Home-Assistant-Aktion": "Action Home Assistant", "Optional: einen Home-Assistant-Dienst direkt mit diesem Button ausführen.": "Facultatif : exécuter directement un service Home Assistant avec ce bouton.",
+        "Dienst / Aktion": "Service / action", "Dienst/Aktion auswählen …": "Sélectionner un service / une action …", "Ziel-Entity": "Entité cible", "Button löschen": "Supprimer le bouton", "+ Button erstellen": "+ Créer un bouton",
+        "Live-Vorschau": "Aperçu en direct", "Die Buttons zeigen und senden ausschließlich den konfigurierten Telegram-Command.": "Les boutons affichent et envoient uniquement la commande Telegram configurée.",
+        "Buttons erscheinen hier als Vorschau.": "Les boutons apparaîtront ici en aperçu.", "Die Buttons sind anklickbar und führen die konfigurierte Home-Assistant-Aktion direkt aus.": "Les boutons sont cliquables et exécutent directement l'action Home Assistant configurée.",
+        "Speichern": "Enregistrer", "Speichern …": "Enregistrement …", "Bitte auswählen:": "Veuillez sélectionner :", "Entity suchen …": "Rechercher une entité …", "Nach Anzeigename oder Entity-ID suchen.": "Rechercher par nom d'affichage ou ID d'entité.", " (gespeichert)": " (enregistré)"
+      }
+    }[this._language] || {};
+    const walk = (node) => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const value = node.nodeValue.trim();
+        if (map[value]) node.nodeValue = node.nodeValue.replace(value, map[value]);
+        return;
+      }
+      if (node.nodeType !== Node.ELEMENT_NODE) return;
+      if (node.placeholder && map[node.placeholder]) node.placeholder = map[node.placeholder];
+      if (node.title && map[node.title]) node.title = map[node.title];
+      if (node.label && map[node.label]) node.label = map[node.label];
+      for (const child of node.childNodes) walk(child);
+    };
+    walk(this);
+  }
+
   async _ensureNativeEntitySelector() {
     if (customElements.get("ha-selector")) return;
 
@@ -48,6 +100,7 @@ class TelegramMenuPanel extends HTMLElement {
         type: "telegram_menu/get_config",
       });
       this._config = response;
+      this._setLanguage(response?.language);
       this._loaded = true;
       this._error = "";
       this._render();
@@ -914,6 +967,7 @@ class TelegramMenuPanel extends HTMLElement {
       () => this._saveConfig(),
     );
 
+    this._localize();
   }
 
   _escape(value) {
