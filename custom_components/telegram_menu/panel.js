@@ -1,4 +1,14 @@
 class TelegramMenuPanel extends HTMLElement {
+  _t(key) {
+    const language = this._panelConfig?.language || "en";
+    const translations = {
+      de: {title:"Telegram Menü", subtitle:"Menüs und Buttons grafisch bearbeiten – jeder Button verwendet ausschließlich den Telegram-Befehl.", createMenu:this._t("createMenu"), loading:this._t("loading"), saved:this._t("saved"), live:this._t("live"), liveSub:"Die Buttons zeigen und senden ausschließlich den konfigurierten Telegram-Befehl.", save:this._t("save"), emptyTitle:this._t("emptyTitle"), emptyText:this._t("emptyText"), firstMenu:this._t("firstMenu"), rename:this._t("rename"), start:this._t("start"), delete:this._t("delete"), help:this._t("help"), message:this._t("message"), keyboard:this._t("keyboard"), reply:this._t("reply"), inline:this._t("inline"), buttons:this._t("buttons"), command:this._t("command"), action:this._t("action"), actionHelp:this._t("actionHelp"), service:this._t("service"), choose:this._t("choose"), target:this._t("target"), deleteButton:this._t("deleteButton"), addButton:this._t("addButton"), previewHint:this._t("previewHint"), noAction:this._t("noAction"), actionFailed:this._t("actionFailed"), keyboardFailed:this._t("keyboardFailed"), saveFailed:this._t("saveFailed"), configFailed:this._t("configFailed"), entityHelper:this._t("entityHelper"), entitySearch:this._t("entitySearch"), chooseNew:this._t("chooseNew"), duplicate:this._t("duplicate"), confirmDelete:"Menü wirklich löschen?"}, 
+      en: {title:${this._t("title")}, subtitle:"Edit menus and buttons graphically – each button uses only the Telegram command.", createMenu:"+ Create menu", loading:"Loading configuration …", saved:"Changes saved.", live:"Live Preview", liveSub:"Buttons display and send only the configured Telegram command.", save:"Save", emptyTitle:"No Telegram menu yet", emptyText:"Create a menu first. You can then add any number of Telegram buttons.", firstMenu:"+ Create first menu", rename:"Rename", start:"▶ Start keyboard", delete:"Delete", help:"Configure the menu message, keyboard type and Telegram buttons here.", message:"Message above the keyboard", keyboard:"Keyboard type", reply:"Normal Telegram keyboard", inline:"Inline keyboard", buttons:this._t("buttons"), command:"Telegram command", action:"Home Assistant action", actionHelp:"Optional: run a Home Assistant service directly with this button.", service:"Service / action", choose:"Select service/action …", target:"Target entity", deleteButton:"Delete button", addButton:"+ Create button", previewHint:"The buttons are clickable and directly execute the configured Home Assistant action.", noAction:"No Home Assistant action is configured for this button.", actionFailed:"Action could not be executed.", keyboardFailed:"Keyboard could not be started.", saveFailed:"Saving failed.", configFailed:"Configuration could not be loaded.", entityHelper:"Search by display name or entity ID.", entitySearch:"Search entity …", chooseNew:"New menu name:", duplicate:"A menu with this name already exists.", confirmDelete:"Really delete menu?"}, 
+      fr: {title:"Menu Telegram", subtitle:"Modifiez graphiquement les menus et les boutons – chaque bouton utilise uniquement la commande Telegram.", createMenu:"+ Créer un menu", loading:"Chargement de la configuration …", saved:"Modifications enregistrées.", live:"Aperçu en direct", liveSub:"Les boutons affichent et envoient uniquement la commande Telegram configurée.", save:"Enregistrer", emptyTitle:"Aucun menu Telegram", emptyText:"Créez d’abord un menu. Vous pourrez ensuite y ajouter autant de boutons Telegram que nécessaire.", firstMenu:"+ Créer le premier menu", rename:"Renommer", start:"▶ Démarrer le clavier", delete:"Supprimer", help:"Configurez ici le message du menu, le type de clavier et les boutons Telegram.", message:"Message au-dessus du clavier", keyboard:"Type de clavier", reply:"Clavier Telegram normal", inline:"Clavier inline", buttons:"Boutons", command:"Commande Telegram", action:"Action Home Assistant", actionHelp:"Facultatif : exécuter directement un service Home Assistant avec ce bouton.", service:"Service / action", choose:"Sélectionner un service/une action …", target:"Entité cible", deleteButton:"Supprimer le bouton", addButton:"+ Créer un bouton", previewHint:"Les boutons sont cliquables et exécutent directement l’action Home Assistant configurée.", noAction:"Aucune action Home Assistant n’est configurée pour ce bouton.", actionFailed:"Impossible d’exécuter l’action.", keyboardFailed:"Impossible de démarrer le clavier.", saveFailed:"Échec de l’enregistrement.", configFailed:"Impossible de charger la configuration.", entityHelper:"Rechercher par nom d’affichage ou ID d’entité.", entitySearch:"Rechercher une entité …", chooseNew:"Nouveau nom du menu :", duplicate:"Un menu portant ce nom existe déjà.", confirmDelete:"Supprimer réellement le menu ?"}
+    };
+    return translations[language]?.[key] || translations.en[key] || key;
+  }
+
   set hass(value) {
     this._hass = value;
     if (!this._loaded) {
@@ -52,7 +62,7 @@ class TelegramMenuPanel extends HTMLElement {
       this._error = "";
       this._render();
     } catch (error) {
-      this._error = error?.message || "Konfiguration konnte nicht geladen werden.";
+      this._error = error?.message || this._t("configFailed");
       this._render();
     } finally {
       this._loading = false;
@@ -66,7 +76,7 @@ class TelegramMenuPanel extends HTMLElement {
     const saveButton = this.querySelector("#save");
     if (saveButton) {
       saveButton.disabled = true;
-      saveButton.textContent = "Speichern …";
+      saveButton.textContent = this._t("save") + " …";
     }
 
     try {
@@ -80,7 +90,7 @@ class TelegramMenuPanel extends HTMLElement {
       this._render();
     } catch (error) {
       this._saved = false;
-      this._error = error?.message || "Speichern fehlgeschlagen.";
+      this._error = error?.message || this._t("saveFailed");
       this._render();
     }
   }
@@ -142,7 +152,7 @@ class TelegramMenuPanel extends HTMLElement {
     }
 
     menus[name] = {
-      message: "Bitte auswählen:",
+      message: this._panelConfig?.language === "fr" ? "Veuillez sélectionner une fonction :" : this._panelConfig?.language === "en" ? "Please select a function:" : "Bitte Funktion auswählen:",
       keyboard_type: "reply",
       rows: [],
     };
@@ -153,7 +163,7 @@ class TelegramMenuPanel extends HTMLElement {
   }
 
   _deleteMenu(name) {
-    if (!confirm(`Menü "${name}" wirklich löschen?`)) return;
+    if (!confirm(`${this._t("confirmDelete")} "${name}"`)) return;
 
     const menus = this._collectMenus();
     delete menus[name];
@@ -164,14 +174,14 @@ class TelegramMenuPanel extends HTMLElement {
   }
 
   _renameMenu(oldName) {
-    const newName = prompt("Neuer Menüname:", oldName);
+    const newName = prompt(this._t("chooseNew"), oldName);
     if (!newName?.trim() || newName.trim() === oldName) return;
 
     const menus = this._collectMenus();
     const name = newName.trim();
 
     if (menus[name]) {
-      alert("Ein Menü mit diesem Namen existiert bereits.");
+      alert(this._t("duplicate"));
       return;
     }
 
@@ -240,8 +250,8 @@ class TelegramMenuPanel extends HTMLElement {
       selector.hass = this._hass;
       selector.selector = { entity: { multiple: false } };
       selector.value = value || "";
-      selector.label = "Ziel-Entity";
-      selector.helper = "Nach Anzeigename oder Entity-ID suchen.";
+      selector.label = this._t("target");
+      selector.helper = this._t("entityHelper");
       selector.addEventListener("value-changed", (event) => {
         hidden.value = event.detail?.value || "";
       });
@@ -252,7 +262,7 @@ class TelegramMenuPanel extends HTMLElement {
     // Fallback for frontend states where HA has not lazy-loaded ha-selector yet.
     const input = document.createElement("input");
     input.className = "entity-search-fallback";
-    input.placeholder = "Entity suchen …";
+    input.placeholder = this._t("entitySearch");
     input.value = value || "";
 
     const list = document.createElement("div");
@@ -305,7 +315,7 @@ class TelegramMenuPanel extends HTMLElement {
     return wrapper;
   }
 
-  async _previewButton(button) { const a=button?.actions?.[0]; if(!a?.action){this._error="Für diesen Button ist keine Home-Assistant-Aktion konfiguriert.";this._render();return;} try{const [d,s]=String(a.action).split(".",2); await this._hass.callService(d,s,a.data||{},a.target||{});this._error="";this._render();}catch(e){this._error=e?.message||"Aktion konnte nicht ausgeführt werden.";this._render();} }
+  async _previewButton(button) { const a=button?.actions?.[0]; if(!a?.action){this._error=this._t("noAction");this._render();return;} try{const [d,s]=String(a.action).split(".",2); await this._hass.callService(d,s,a.data||{},a.target||{});this._error="";this._render();}catch(e){this._error=e?.message||this._t("actionFailed");this._render();} }
 
   _renderPreview(menu) {
     const wrap = document.createElement("div");
@@ -321,7 +331,7 @@ class TelegramMenuPanel extends HTMLElement {
 
     const msg = document.createElement("div");
     msg.className = "preview-message";
-    msg.textContent = menu?.message || "Bitte auswählen:";
+    msg.textContent = menu?.message || this._panelConfig?.language === "fr" ? "Veuillez sélectionner une fonction :" : this._panelConfig?.language === "en" ? "Please select a function:" : "Bitte Funktion auswählen:";
     screen.appendChild(msg);
 
     const kb = document.createElement("div");
@@ -357,7 +367,7 @@ class TelegramMenuPanel extends HTMLElement {
 
     const hint = document.createElement("div");
     hint.className = "preview-hint";
-    hint.textContent = "Die Buttons sind anklickbar und führen die konfigurierte Home-Assistant-Aktion direkt aus.";
+    hint.textContent = this._t("previewHint");
     wrap.appendChild(hint);
 
     return wrap;
@@ -737,12 +747,12 @@ class TelegramMenuPanel extends HTMLElement {
 
         const rename = document.createElement("button");
         rename.className = "secondary";
-        rename.textContent = "Umbenennen";
+        rename.textContent = this._t("rename");
         rename.addEventListener("click", () => this._renameMenu(name));
 
         const start = document.createElement("button");
         start.className = "secondary";
-        start.textContent = "▶ Tastatur starten";
+        start.textContent = this._t("start");
         start.addEventListener("click", async () => {
           try {
             await this._hass.callService("telegram_menu", "show", { menu: name });
@@ -750,14 +760,14 @@ class TelegramMenuPanel extends HTMLElement {
             this._started = name;
             this._render();
           } catch (error) {
-            this._error = error?.message || "Tastatur konnte nicht gestartet werden.";
+            this._error = error?.message || this._t("keyboardFailed");
             this._render();
           }
         });
 
         const remove = document.createElement("button");
         remove.className = "danger";
-        remove.textContent = "Löschen";
+        remove.textContent = this._t("delete");
         remove.addEventListener("click", () => this._deleteMenu(name));
 
         header.append(title, start, rename, remove);
@@ -765,7 +775,7 @@ class TelegramMenuPanel extends HTMLElement {
 
         const help = document.createElement("div");
         help.className = "menu-help";
-        help.textContent = "Hier kannst du die Menü-Nachricht, den Tastaturtyp und die Telegram-Buttons konfigurieren.";
+        help.textContent = this._t("help");
         card.appendChild(help);
 
         const messageField = document.createElement("div");
@@ -806,7 +816,7 @@ class TelegramMenuPanel extends HTMLElement {
 
         const buttonsTitle = document.createElement("div");
         buttonsTitle.className = "buttons-title";
-        buttonsTitle.textContent = "Buttons";
+        buttonsTitle.textContent = this._t("buttons");
         card.appendChild(buttonsTitle);
 
         for (let rowIndex = 0; rowIndex < (menu?.rows || []).length; rowIndex++) {
@@ -831,17 +841,17 @@ class TelegramMenuPanel extends HTMLElement {
 
             const actionTitle = document.createElement("div");
             actionTitle.className = "action-title";
-            actionTitle.textContent = "Home-Assistant-Aktion";
+            actionTitle.textContent = this._t("action");
 
             const actionHelp = document.createElement("div");
             actionHelp.className = "action-help";
-            actionHelp.textContent = "Optional: einen Home-Assistant-Dienst direkt mit diesem Button ausführen.";
+            actionHelp.textContent = this._t("actionHelp");
 
             const actionField = document.createElement("div");
             actionField.className = "field";
 
             const actionLabel = document.createElement("label");
-            actionLabel.textContent = "Dienst / Aktion";
+            actionLabel.textContent = this._t("service");
 
             const actionInput = document.createElement("input");
             actionInput.className = "action-input";
@@ -857,7 +867,7 @@ class TelegramMenuPanel extends HTMLElement {
             targetField.className = "field";
 
             const targetLabel = document.createElement("label");
-            targetLabel.textContent = "Ziel-Entity";
+            targetLabel.textContent = this._t("target");
 
             const targetPicker = this._createEntityPicker(
               button?.actions?.[0]?.target?.entity_id?.[0] || "",
@@ -873,7 +883,7 @@ class TelegramMenuPanel extends HTMLElement {
 
             const removeButton = document.createElement("button");
             removeButton.className = "danger";
-            removeButton.textContent = "Button löschen";
+            removeButton.textContent = this._t("deleteButton");
             removeButton.addEventListener(
               "click",
               () => this._deleteButton(name, rowIndex, buttonIndex),
@@ -896,7 +906,7 @@ class TelegramMenuPanel extends HTMLElement {
 
         const addButton = document.createElement("button");
         addButton.className = "secondary";
-        addButton.textContent = "+ Button erstellen";
+        addButton.textContent = this._t("addButton");
         addButton.addEventListener("click", () => this._addButton(name));
         card.appendChild(addButton);
 
