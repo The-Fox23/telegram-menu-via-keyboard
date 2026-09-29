@@ -32,15 +32,7 @@ class MenuManager:
         return str(self.entry.data[CONF_CHAT_ID])
 
     def find_action(self, command: str) -> dict[str, Any] | None:
-        """Find the first configured action for a Telegram command or button text."""
-        value = str(command or "").strip()
-        if not value:
-            return None
-
-        # Telegram commands can arrive with optional bot-name suffixes
-        # (for example /test@my_bot). Compare the command itself.
-        normalized = value.split("@", 1)[0].strip().lower()
-
+        """Find the first configured action for a Telegram command."""
         for menu in self.menus.values():
             if not isinstance(menu, dict):
                 continue
@@ -48,14 +40,8 @@ class MenuManager:
                 for button in row:
                     if not isinstance(button, dict):
                         continue
-
-                    configured_command = str(button.get("command", "")).strip().lower()
-                    if configured_command and not configured_command.startswith("/"):
-                        configured_command = "/" + configured_command
-
-                    if normalized != configured_command:
+                    if str(button.get("command", "")).strip() != command:
                         continue
-
                     actions = button.get("actions", [])
                     if isinstance(actions, list) and actions:
                         action = actions[0]
@@ -137,26 +123,23 @@ class MenuManager:
         return keyboard
 
     @staticmethod
-    def _render_inline_keyboard(menu: dict[str, Any]) -> list[str]:
-        """Render an Inline Keyboard in Home Assistant's string format."""
-        keyboard: list[str] = []
+    def _render_inline_keyboard(menu: dict[str, Any]) -> list[list[list[str]]]:
+        """Render a Telegram Inline Keyboard with separate label and command."""
+        keyboard: list[list[list[str]]] = []
 
         for row in menu.get("rows", []):
-            rendered_row: list[str] = []
+            rendered_row: list[list[str]] = []
             for button in row:
                 if isinstance(button, dict):
                     command = str(button.get("command", "")).strip()
-                    if command and not command.startswith("/"):
-                        command = "/" + command
-                    if command:
-                        rendered_row.append(f"{command}:{command}")
+                    label = str(button.get("label", command)).strip()
+                    if command and label:
+                        rendered_row.append([label, command])
                 elif isinstance(button, str) and button.strip():
                     command = button.strip()
-                    if not command.startswith("/"):
-                        command = "/" + command
-                    rendered_row.append(f"{command}:{command}")
+                    rendered_row.append([command, command])
             if rendered_row:
-                keyboard.append(", ".join(rendered_row))
+                keyboard.append(rendered_row)
 
         return keyboard
 
