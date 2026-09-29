@@ -257,3 +257,24 @@ Für diesen Stand ist die Integrationsversion **0.0.16** gesetzt. Der GitHub-Rel
 **Release:** v0.0.23
 
 **Aktueller Fokus:** v0.0.23 testen: neue Installation, englische Sprachauswahl, Sprachumschaltung und Sidebar-/Panel-Übersetzungen.
+
+
+### v0.0.23 – Sicherheitskorrektur und Lokalisierung final vorbereitet
+- Die stabile `panel.js`-Basis aus v0.0.22 wurde beibehalten; die Mehrsprachigkeit wurde anschließend gezielt ergänzt.
+- Das Panel verwendet jetzt die in der Config Entry gespeicherte Sprache für die sichtbaren UI-Texte.
+- Unterstützte Panel-Sprachen: Deutsch, English und Français.
+- Die Sidebar-Titel werden über `panel.py` entsprechend der Auswahl gesetzt:
+  - Deutsch: **Telegram Menü**
+  - English: **Telegram Menu**
+  - Français: **Menu Telegram**
+- Die erste Sprachauswahl des Config Flows bleibt unabhängig von der Home-Assistant-Sprache **immer Englisch**.
+- Die Sprache kann später über **Konfigurieren** geändert werden.
+- Die funktionierende Telegram-Command-/Action-Logik aus v0.0.22 wurde nicht verändert.
+- Nach einer fehlerhaften ersten UI-Lokalisierungsänderung wurde `panel.js` zunächst vollständig auf den stabilen Stand zurückgesetzt und danach kontrolliert erweitert.
+- Panel-Datei geprüft: ausgeglichene Klammer-/Blockstruktur und keine fehlerhafte rekursive Übersetzung im Textdictionary.
+- `manifest.json` steht auf **0.0.23**.
+- **Kein GitHub Release/Tag wurde von mir angelegt.** Der Release/Tag **v0.0.23** kann jetzt manuell auf `main` erstellt werden.
+
+**Letzte Aktualisierung:** 2026-09-29
+
+**Status:** v0.0.23 für manuellen Release/Tag vorbereitet.
