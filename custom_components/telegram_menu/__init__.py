@@ -24,9 +24,20 @@ async def async_setup(hass: HomeAssistant, config: dict[str, Any]) -> bool:
     hass.data.setdefault(DOMAIN, {})
 
     async def handle_telegram_event(event: Event) -> None:
-        """Execute a configured button action for a Telegram command."""
-        command = str(event.data.get("command", "")).strip()
-        if not command:
+        """Execute a configured button action for Telegram input."""
+        event_type = event.event_type
+        if event_type == "telegram_callback":
+            value = str(
+                event.data.get("data")
+                or event.data.get("command")
+                or ""
+            ).strip()
+        elif event_type == "telegram_text":
+            value = str(event.data.get("text") or "").strip()
+        else:
+            value = str(event.data.get("command") or "").strip()
+
+        if not value:
             return
 
         chat_id = str(event.data.get("chat_id", ""))
@@ -34,7 +45,7 @@ async def async_setup(hass: HomeAssistant, config: dict[str, Any]) -> bool:
             if chat_id != manager.default_chat_id:
                 continue
 
-            action = manager.find_action(command)
+            action = manager.find_action(value)
             if action:
                 await manager.execute_action(action)
                 return
