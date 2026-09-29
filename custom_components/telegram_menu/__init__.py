@@ -166,6 +166,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data[DOMAIN][entry.entry_id] = manager
     language = entry.options.get(CONF_LANGUAGE, entry.data.get(CONF_LANGUAGE, DEFAULT_LANGUAGE))
     await async_register_panel(hass, manager.menus, language)
+    entry.async_on_unload(entry.add_update_listener(async_update_options))
     return True
 
 
