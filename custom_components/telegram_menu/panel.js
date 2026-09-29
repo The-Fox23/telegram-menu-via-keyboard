@@ -97,12 +97,15 @@ class TelegramMenuPanel extends HTMLElement {
         const rowButtons = [];
 
         for (const button of row.querySelectorAll(".button-editor")) {
-          const label = button.querySelector(".label-input")?.value.trim() || "";
-          const command = button.querySelector(".command-input")?.value.trim() || "";
+          let command = button.querySelector(".command-input")?.value.trim() || "";
           const action = button.querySelector(".action-input")?.value.trim() || "";
           const target = button.querySelector(".target-input")?.value.trim() || "";
 
-          const buttonConfig = { label, command };
+          if (command && !command.startsWith("/")) {
+            command = "/" + command;
+          }
+
+          const buttonConfig = { command };
           if (action) {
             buttonConfig.actions = [{
               action,
@@ -110,7 +113,7 @@ class TelegramMenuPanel extends HTMLElement {
             }];
           }
 
-          if (label || command) {
+          if (command) {
             rowButtons.push(buttonConfig);
           }
         }
@@ -188,7 +191,6 @@ class TelegramMenuPanel extends HTMLElement {
     if (!menu.rows.length) menu.rows.push([]);
 
     menu.rows[menu.rows.length - 1].push({
-      label: "Neuer Button",
       command: "/neuer_button",
     });
 
@@ -333,7 +335,7 @@ class TelegramMenuPanel extends HTMLElement {
         const previewButton = document.createElement("button");
         previewButton.type = "button";
         previewButton.className = "preview-button";
-        previewButton.textContent = button?.label || button?.command || "Button";
+        previewButton.textContent = button?.command || "Button";
         previewButton.title = button?.command || "Aktion testen";
         previewButton.addEventListener("click", () => this._previewButton(button));
         rowElement.appendChild(previewButton);
@@ -676,7 +678,7 @@ class TelegramMenuPanel extends HTMLElement {
 
       <div class="container">
         <h1>Telegram Menu</h1>
-        <div class="subtitle">Menüs und Buttons grafisch bearbeiten</div>
+        <div class="subtitle">Menüs und Buttons grafisch bearbeiten – jeder Button verwendet ausschließlich den Telegram-Command.</div>
 
         <div class="toolbar">
           <button id="add-menu">+ Menü erstellen</button>
@@ -691,7 +693,7 @@ class TelegramMenuPanel extends HTMLElement {
           <div class="preview-column">
             <div class="preview-card">
               <div class="preview-title">Live-Vorschau</div>
-              <div class="preview-subtitle">So sieht die Telegram-Tastatur aus. Vorschau-Buttons können die konfigurierte Aktion direkt testen.</div>
+              <div class="preview-subtitle">Die Buttons zeigen und senden ausschließlich den konfigurierten Telegram-Command.</div>
               <div id="preview"></div>
             </div>
           </div>
@@ -817,15 +819,6 @@ class TelegramMenuPanel extends HTMLElement {
             const editor = document.createElement("div");
             editor.className = "button-editor";
 
-            const labelField = document.createElement("div");
-            labelField.className = "field";
-            labelField.innerHTML = "<label>Anzeigename</label>";
-
-            const labelInput = document.createElement("input");
-            labelInput.className = "label-input";
-            labelInput.value = button?.label || button?.command || "";
-            labelField.appendChild(labelInput);
-
             const commandField = document.createElement("div");
             commandField.className = "field";
             commandField.innerHTML = "<label>Telegram-Befehl</label>";
@@ -833,6 +826,7 @@ class TelegramMenuPanel extends HTMLElement {
             const commandInput = document.createElement("input");
             commandInput.className = "command-input";
             commandInput.value = button?.command || "";
+            commandInput.placeholder = "/licht_an";
             commandField.appendChild(commandInput);
 
             const actionTitle = document.createElement("div");
@@ -870,7 +864,6 @@ class TelegramMenuPanel extends HTMLElement {
             );
 
             targetField.append(targetLabel, targetPicker);
-            labelInput.addEventListener("input", liveUpdate);
             commandInput.addEventListener("input", liveUpdate);
             targetPicker.addEventListener("value-changed", liveUpdate);
             targetPicker.addEventListener("input", liveUpdate);
@@ -888,7 +881,6 @@ class TelegramMenuPanel extends HTMLElement {
 
             actions.appendChild(removeButton);
             editor.append(
-              labelField,
               commandField,
               actionTitle,
               actionHelp,
