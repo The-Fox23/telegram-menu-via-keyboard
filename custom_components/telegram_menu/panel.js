@@ -100,7 +100,7 @@ class TelegramMenuPanel extends HTMLElement {
         type: "telegram_menu/get_config",
       });
       this._config = response;
-      this._setLanguage(response?.language);
+      this._setLanguage(response?.language || this._panelConfig?.language);
       this._loaded = true;
       this._error = "";
       this._render();
