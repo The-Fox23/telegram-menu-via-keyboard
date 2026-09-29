@@ -2,16 +2,29 @@
   "config": {
     "step": {
       "user": {
-        "title": "Telegram-Menü",
+        "title": "Sprache auswählen",
+        "description": "Wähle die Sprache für Telegram Menü.",
+        "data": {"language": "Sprache"},
+        "data_description": {"language": "Wähle Deutsch, Englisch oder Französisch."}
+      },
+      "connection": {
+        "title": "Telegram Menü – Telegram-Verbindung",
         "description": "Wähle den vorhandenen Telegram-Bot und gib die Chat-ID ein. Menüs und Buttons werden anschließend im grafischen Editor eingerichtet.",
-        "data": {
-          "notify_entity": "Telegram-Bot",
-          "chat_id": "Chat-ID"
-        },
+        "data": {"notify_entity": "Telegram-Bot", "chat_id": "Chat-ID"},
         "data_description": {
           "notify_entity": "Wähle die vorhandene notify.telegram_bot_* Entity deiner Telegram-Integration.",
           "chat_id": "Telegram-Chat-ID, an die das Menü gesendet werden soll."
         }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Telegram Menü – Sprache",
+        "description": "Ändere hier später die Sprache der Telegram-Menü-Oberfläche.",
+        "data": {"language": "Sprache"},
+        "data_description": {"language": "Wähle Deutsch, Englisch oder Französisch."}
       }
     }
   }
