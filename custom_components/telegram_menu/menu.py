@@ -49,14 +49,11 @@ class MenuManager:
                     if not isinstance(button, dict):
                         continue
 
-                    configured_command = str(button.get("command", "")).strip()
-                    configured_label = str(button.get("label", "")).strip()
+                    configured_command = str(button.get("command", "")).strip().lower()
+                    if configured_command and not configured_command.startswith("/"):
+                        configured_command = "/" + configured_command
 
-                    matches = {
-                        configured_command.lower(),
-                        configured_label.lower(),
-                    }
-                    if normalized not in matches and value.lower() not in matches:
+                    if normalized != configured_command:
                         continue
 
                     actions = button.get("actions", [])
@@ -149,11 +146,14 @@ class MenuManager:
             for button in row:
                 if isinstance(button, dict):
                     command = str(button.get("command", "")).strip()
-                    label = str(button.get("label", command)).strip()
-                    if command and label:
-                        rendered_row.append(f"{label}:{command}")
+                    if command and not command.startswith("/"):
+                        command = "/" + command
+                    if command:
+                        rendered_row.append(f"{command}:{command}")
                 elif isinstance(button, str) and button.strip():
                     command = button.strip()
+                    if not command.startswith("/"):
+                        command = "/" + command
                     rendered_row.append(f"{command}:{command}")
             if rendered_row:
                 keyboard.append(", ".join(rendered_row))
