@@ -3,7 +3,7 @@ class TelegramMenuPanel extends HTMLElement {
     const language = this._panelConfig?.language || "en";
     const translations = {
       de: {
-        title:"Telegram Menü", subtitle:"Menüs und Buttons grafisch bearbeiten – jeder Button verwendet ausschließlich den Telegram-Befehl.", createMenu:"+ Menü erstellen", loading:"Konfiguration wird geladen …", saved:"Änderungen gespeichert.", live:"Live-Vorschau", liveSub:"Die Buttons zeigen und senden ausschließlich den konfigurierten Telegram-Befehl.", save:"Speichern", emptyTitle:"Noch kein Telegram-Menü vorhanden", emptyText:"Erstelle zuerst ein Menü. Danach kannst du darin beliebig viele Telegram-Buttons anlegen.", firstMenu:"+ Erstes Menü erstellen", rename:"Umbenennen", start:"▶ Tastatur starten", delete:"Löschen", help:"Hier kannst du die Menü-Nachricht, den Tastaturtyp und die Telegram-Buttons konfigurieren.", message:"Nachricht über der Tastatur", keyboard:"Tastaturtyp", reply:"Normale Telegram-Tastatur", inline:"Inline-Tastatur", buttons:"Buttons", command:"Telegram-Befehl", action:"Home-Assistant-Aktion", actionHelp:"Optional: einen Home-Assistant-Dienst direkt mit diesem Button ausführen.", service:"Dienst / Aktion", choose:"Dienst/Aktion auswählen …", target:"Ziel-Entity", deleteButton:"Button löschen", addButton:"+ Button erstellen", previewHint:"Die Buttons sind anklickbar und führen die konfigurierte Home-Assistant-Aktion direkt aus.", noAction:"Für diesen Button ist keine Home-Assistant-Aktion konfiguriert.", actionFailed:"Aktion konnte nicht ausgeführt werden.", keyboardFailed:"Tastatur konnte nicht gestartet werden.", saveFailed:"Speichern fehlgeschlagen.", configFailed:"Konfiguration konnte nicht geladen werden.", entityHelper:"Nach Anzeigename oder Entity-ID suchen.", entitySearch:"Entity suchen …", chooseNew:"Neuer Menüname:", duplicate:"Ein Menü mit diesem Namen existiert bereits.", confirmDelete:"Menü wirklich löschen?"
+        title:"Telegram Menü", subtitle:"Menüs und Buttons grafisch bearbeiten – jeder Button verwendet ausschließlich den Telegram-Befehl.", createMenu:"+ Menü erstellen", loading:"Konfiguration wird geladen …", saved:"Änderungen gespeichert.", live:"Live-Vorschau", liveSub:"Die Buttons zeigen und senden ausschließlich den konfigurierten Telegram-Befehl.", save:"Speichern", emptyTitle:"Noch kein Telegram-Menü vorhanden", emptyText:"${this._t("emptyText")}", firstMenu:"+ Erstes Menü erstellen", rename:"Umbenennen", start:"▶ Tastatur starten", delete:"Löschen", help:"Hier kannst du die Menü-Nachricht, den Tastaturtyp und die Telegram-Buttons konfigurieren.", message:"Nachricht über der Tastatur", keyboard:"Tastaturtyp", reply:"Normale Telegram-Tastatur", inline:"Inline-Tastatur", buttons:"Buttons", command:"Telegram-Befehl", action:"Home-Assistant-Aktion", actionHelp:"Optional: einen Home-Assistant-Dienst direkt mit diesem Button ausführen.", service:"Dienst / Aktion", choose:"Dienst/Aktion auswählen …", target:"Ziel-Entity", deleteButton:"Button löschen", addButton:"+ Button erstellen", previewHint:"Die Buttons sind anklickbar und führen die konfigurierte Home-Assistant-Aktion direkt aus.", noAction:"Für diesen Button ist keine Home-Assistant-Aktion konfiguriert.", actionFailed:"Aktion konnte nicht ausgeführt werden.", keyboardFailed:"Tastatur konnte nicht gestartet werden.", saveFailed:"Speichern fehlgeschlagen.", configFailed:"Konfiguration konnte nicht geladen werden.", entityHelper:"Nach Anzeigename oder Entity-ID suchen.", entitySearch:"Entity suchen …", chooseNew:"Neuer Menüname:", duplicate:"Ein Menü mit diesem Namen existiert bereits.", confirmDelete:"Menü wirklich löschen?"
       },
       en: {
         title:"Telegram Menu", subtitle:"Edit menus and buttons graphically – each button uses only the Telegram command.", createMenu:"+ Create menu", loading:"Loading configuration …", saved:"Changes saved.", live:"Live Preview", liveSub:"Buttons display and send only the configured Telegram command.", save:"Save", emptyTitle:"No Telegram menu yet", emptyText:"Create a menu first. You can then add any number of Telegram buttons.", firstMenu:"+ Create first menu", rename:"Rename", start:"▶ Start keyboard", delete:"Delete", help:"Configure the menu message, keyboard type and Telegram buttons here.", message:"Message above the keyboard", keyboard:"Keyboard type", reply:"Normal Telegram keyboard", inline:"Inline keyboard", buttons:"Buttons", command:"Telegram command", action:"Home Assistant action", actionHelp:"Optional: run a Home Assistant service directly with this button.", service:"Service / action", choose:"Select service/action …", target:"Target entity", deleteButton:"Delete button", addButton:"+ Create button", previewHint:"The buttons are clickable and directly execute the configured Home Assistant action.", noAction:"No Home Assistant action is configured for this button.", actionFailed:"Action could not be executed.", keyboardFailed:"Keyboard could not be started.", saveFailed:"Saving failed.", configFailed:"Configuration could not be loaded.", entityHelper:"Search by display name or entity ID.", entitySearch:"Search entity …", chooseNew:"New menu name:", duplicate:"A menu with this name already exists.", confirmDelete:"Really delete menu?"
@@ -693,29 +693,29 @@ class TelegramMenuPanel extends HTMLElement {
       </style>
 
       <div class="container">
-        <h1>Telegram Menu</h1>
-        <div class="subtitle">Menüs und Buttons grafisch bearbeiten – jeder Button verwendet ausschließlich den Telegram-Command.</div>
+        <h1>${this._t("title")}</h1>
+        <div class="subtitle">${this._t("subtitle")}</div>
 
         <div class="toolbar">
-          <button id="add-menu">+ Menü erstellen</button>
+          <button id="add-menu">${this._t("createMenu")}</button>
         </div>
 
-        ${this._loading ? '<div class="status">Konfiguration wird geladen …</div>' : ""}
+        ${this._loading ? '<div class="status">${this._t("loading")}</div>' : ""}
         ${this._error ? `<div class="status error">${this._escape(this._error)}</div>` : ""}
-        ${this._saved ? '<div class="status success">Änderungen gespeichert.</div>' : ""}
+        ${this._saved ? '<div class="status success">${this._t("saved")}</div>' : ""}
 
         <div class="editor-layout">
           <div id="content"></div>
           <div class="preview-column">
             <div class="preview-card">
-              <div class="preview-title">Live-Vorschau</div>
-              <div class="preview-subtitle">Die Buttons zeigen und senden ausschließlich den konfigurierten Telegram-Command.</div>
+              <div class="preview-title">${this._t("live")}</div>
+              <div class="preview-subtitle">${this._t("liveSub")}</div>
               <div id="preview"></div>
             </div>
           </div>
         </div>
         <div class="save-footer">
-          <button id="save">Speichern</button>
+          <button id="save">${this._t("save")}</button>
         </div>
       </div>
     `;
@@ -726,11 +726,11 @@ class TelegramMenuPanel extends HTMLElement {
     if (!menuEntries.length && !this._loading && !this._error) {
       content.innerHTML = `
         <div class="empty">
-          <div class="empty-title">Noch kein Telegram-Menü vorhanden</div>
+          <div class="empty-title">${this._t("emptyTitle")}</div>
           <div class="empty-text">
-            Erstelle zuerst ein Menü. Danach kannst du darin beliebig viele Telegram-Buttons anlegen.
+            ${this._t("emptyText")}
           </div>
-          <button id="create-first-menu">+ Erstes Menü erstellen</button>
+          <button id="create-first-menu">${this._t("firstMenu")}</button>
         </div>
       `;
 
@@ -786,7 +786,7 @@ class TelegramMenuPanel extends HTMLElement {
 
         const messageField = document.createElement("div");
         messageField.className = "field";
-        messageField.innerHTML = "<label>Nachricht über der Tastatur</label>";
+        messageField.innerHTML = "<label>${this._t("message")}</label>";
 
         const messageInput = document.createElement("input");
         messageInput.className = "message-input";
@@ -796,13 +796,13 @@ class TelegramMenuPanel extends HTMLElement {
 
         const typeField = document.createElement("div");
         typeField.className = "field";
-        typeField.innerHTML = "<label>Tastaturtyp</label>";
+        typeField.innerHTML = "<label>${this._t("keyboard")}</label>";
 
         const typeSelect = document.createElement("select");
         typeSelect.className = "keyboard-type";
         typeSelect.innerHTML = `
-          <option value="reply">Normale Telegram-Tastatur</option>
-          <option value="inline">Inline-Tastatur</option>
+          <option value="reply">${this._t("reply")}</option>
+          <option value="inline">${this._t("inline")}</option>
         `;
         typeSelect.value = menu?.keyboard_type || "reply";
         typeField.appendChild(typeSelect);
