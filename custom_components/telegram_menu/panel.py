@@ -13,6 +13,7 @@ PANEL_FRONTEND_URL_PATH = "telegram_menu"
 PANEL_NAME = "telegram-menu-panel"
 PANEL_ICON = "mdi:keyboard"
 PANEL_TITLE = "Telegram Menu"
+STATIC_PATH_REGISTERED = "static_path_registered"
 
 PANEL_TITLES = {
     "de": "Telegram Menü",
@@ -27,9 +28,13 @@ async def async_register_panel(
     """Register the Telegram Menu sidebar panel."""
     panel_path = hass.config.path("custom_components", DOMAIN, "panel.js")
 
-    await hass.http.async_register_static_paths(
-        [StaticPathConfig(PANEL_URL, panel_path, True)]
-    )
+    # The config entry can be retried by Home Assistant after a setup error.
+    # In that case the static HTTP route may already be registered.
+    if not hass.data.setdefault(DOMAIN, {}).get(STATIC_PATH_REGISTERED):
+        await hass.http.async_register_static_paths(
+            [StaticPathConfig(PANEL_URL, panel_path, True)]
+        )
+        hass.data[DOMAIN][STATIC_PATH_REGISTERED] = True
 
     async_register_built_in_panel(
         hass,
