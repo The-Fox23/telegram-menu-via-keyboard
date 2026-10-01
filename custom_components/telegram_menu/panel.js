@@ -49,7 +49,7 @@ class TelegramMenuPanel extends HTMLElement {
         "Dienst / Aktion": "Service / action", "Dienst/Aktion auswählen …": "Select service/action …", "Ziel-Entity": "Target entity", "Button löschen": "Delete button", "+ Button erstellen": "+ Create button",
         "Live-Vorschau": "Live preview", "Die Buttons zeigen und senden ausschließlich den konfigurierten Telegram-Command.": "Buttons display and send only the configured Telegram command.",
         "Buttons erscheinen hier als Vorschau.": "Buttons will appear here as a preview.", "Die Buttons sind anklickbar und führen die konfigurierte Home-Assistant-Aktion direkt aus.": "Buttons are clickable and directly execute the configured Home Assistant action.",
-        "Speichern": "Save", "Speichern …": "Saving …", "Bitte auswählen:": "Please select:", "Entity suchen …": "Search entity …", "Nach Anzeigename oder Entity-ID suchen.": "Search by display name or entity ID.", " (gespeichert)": " (saved)"
+        "Speichern": "Save", "Speichern …": "Saving …", "Bitte auswählen:": "Please select:", "Nachricht schreiben …": "Type a message …", "Entity suchen …": "Search entity …", "Nach Anzeigename oder Entity-ID suchen.": "Search by display name or entity ID.", " (gespeichert)": " (saved)"
       },
       fr: {
         "Telegram Menu": "Menu Telegram",
@@ -63,7 +63,7 @@ class TelegramMenuPanel extends HTMLElement {
         "Dienst / Aktion": "Service / action", "Dienst/Aktion auswählen …": "Sélectionner un service / une action …", "Ziel-Entity": "Entité cible", "Button löschen": "Supprimer le bouton", "+ Button erstellen": "+ Créer un bouton",
         "Live-Vorschau": "Aperçu en direct", "Die Buttons zeigen und senden ausschließlich den konfigurierten Telegram-Command.": "Les boutons affichent et envoient uniquement la commande Telegram configurée.",
         "Buttons erscheinen hier als Vorschau.": "Les boutons apparaîtront ici en aperçu.", "Die Buttons sind anklickbar und führen die konfigurierte Home-Assistant-Aktion direkt aus.": "Les boutons sont cliquables et exécutent directement l'action Home Assistant configurée.",
-        "Speichern": "Enregistrer", "Speichern …": "Enregistrement …", "Bitte auswählen:": "Veuillez sélectionner :", "Entity suchen …": "Rechercher une entité …", "Nach Anzeigename oder Entity-ID suchen.": "Rechercher par nom d'affichage ou ID d'entité.", " (gespeichert)": " (enregistré)"
+        "Speichern": "Enregistrer", "Speichern …": "Enregistrement …", "Bitte auswählen:": "Veuillez sélectionner :", "Nachricht schreiben …": "Écrire un message …", "Entity suchen …": "Rechercher une entité …", "Nach Anzeigename oder Entity-ID suchen.": "Rechercher par nom d'affichage ou ID d'entité.", " (gespeichert)": " (enregistré)"
       }
     }[this._language] || {};
     const walk = (node) => {
