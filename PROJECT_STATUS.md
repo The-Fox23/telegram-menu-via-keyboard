@@ -307,3 +307,20 @@ Für diesen Stand ist die Integrationsversion **0.0.16** gesetzt. Der GitHub-Rel
 **Status:** v0.0.29 ist auf `main` vorbereitet und kann als GitHub-Tag/Release **v0.0.29** erstellt werden.
 
 **Aktueller Fokus:** v0.0.29 in Home Assistant testen – Französisch, Speichern-Button im Light Mode sowie Übergänge und Hover-Effekte im Dark Mode.
+
+
+### v0.0.30 – Telegram-Blue UI und Smartphone-Vorschau
+- Die komplette Panel-Hintergrundfläche verwendet jetzt ein festes Telegram-Blau mit dezentem Hintergrundmuster – unabhängig davon, ob Home Assistant im Light- oder Dark-Mode läuft.
+- Kopfbereich des Panels erhält eine Telegram-inspirierte Markenoptik mit blauem Farbschema und klarer weißer Typografie.
+- Die bestehenden Editor-Karten bleiben im jeweiligen Home-Assistant-Theme lesbar und setzen sich deutlich vom blauen Seitenhintergrund ab.
+- Die Live-Vorschau wurde zu einer deutlich realistischeren Smartphone-Darstellung ausgebaut.
+- Das Smartphone zeigt einen Telegram-inspirierten Chat-Kopf, Nachricht, echte konfigurierte Button-Reihen und einen Nachrichtenbereich.
+- Die vorhandene direkte Testfunktion der Vorschau-Buttons bleibt erhalten.
+- Keine Änderungen an Telegram-Command-Verarbeitung, gespeicherten Menüstrukturen oder Home-Assistant-Aktionen.
+- `manifest.json` wurde auf **0.0.30** erhöht.
+
+**Letzte Aktualisierung:** 2026-10-01
+
+**Status:** v0.0.30 ist auf `main` vorbereitet. Kein GitHub-Tag/Release wurde angelegt.
+
+**Aktueller Fokus:** v0.0.30 in Home Assistant testen – Light Mode, Dark Mode, Smartphone-Vorschau und bestehende Telegram-Button-Funktion.
