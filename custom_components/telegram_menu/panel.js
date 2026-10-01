@@ -379,7 +379,13 @@ class TelegramMenuPanel extends HTMLElement {
 
     const top = document.createElement("div");
     top.className = "preview-top";
-    top.innerHTML = "<span>Telegram</span><span>Vorschau</span>";
+    top.innerHTML = `
+      <div class="preview-top-left">
+        <span class="preview-avatar">➤</span>
+        <span class="preview-top-title"><strong>Telegram Menu</strong><small>Bot</small></span>
+      </div>
+      <span class="preview-top-menu">⋮</span>
+    `;
 
     const screen = document.createElement("div");
     screen.className = "preview-screen";
@@ -417,6 +423,12 @@ class TelegramMenuPanel extends HTMLElement {
     }
 
     screen.appendChild(kb);
+
+    const composer = document.createElement("div");
+    composer.className = "preview-composer";
+    composer.innerHTML = '<span>☺</span><span class="preview-composer-input">Nachricht schreiben …</span><span>⌕</span><span class="preview-send">➤</span>';
+    screen.appendChild(composer);
+
     phone.append(top, screen);
     wrap.appendChild(phone);
 
@@ -437,12 +449,20 @@ class TelegramMenuPanel extends HTMLElement {
     this.innerHTML = `
       <style>
         :host {
+          --telegram-blue: #229ED9;
+          --telegram-blue-dark: #168AC0;
+          --telegram-blue-deep: #0D7DB5;
           display: block;
           box-sizing: border-box;
           padding: 24px;
-          background: var(--primary-background-color);
-          color: var(--primary-text-color);
           min-height: 100vh;
+          background:
+            radial-gradient(circle at 8% 8%, rgba(255,255,255,.13) 0 2px, transparent 3px),
+            radial-gradient(circle at 92% 16%, rgba(255,255,255,.10) 0 2px, transparent 3px),
+            linear-gradient(135deg, var(--telegram-blue-deep) 0%, var(--telegram-blue) 48%, var(--telegram-blue-dark) 100%);
+          background-size: 92px 92px, 118px 118px, 100% 100%;
+          background-attachment: fixed;
+          color: var(--primary-text-color);
           font-family: var(--paper-font-body1_-_font-family, sans-serif);
         }
 
@@ -451,21 +471,247 @@ class TelegramMenuPanel extends HTMLElement {
           margin: 0 auto;
         }
 
+        .brand-header {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          margin-bottom: 20px;
+          color: white;
+        }
+
+        .brand-icon {
+          width: 48px;
+          height: 48px;
+          flex: 0 0 48px;
+          display: grid;
+          place-items: center;
+          border-radius: 50%;
+          background: rgba(255,255,255,.96);
+          color: var(--telegram-blue);
+          font-size: 27px;
+          font-weight: 900;
+          transform: rotate(-10deg);
+          box-shadow: 0 7px 18px rgba(0,0,0,.20);
+        }
+
+        .brand-header h1 {
+          color: white;
+          margin: 0 0 3px;
+        }
+
+        .brand-header .subtitle {
+          color: rgba(255,255,255,.90);
+          margin: 0;
+        }
+
         .editor-layout { display:grid; grid-template-columns:minmax(0,1.55fr) minmax(300px,.75fr); gap:22px; align-items:start; }
         .preview-column { position:sticky; top:20px; }
-        .preview-card { background:var(--card-background-color); border:2px solid var(--divider-color); border-radius:16px; padding:18px; box-shadow:var(--ha-box-shadow); }
+        .preview-card { background:var(--card-background-color); border:2px solid rgba(255,255,255,.32); border-radius:18px; padding:18px; box-shadow:0 14px 35px rgba(0,0,0,.20); }
         .preview-title { font-size:19px; font-weight:700; margin-bottom:5px; }
         .preview-subtitle { font-size:12px; line-height:1.45; color:var(--secondary-text-color); margin-bottom:16px; }
-        .preview-phone { width:min(100%,360px); min-height:600px; margin:0 auto; box-sizing:border-box; border:8px solid var(--primary-text-color); border-radius:34px; overflow:hidden; background:var(--primary-background-color); box-shadow:0 0 0 2px var(--divider-color), 0 10px 30px rgba(0,0,0,.35); position:relative; }
-        .preview-phone::before { content:""; display:block; width:92px; height:18px; margin:0 auto; background:var(--primary-text-color); border-radius:0 0 12px 12px; position:relative; z-index:2; }
-        .preview-top { display:flex; justify-content:space-between; align-items:center; padding:12px 14px; font-size:12px; font-weight:700; background:var(--secondary-background-color); color:var(--primary-text-color); border-bottom:1px solid var(--divider-color); }
-        .preview-screen { min-height:540px; padding:16px 12px 14px; background:var(--primary-background-color); box-sizing:border-box; }
-        .preview-message { max-width:88%; padding:11px 13px; border-radius:14px 14px 14px 4px; background:var(--card-background-color); border:1px solid var(--divider-color); margin:0 auto 18px 0; font-size:13px; line-height:1.4; white-space:pre-wrap; box-shadow:0 2px 5px rgba(0,0,0,.2); }
-        .preview-row { display:flex; gap:7px; margin-bottom:7px; }
-        .preview-button { flex:1; min-width:0; padding:10px 8px; border-radius:9px; background:var(--secondary-background-color); color:var(--primary-text-color); border:2px solid var(--primary-color); font-size:12px; font-weight:600; cursor:pointer; box-shadow:0 2px 4px rgba(0,0,0,.25); transition:transform .08s ease, background .08s ease, box-shadow .08s ease; }
-        .preview-button:hover { background:var(--primary-color); color:var(--text-primary-color,white); }
-        .preview-button:active { transform:translateY(2px); box-shadow:0 0 1px rgba(0,0,0,.25); }
-        .preview-empty { padding:14px; border:1px dashed var(--divider-color); border-radius:10px; text-align:center; color:var(--secondary-text-color); font-size:12px; }
+        .preview-phone {
+          width: min(100%, 350px);
+          height: 650px;
+          margin: 0 auto;
+          box-sizing: border-box;
+          padding: 7px;
+          border: 2px solid #26333d;
+          border-radius: 38px;
+          background: #101820;
+          box-shadow: 0 0 0 2px rgba(255,255,255,.32), 0 18px 42px rgba(0,0,0,.38);
+          position: relative;
+        }
+
+        .preview-phone::before {
+          content:"";
+          display:block;
+          position:absolute;
+          top:7px;
+          left:50%;
+          transform:translateX(-50%);
+          width:104px;
+          height:22px;
+          background:#101820;
+          border-radius:0 0 15px 15px;
+          z-index:4;
+        }
+
+        .preview-phone::after {
+          content:"";
+          position:absolute;
+          top:17px;
+          right:11px;
+          width:4px;
+          height:4px;
+          border-radius:50%;
+          background:#3e4b54;
+          z-index:5;
+        }
+
+        .preview-top {
+          display:flex;
+          align-items:center;
+          justify-content:space-between;
+          gap:8px;
+          height:62px;
+          box-sizing:border-box;
+          padding:15px 12px 8px;
+          border-radius:30px 30px 0 0;
+          font-size:12px;
+          font-weight:700;
+          background:linear-gradient(180deg, #229ED9 0%, #168AC0 100%);
+          color:white;
+          border-bottom:1px solid rgba(0,0,0,.16);
+        }
+
+        .preview-top-left {
+          display:flex;
+          align-items:center;
+          gap:9px;
+          min-width:0;
+        }
+
+        .preview-avatar {
+          width:34px;
+          height:34px;
+          flex:0 0 34px;
+          display:grid;
+          place-items:center;
+          border-radius:50%;
+          background:white;
+          color:#229ED9;
+          font-size:19px;
+          font-weight:900;
+          transform:rotate(-10deg);
+        }
+
+        .preview-top-title {
+          display:flex;
+          flex-direction:column;
+          min-width:0;
+          line-height:1.15;
+        }
+
+        .preview-top-title strong {
+          overflow:hidden;
+          text-overflow:ellipsis;
+          white-space:nowrap;
+        }
+
+        .preview-top-title small {
+          opacity:.78;
+          font-weight:500;
+          margin-top:2px;
+        }
+
+        .preview-top-menu {
+          font-size:21px;
+          line-height:1;
+          opacity:.9;
+        }
+
+        .preview-screen {
+          height: calc(100% - 62px);
+          padding:16px 11px 10px;
+          background:
+            radial-gradient(circle at 15px 15px, rgba(34,158,217,.12) 0 2px, transparent 3px),
+            radial-gradient(circle at 55px 55px, rgba(34,158,217,.09) 0 2px, transparent 3px),
+            var(--card-background-color);
+          background-size:70px 70px, 85px 85px, auto;
+          box-sizing:border-box;
+          border-radius:0 0 30px 30px;
+          display:flex;
+          flex-direction:column;
+        }
+
+        .preview-message {
+          max-width:88%;
+          padding:11px 13px;
+          border-radius:14px 14px 14px 4px;
+          background:color-mix(in srgb, var(--card-background-color) 92%, white);
+          color:var(--primary-text-color);
+          border:1px solid color-mix(in srgb, var(--divider-color) 80%, white);
+          margin:0 auto 18px 0;
+          font-size:13px;
+          line-height:1.4;
+          white-space:pre-wrap;
+          box-shadow:0 2px 6px rgba(0,0,0,.16);
+        }
+
+        .preview-keyboard {
+          margin-top:auto;
+        }
+
+        .preview-row { display:flex; gap:6px; margin-bottom:6px; }
+
+        .preview-button {
+          flex:1;
+          min-width:0;
+          padding:10px 7px;
+          border-radius:8px;
+          background:color-mix(in srgb, #229ED9 18%, var(--card-background-color));
+          color:var(--primary-text-color);
+          border:1px solid rgba(34,158,217,.42);
+          font-size:12px;
+          font-weight:650;
+          cursor:pointer;
+          box-shadow:0 2px 5px rgba(0,0,0,.14);
+          transition:transform .16s ease, background-color .16s ease, box-shadow .16s ease, color .16s ease;
+        }
+
+        .preview-button:hover {
+          background:#229ED9;
+          color:white;
+          transform:translateY(-1px);
+          box-shadow:0 4px 9px rgba(0,0,0,.20);
+        }
+
+        .preview-button:active {
+          transform:translateY(1px);
+          box-shadow:0 1px 2px rgba(0,0,0,.16);
+        }
+
+        .preview-empty {
+          padding:14px;
+          border:1px dashed rgba(34,158,217,.55);
+          border-radius:10px;
+          text-align:center;
+          color:var(--secondary-text-color);
+          font-size:12px;
+        }
+
+        .preview-composer {
+          display:flex;
+          align-items:center;
+          gap:8px;
+          margin-top:10px;
+          padding:8px 9px;
+          border-radius:18px;
+          background:color-mix(in srgb, var(--card-background-color) 90%, white);
+          border:1px solid var(--divider-color);
+          color:var(--secondary-text-color);
+          font-size:11px;
+        }
+
+        .preview-composer-input {
+          flex:1;
+          min-width:0;
+          overflow:hidden;
+          text-overflow:ellipsis;
+          white-space:nowrap;
+        }
+
+        .preview-send {
+          width:28px;
+          height:28px;
+          display:grid;
+          place-items:center;
+          border-radius:50%;
+          background:#229ED9;
+          color:white;
+          font-weight:800;
+        }
+
         .preview-hint { margin-top:14px; text-align:center; font-size:12px; line-height:1.4; color:var(--secondary-text-color); }
         .version-badge { display:inline-flex; padding:4px 9px; margin-left:8px; border-radius:999px; background:color-mix(in srgb,var(--primary-color) 15%,var(--card-background-color)); border:1px solid color-mix(in srgb,var(--primary-color) 35%,var(--divider-color)); color:var(--primary-color); font-size:12px; font-weight:700; }
 
@@ -488,12 +734,12 @@ class TelegramMenuPanel extends HTMLElement {
 
         button {
           border: 0;
-          border-radius: 8px;
+          border-radius: 9px;
           padding: 10px 16px;
           font-size: 14px;
           cursor: pointer;
-          background: var(--primary-color);
-          color: var(--text-primary-color, var(--primary-text-color));
+          background: #229ED9;
+          color: white;
           transition:
             background-color 180ms ease,
             border-color 180ms ease,
@@ -515,7 +761,7 @@ class TelegramMenuPanel extends HTMLElement {
         button.secondary {
           background: var(--secondary-background-color);
           color: var(--primary-text-color);
-          border: 1px solid var(--divider-color);
+          border: 1px solid rgba(34,158,217,.45);
         }
 
         button.danger {
@@ -530,9 +776,10 @@ class TelegramMenuPanel extends HTMLElement {
 
         .status {
           padding: 10px 14px;
-          border-radius: 8px;
-          background: var(--secondary-background-color);
+          border-radius: 10px;
+          background: var(--card-background-color);
           color: var(--secondary-text-color);
+          border: 1px solid var(--divider-color);
           margin-bottom: 20px;
         }
 
@@ -805,11 +1052,26 @@ class TelegramMenuPanel extends HTMLElement {
           margin-bottom: 16px;
         }
 
-        @media (max-width: 900px) { .editor-layout{grid-template-columns:1fr;} .preview-column{position:static;} }
+        @media (max-width: 900px) {
+          .editor-layout{grid-template-columns:1fr;}
+          .preview-column{position:static;}
+          .preview-phone{height:610px;}
+        }
 
         @media (max-width: 600px) {
           :host {
             padding: 12px;
+          }
+
+          .brand-header {
+            gap: 10px;
+          }
+
+          .brand-icon {
+            width: 42px;
+            height: 42px;
+            flex-basis: 42px;
+            font-size: 23px;
           }
 
           .menu-card {
@@ -823,8 +1085,13 @@ class TelegramMenuPanel extends HTMLElement {
       </style>
 
       <div class="container">
-        <h1>Telegram Menu</h1>
-        <div class="subtitle">Menüs und Buttons grafisch bearbeiten – jeder Button verwendet ausschließlich den Telegram-Command.</div>
+        <div class="brand-header">
+          <div class="brand-icon">➤</div>
+          <div>
+            <h1>Telegram Menu</h1>
+            <div class="subtitle">Menüs und Buttons grafisch bearbeiten – jeder Button verwendet ausschließlich den Telegram-Command.</div>
+          </div>
+        </div>
 
         <div class="toolbar">
           <button id="add-menu">+ Menü erstellen</button>
