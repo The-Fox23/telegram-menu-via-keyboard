@@ -324,3 +324,14 @@ Für diesen Stand ist die Integrationsversion **0.0.16** gesetzt. Der GitHub-Rel
 **Status:** v0.0.30 ist auf `main` vorbereitet. Kein GitHub-Tag/Release wurde angelegt.
 
 **Aktueller Fokus:** v0.0.30 in Home Assistant testen – Light Mode, Dark Mode, Smartphone-Vorschau und bestehende Telegram-Button-Funktion.
+
+
+### v0.0.31 – Smartphone-Vorschau als reine Telegram-Tastatur
+- Die Smartphone-Vorschau wurde auf die gewünschte Darstellung reduziert.
+- Im Handy werden jetzt ausschließlich die konfigurierten Telegram-Tasten angezeigt.
+- Chat-Kopf, Nachricht und Eingabefeld wurden aus der Vorschau entfernt.
+- Die Tasten werden weiterhin dynamisch aus dem aktuell ausgewählten Menü aufgebaut.
+- Die Telegram-blaue Smartphone-Fläche und die bestehende blaue Gesamtoptik bleiben erhalten.
+- `manifest.json` wurde auf **0.0.31** erhöht.
+
+**Status:** v0.0.31 ist auf `main` vorbereitet. Kein GitHub-Tag/Release wurde angelegt.
