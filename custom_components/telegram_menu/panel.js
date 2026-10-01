@@ -379,13 +379,6 @@ class TelegramMenuPanel extends HTMLElement {
 
     const top = document.createElement("div");
     top.className = "preview-top";
-    top.innerHTML = `
-      <div class="preview-top-left">
-        <span class="preview-avatar">➤</span>
-        <span class="preview-top-title"><strong>Telegram Menu</strong><small>Bot</small></span>
-      </div>
-      <span class="preview-top-menu">⋮</span>
-    `;
 
     const screen = document.createElement("div");
     screen.className = "preview-screen";
@@ -423,12 +416,6 @@ class TelegramMenuPanel extends HTMLElement {
     }
 
     screen.appendChild(kb);
-
-    const composer = document.createElement("div");
-    composer.className = "preview-composer";
-    composer.innerHTML = '<span>☺</span><span class="preview-composer-input">Nachricht schreiben …</span><span>⌕</span><span class="preview-send">➤</span>';
-    screen.appendChild(composer);
-
     phone.append(top, screen);
     wrap.appendChild(phone);
 
@@ -549,110 +536,52 @@ class TelegramMenuPanel extends HTMLElement {
         }
 
         .preview-top {
-          display:flex;
-          align-items:center;
-          justify-content:space-between;
-          gap:8px;
-          height:62px;
-          box-sizing:border-box;
-          padding:15px 12px 8px;
-          border-radius:30px 30px 0 0;
-          font-size:12px;
-          font-weight:700;
-          background:linear-gradient(180deg, #229ED9 0%, #168AC0 100%);
-          color:white;
-          border-bottom:1px solid rgba(0,0,0,.16);
+          display:none;
         }
 
-        .preview-top-left {
-          display:flex;
-          align-items:center;
-          gap:9px;
-          min-width:0;
-        }
-
-        .preview-avatar {
-          width:34px;
-          height:34px;
-          flex:0 0 34px;
-          display:grid;
-          place-items:center;
-          border-radius:50%;
-          background:white;
-          color:#229ED9;
-          font-size:19px;
-          font-weight:900;
-          transform:rotate(-10deg);
-        }
-
-        .preview-top-title {
-          display:flex;
-          flex-direction:column;
-          min-width:0;
-          line-height:1.15;
-        }
-
-        .preview-top-title strong {
-          overflow:hidden;
-          text-overflow:ellipsis;
-          white-space:nowrap;
-        }
-
-        .preview-top-title small {
-          opacity:.78;
-          font-weight:500;
-          margin-top:2px;
-        }
-
+        .preview-top-left,
+        .preview-avatar,
+        .preview-top-title,
         .preview-top-menu {
-          font-size:21px;
-          line-height:1;
-          opacity:.9;
+          display:none;
         }
 
         .preview-screen {
-          height: calc(100% - 62px);
-          padding:16px 11px 10px;
+          height:100%;
+          padding:34px 13px 22px;
           background:
-            radial-gradient(circle at 15px 15px, rgba(34,158,217,.12) 0 2px, transparent 3px),
-            radial-gradient(circle at 55px 55px, rgba(34,158,217,.09) 0 2px, transparent 3px),
-            var(--card-background-color);
+            radial-gradient(circle at 15px 15px, rgba(255,255,255,.13) 0 2px, transparent 3px),
+            radial-gradient(circle at 55px 55px, rgba(255,255,255,.10) 0 2px, transparent 3px),
+            linear-gradient(160deg, #229ED9 0%, #168AC0 100%);
           background-size:70px 70px, 85px 85px, auto;
           box-sizing:border-box;
-          border-radius:0 0 30px 30px;
+          border-radius:30px;
           display:flex;
           flex-direction:column;
+          justify-content:center;
         }
 
         .preview-message {
-          max-width:88%;
-          padding:11px 13px;
-          border-radius:14px 14px 14px 4px;
-          background:color-mix(in srgb, var(--card-background-color) 92%, white);
-          color:var(--primary-text-color);
-          border:1px solid color-mix(in srgb, var(--divider-color) 80%, white);
-          margin:0 auto 18px 0;
-          font-size:13px;
-          line-height:1.4;
-          white-space:pre-wrap;
-          box-shadow:0 2px 6px rgba(0,0,0,.16);
+          display:none;
         }
 
         .preview-keyboard {
-          margin-top:auto;
+          width:100%;
+          margin:0;
         }
 
-        .preview-row { display:flex; gap:6px; margin-bottom:6px; }
+        .preview-row { display:flex; gap:9px; margin-bottom:9px; }
 
         .preview-button {
           flex:1;
           min-width:0;
-          padding:10px 7px;
-          border-radius:8px;
-          background:color-mix(in srgb, #229ED9 18%, var(--card-background-color));
-          color:var(--primary-text-color);
-          border:1px solid rgba(34,158,217,.42);
-          font-size:12px;
+          min-height:64px;
+          padding:12px 8px;
+          border-radius:10px;
+          background:rgba(7,77,130,.78);
+          color:white;
+          border:1px solid rgba(255,255,255,.12);
+          font-size:13px;
           font-weight:650;
           cursor:pointer;
           box-shadow:0 2px 5px rgba(0,0,0,.14);
@@ -660,7 +589,7 @@ class TelegramMenuPanel extends HTMLElement {
         }
 
         .preview-button:hover {
-          background:#229ED9;
+          background:rgba(34,158,217,.95);
           color:white;
           transform:translateY(-1px);
           box-shadow:0 4px 9px rgba(0,0,0,.20);
@@ -680,36 +609,10 @@ class TelegramMenuPanel extends HTMLElement {
           font-size:12px;
         }
 
-        .preview-composer {
-          display:flex;
-          align-items:center;
-          gap:8px;
-          margin-top:10px;
-          padding:8px 9px;
-          border-radius:18px;
-          background:color-mix(in srgb, var(--card-background-color) 90%, white);
-          border:1px solid var(--divider-color);
-          color:var(--secondary-text-color);
-          font-size:11px;
-        }
-
-        .preview-composer-input {
-          flex:1;
-          min-width:0;
-          overflow:hidden;
-          text-overflow:ellipsis;
-          white-space:nowrap;
-        }
-
+        .preview-composer,
+        .preview-composer-input,
         .preview-send {
-          width:28px;
-          height:28px;
-          display:grid;
-          place-items:center;
-          border-radius:50%;
-          background:#229ED9;
-          color:white;
-          font-weight:800;
+          display:none;
         }
 
         .preview-hint { margin-top:14px; text-align:center; font-size:12px; line-height:1.4; color:var(--secondary-text-color); }
