@@ -36,6 +36,11 @@ async def async_setup(hass: HomeAssistant, config: dict[str, Any]) -> bool:
 
             action = manager.find_action(command)
             if action:
+                submenu = str(action.get("_open_menu", "")).strip()
+                if submenu:
+                    await manager.show_menu(submenu, chat_id)
+                    return
+
                 await manager.execute_action(action)
                 return
 
