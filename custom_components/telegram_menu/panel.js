@@ -46,7 +46,7 @@ class TelegramMenuPanel extends HTMLElement {
         "Hier kannst du die Menü-Nachricht, den Tastaturtyp und die Telegram-Buttons konfigurieren.": "Configure the menu message, keyboard type and Telegram buttons here.",
         "Nachricht über der Tastatur": "Message above keyboard", "Tastaturtyp": "Keyboard type", "Normale Telegram-Tastatur": "Normal Telegram keyboard", "Inline-Tastatur": "Inline keyboard",
         "Telegram-Befehl": "Telegram command", "Aktionstyp": "Action type", "Home-Assistant-Aktion": "Home Assistant action", "Untermenü öffnen": "Open submenu", "Menü auswählen …": "Select menu …", "Optional: einen Home-Assistant-Dienst direkt mit diesem Button ausführen.": "Optional: execute a Home Assistant service directly with this button.",
-        "Dienst / Aktion": "Service / action", "Dienst/Aktion auswählen …": "Select service/action …", "Ziel-Entity": "Target entity", "Button löschen": "Delete button", "+ Button erstellen": "+ Create button",
+        "Dienst / Aktion": "Service / action", "Dienst/Aktion auswählen …": "Select service/action …", "Ziel-Entity": "Target entity", "Untermenü konfigurieren": "Configure submenu", "Button löschen": "Delete button", "+ Button erstellen": "+ Create button",
         "Live-Vorschau": "Live preview", "Die Buttons zeigen und senden ausschließlich den konfigurierten Telegram-Command.": "Buttons display and send only the configured Telegram command.",
         "Buttons erscheinen hier als Vorschau.": "Buttons will appear here as a preview.", "Die Buttons sind anklickbar und führen die konfigurierte Home-Assistant-Aktion direkt aus.": "Buttons are clickable and directly execute the configured Home Assistant action.",
         "Speichern": "Save", "Speichern …": "Saving …", "Bitte auswählen:": "Please select:", "Nachricht schreiben …": "Type a message …", "Entity suchen …": "Search entity …", "Nach Anzeigename oder Entity-ID suchen.": "Search by display name or entity ID.", " (gespeichert)": " (saved)"
@@ -266,6 +266,21 @@ class TelegramMenuPanel extends HTMLElement {
     this._config = { ...this._config, menus };
     this._saved = false;
     this._render();
+  }
+
+  _focusMenu(menuName) {
+    const card = [...this.querySelectorAll(".menu-card")]
+      .find((element) => element.dataset.name === menuName);
+    if (!card) return;
+
+    card.scrollIntoView({ behavior: "smooth", block: "start" });
+    card.classList.remove("submenu-target-highlight");
+    requestAnimationFrame(() => {
+      card.classList.add("submenu-target-highlight");
+      window.setTimeout(() => card.classList.remove("submenu-target-highlight"), 1200);
+    });
+
+    card.querySelector(".message-input, .command-input")?.focus();
   }
 
   _deleteButton(name, rowIndex, buttonIndex) {
@@ -702,6 +717,13 @@ class TelegramMenuPanel extends HTMLElement {
         button.danger {
           background: var(--error-color);
           color: white;
+          border: 2px solid rgba(255,255,255,.72);
+          box-shadow: 0 2px 7px rgba(0,0,0,.16);
+        }
+
+        button.danger:hover:not(:disabled) {
+          border-color: white;
+          box-shadow: 0 4px 11px rgba(0,0,0,.22);
         }
 
         button:disabled {
@@ -747,6 +769,19 @@ class TelegramMenuPanel extends HTMLElement {
             var(--divider-color)
           );
           box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
+        }
+
+        .menu-card.submenu-target-highlight {
+          animation: submenuTargetHighlight 1200ms ease;
+        }
+
+        @keyframes submenuTargetHighlight {
+          0%, 100% {
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
+          }
+          35% {
+            box-shadow: 0 0 0 4px rgba(34,158,217,.58), 0 10px 28px rgba(0,0,0,.24);
+          }
         }
 
         .menu-header {
@@ -1258,24 +1293,38 @@ class TelegramMenuPanel extends HTMLElement {
               menuSelect.appendChild(option);
             }
             menuSelect.value = storedMenu;
+
+            const configureMenuButton = document.createElement("button");
+            configureMenuButton.type = "button";
+            configureMenuButton.className = "secondary submenu-configure";
+            configureMenuButton.textContent = "Untermenü konfigurieren";
+            configureMenuButton.addEventListener("click", () => {
+              const targetMenu = menuSelect.value.trim();
+              if (targetMenu) this._focusMenu(targetMenu);
+            });
+
             actionTypeField.appendChild(actionType);
-            menuField.append(menuLabel, menuSelect);
+            menuField.append(menuLabel, menuSelect, configureMenuButton);
 
             const refreshActionMode = () => {
               const menuMode = actionType.value === "menu";
               actionHelp.textContent = menuMode
-                ? "Beim Telegram-Befehl wird das ausgewählte Untermenü geöffnet."
+                ? "Beim Telegram-Befehl wird das ausgewählte Untermenü geöffnet. Dort kannst du weitere Untermenüs oder die endgültige Home-Assistant-Aktion konfigurieren."
                 : "Optional: einen Home-Assistant-Dienst direkt mit diesem Button ausführen.";
               actionField.hidden = menuMode;
               targetField.hidden = menuMode;
               menuField.hidden = !menuMode;
+              configureMenuButton.hidden = !menuMode || !menuSelect.value.trim();
               liveUpdate();
             };
             actionType.addEventListener("change", refreshActionMode);
             actionInput.addEventListener("input", liveUpdate);
             targetPicker.addEventListener("value-changed", liveUpdate);
             targetPicker.addEventListener("input", liveUpdate);
-            menuSelect.addEventListener("change", liveUpdate);
+            menuSelect.addEventListener("change", () => {
+              configureMenuButton.hidden = actionType.value !== "menu" || !menuSelect.value.trim();
+              liveUpdate();
+            });
             refreshActionMode();
 
             const actions = document.createElement("div");
