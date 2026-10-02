@@ -351,3 +351,12 @@ Für diesen Stand ist die Integrationsversion **0.0.16** gesetzt. Der GitHub-Rel
 **Letzte Aktualisierung:** 2026-10-02
 
 **Status:** v0.0.32 auf `main` vorbereitet.
+
+
+### v0.0.32 – Untermenü-Navigation im Editor erweitert
+- Bei **Untermenü öffnen** werden **Dienst/Aktion** und **Ziel-Entity** ausgeblendet.
+- Stattdessen wird die Auswahl des Zielmenüs angezeigt.
+- Nach Auswahl eines Zielmenüs erscheint **Untermenü konfigurieren**.
+- Der Button springt direkt zum ausgewählten Menü und hebt dieses kurz hervor.
+- Damit kann die Menüstruktur rekursiv aufgebaut werden: Menübutton → Untermenü → weiteres Untermenü → finaler Home-Assistant-Aktionsbutton.
+- Löschen-Buttons besitzen jetzt einen sichtbaren Rahmen.
