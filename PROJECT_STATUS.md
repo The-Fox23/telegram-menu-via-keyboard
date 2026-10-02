@@ -335,3 +335,19 @@ Für diesen Stand ist die Integrationsversion **0.0.16** gesetzt. Der GitHub-Rel
 - `manifest.json` wurde auf **0.0.31** erhöht.
 
 **Status:** v0.0.31 ist auf `main` vorbereitet. Kein GitHub-Tag/Release wurde angelegt.
+
+
+### v0.0.32 – Untermenüs und Editor-Layout
+- Buttons können zwischen **Home-Assistant-Aktion** und **Untermenü öffnen** unterscheiden.
+- Ein Button kann ein anderes konfiguriertes Menü als Ziel auswählen.
+- Der Telegram-Command des Buttons öffnet beim Empfang direkt das ausgewählte Untermenü.
+- Die bisherige Dienst-/Aktion- und Ziel-Entity-Auswahl bleibt für normale Aktions-Buttons erhalten.
+- Die Live-Vorschau unterstützt auch Untermenü-Buttons.
+- Der Button-Editor ist jetzt deutlich **Telegram-blau** hinterlegt.
+- **Speichern** wurde aus dem unteren Seitenbereich entfernt und befindet sich jetzt oben im Menü-Header neben den Menüaktionen und direkt bei **Umbenennen**.
+- Integrationsversion auf **0.0.32** erhöht.
+- Kein GitHub-Tag/Release wurde angelegt.
+
+**Letzte Aktualisierung:** 2026-10-02
+
+**Status:** v0.0.32 auf `main` vorbereitet.
