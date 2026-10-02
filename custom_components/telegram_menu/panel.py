@@ -1,6 +1,8 @@
 """Telegram Menu Home Assistant sidebar panel."""
 from __future__ import annotations
 
+from pathlib import Path
+
 from homeassistant.components.frontend import async_register_built_in_panel, async_remove_panel
 from homeassistant.components.http import StaticPathConfig
 from homeassistant.core import HomeAssistant
@@ -27,6 +29,9 @@ async def async_register_panel(
 ) -> None:
     """Register the Telegram Menu sidebar panel."""
     panel_path = hass.config.path("custom_components", DOMAIN, "panel.js")
+    # Use the panel.js modification time as a cache-busting token. This keeps
+    # the integration version independent from frontend-only changes.
+    panel_cache_token = Path(panel_path).stat().st_mtime_ns
 
     # The config entry can be retried by Home Assistant after a setup error.
     # In that case the static HTTP route may already be registered.
@@ -46,7 +51,7 @@ async def async_register_panel(
         config={
             "_panel_custom": {
                 "name": PANEL_NAME,
-                "module_url": f"{PANEL_URL}?{VERSION}",
+                "module_url": f"{PANEL_URL}?v={panel_cache_token}",
                 "embed_iframe": True,
             },
             "version": VERSION,
