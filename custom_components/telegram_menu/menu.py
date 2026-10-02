@@ -42,6 +42,10 @@ class MenuManager:
                         continue
                     if str(button.get("command", "")).strip() != command:
                         continue
+                    open_menu = str(button.get("open_menu", "")).strip()
+                    if open_menu:
+                        return {"_open_menu": open_menu}
+
                     actions = button.get("actions", [])
                     if isinstance(actions, list) and actions:
                         action = actions[0]
