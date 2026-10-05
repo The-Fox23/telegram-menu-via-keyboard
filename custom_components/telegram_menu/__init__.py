@@ -155,6 +155,29 @@ def ws_save_config(
         connection.send_error(msg["id"], "invalid_config", "Menus must be an object")
         return
 
+    invalid_refs: list[str] = []
+    menu_names = {str(name).strip() for name in menus}
+    for menu_name, menu in menus.items():
+        if not isinstance(menu, dict):
+            continue
+        for row in menu.get("rows", []):
+            if not isinstance(row, list):
+                continue
+            for button in row:
+                if not isinstance(button, dict):
+                    continue
+                target = str(button.get("open_menu", "")).strip()
+                if target and target not in menu_names:
+                    invalid_refs.append(f"{menu_name} -> {target}")
+
+    if invalid_refs:
+        connection.send_error(
+            msg["id"],
+            "invalid_submenu",
+            "Ungültige Untermenü-Verweise: " + ", ".join(invalid_refs),
+        )
+        return
+
     entry = manager.entry
     hass.config_entries.async_update_entry(
         entry,
