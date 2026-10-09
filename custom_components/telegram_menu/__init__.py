@@ -10,7 +10,7 @@ from homeassistant.helpers import config_validation as cv
 import voluptuous as vol
 
 from .const import CONF_CHAT_ID, CONF_LANGUAGE, CONF_MENUS, CONF_NOTIFY_ENTITY, DOMAIN
-from .menu import BACK_COMMAND, BACK_LABEL, MAIN_COMMAND, MAIN_LABEL, MenuManager
+from .menu import BACK_COMMAND, MAIN_COMMAND, MenuManager, normalize_telegram_command
 from .panel import async_register_panel, async_unregister_panel
 
 PLATFORMS: list[str] = []
@@ -29,9 +29,11 @@ async def async_setup(hass: HomeAssistant, config: dict[str, Any]) -> bool:
         if not incoming:
             return
 
-        # Telegram can append @botname to commands in group chats. Normalize it
-        # to the slash-command configured in the menu editor.
-        command = incoming.split("@", 1)[0] if incoming.startswith("/") else incoming
+        # Normalize legacy reply-keyboard text (including spaces or umlauts)
+        # to the ASCII command stored in the menu.
+        command = normalize_telegram_command(incoming)
+        if not command:
+            return
 
         for manager in hass.data[DOMAIN].values():
             if chat_id != manager.default_chat_id:
