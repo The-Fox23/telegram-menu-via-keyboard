@@ -6,7 +6,7 @@ from typing import Any
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
-from .const import CONF_CHAT_ID, CONF_MENUS, CONF_NOTIFY_ENTITY
+from .const import CONF_CHAT_ID, CONF_MENUS, CONF_NAVIGATION_BUTTONS, CONF_NOTIFY_ENTITY
 
 KEYBOARD_REPLY = "reply"
 KEYBOARD_INLINE = "inline"
@@ -55,9 +55,19 @@ class MenuManager:
     def default_chat_id(self) -> str:
         return str(self.entry.data[CONF_CHAT_ID])
 
-    def find_action(self, command: str) -> dict[str, Any] | None:
-        """Find the first configured action for a Telegram command."""
-        for menu in self.menus.values():
+    def find_action(
+        self, command: str, chat_id: str | None = None
+    ) -> dict[str, Any] | None:
+        """Find a command in the active menu first, then search all menus."""
+        menu_names: list[str] = []
+        chat = str(chat_id or self.default_chat_id)
+        stack = self._navigation_stacks.get(chat, [])
+        if stack and stack[-1] in self.menus:
+            menu_names.append(stack[-1])
+        menu_names.extend(name for name in self.menus if name not in menu_names)
+
+        for menu_name in menu_names:
+            menu = self.menus.get(menu_name)
             if not isinstance(menu, dict):
                 continue
             for row in menu.get("rows", []):
@@ -163,11 +173,16 @@ class MenuManager:
             "message": menu.get("message", "Bitte auswählen:"),
         }
 
+        navigation_buttons_enabled = self.entry.data.get(CONF_NAVIGATION_BUTTONS, True)
         if keyboard_type == KEYBOARD_INLINE:
-            data["inline_keyboard"] = self._render_inline_keyboard(menu, is_submenu)
+            data["inline_keyboard"] = self._render_inline_keyboard(
+                menu, is_submenu, navigation_buttons_enabled
+            )
         else:
             # Reply keyboard buttons send their visible text back as a message.
-            data["keyboard"] = self._render_reply_keyboard(menu, is_submenu)
+            data["keyboard"] = self._render_reply_keyboard(
+                menu, is_submenu, navigation_buttons_enabled
+            )
 
         await self.hass.services.async_call(
             "telegram_bot",
@@ -178,7 +193,9 @@ class MenuManager:
 
     @staticmethod
     def _render_reply_keyboard(
-        menu: dict[str, Any], is_submenu: bool = False
+        menu: dict[str, Any],
+        is_submenu: bool = False,
+        navigation_buttons_enabled: bool = True,
     ) -> list[str]:
         """Render a Telegram Reply Keyboard, adding navigation controls in submenus."""
         keyboard: list[str] = []
@@ -197,13 +214,16 @@ class MenuManager:
             if rendered_row:
                 keyboard.append(", ".join(rendered_row))
 
-        if is_submenu:
-            keyboard.append(f"{BACK_COMMAND}, {MAIN_COMMAND}")
+        if is_submenu and navigation_buttons_enabled:
+            # Human-readable labels normalize to the legacy navigation aliases.
+            keyboard.append(f"{BACK_LABEL}, {MAIN_LABEL}")
         return keyboard
 
     @staticmethod
     def _render_inline_keyboard(
-        menu: dict[str, Any], is_submenu: bool = False
+        menu: dict[str, Any],
+        is_submenu: bool = False,
+        navigation_buttons_enabled: bool = True,
     ) -> list[list[list[str]]]:
         """Render inline buttons and append callback-based navigation controls."""
         keyboard: list[list[list[str]]] = []
@@ -223,7 +243,7 @@ class MenuManager:
             if rendered_row:
                 keyboard.append(rendered_row)
 
-        if is_submenu:
+        if is_submenu and navigation_buttons_enabled:
             keyboard.append([[BACK_LABEL, BACK_COMMAND], [MAIN_LABEL, MAIN_COMMAND]])
         return keyboard
 
