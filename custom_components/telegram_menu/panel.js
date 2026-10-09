@@ -40,7 +40,7 @@ class TelegramMenuPanel extends HTMLElement {
       en: {
         "Telegram Menu": "Telegram Menu",
         "Menüs und Buttons grafisch bearbeiten – jeder Button verwendet ausschließlich den Telegram-Command.": "Edit menus and buttons graphically – each button uses only the Telegram command.",
-        "+ Menü erstellen": "+ Create menu", "Automatische Navigationstasten (Zurück / Hauptmenü)": "Automatic navigation buttons (Back / Main menu)", "Konfiguration wird geladen …": "Loading configuration …", "Änderungen gespeichert.": "Changes saved.",
+        "+ Menü erstellen": "+ Create menu", "Automatische Navigationstasten (Zurück / Hauptmenü)": "Automatic navigation buttons (Back / Main menu)", "Automatische Navigationstasten": "Automatic navigation buttons", "Automatische Navigationstasten deaktiviert": "Automatic navigation buttons disabled", "Du kannst eigene Buttons anlegen und als Ziel Main oder ein anderes Menü auswählen.": "You can create your own buttons and select Main or another menu as the target.", "Konfiguration wird geladen …": "Loading configuration …", "Änderungen gespeichert.": "Changes saved.",
         "Noch kein Telegram-Menü vorhanden": "No Telegram menu yet", "Erstelle zuerst ein Menü. Danach kannst du darin beliebig viele Telegram-Buttons anlegen.": "Create a menu first. You can then add as many Telegram buttons as you like.",
         "+ Erstes Menü erstellen": "+ Create first menu", "Umbenennen": "Rename", "▶ Tastatur starten": "▶ Start keyboard", "Löschen": "Delete",
         "Hier kannst du die Menü-Nachricht, den Tastaturtyp und die Telegram-Buttons konfigurieren.": "Configure the menu message, keyboard type and Telegram buttons here.",
@@ -54,7 +54,7 @@ class TelegramMenuPanel extends HTMLElement {
       fr: {
         "Telegram Menu": "Menu Telegram",
         "Menüs und Buttons grafisch bearbeiten – jeder Button verwendet ausschließlich den Telegram-Command.": "Modifiez les menus et les boutons graphiquement – chaque bouton utilise uniquement la commande Telegram.",
-        "+ Menü erstellen": "+ Créer un menu", "Automatische Navigationstasten (Zurück / Hauptmenü)": "Boutons de navigation automatiques (Retour / Menu principal)", "Konfiguration wird geladen …": "Chargement de la configuration …", "Änderungen gespeichert.": "Modifications enregistrées.",
+        "+ Menü erstellen": "+ Créer un menu", "Automatische Navigationstasten (Zurück / Hauptmenü)": "Boutons de navigation automatiques (Retour / Menu principal)", "Automatische Navigationstasten": "Boutons de navigation automatiques", "Automatische Navigationstasten deaktiviert": "Boutons de navigation automatiques désactivés", "Du kannst eigene Buttons anlegen und als Ziel Main oder ein anderes Menü auswählen.": "Vous pouvez créer vos propres boutons et sélectionner Main ou un autre menu comme cible.", "Konfiguration wird geladen …": "Chargement de la configuration …", "Änderungen gespeichert.": "Modifications enregistrées.",
         "Noch kein Telegram-Menü vorhanden": "Aucun menu Telegram", "Erstelle zuerst ein Menü. Danach kannst du darin beliebig viele Telegram-Buttons anlegen.": "Créez d'abord un menu. Vous pourrez ensuite ajouter autant de boutons Telegram que nécessaire.",
         "+ Erstes Menü erstellen": "+ Créer le premier menu", "Umbenennen": "Renommer", "▶ Tastatur starten": "▶ Démarrer le clavier", "Löschen": "Supprimer",
         "Hier kannst du die Menü-Nachricht, den Tastaturtyp und die Telegram-Buttons konfigurieren.": "Configurez ici le message du menu, le type de clavier et les boutons Telegram.",
@@ -609,6 +609,35 @@ class TelegramMenuPanel extends HTMLElement {
           width: 18px;
           height: 18px;
           accent-color: #229ED9;
+        }
+
+        .navigation-buttons-preview {
+          margin-top: 16px;
+          padding: 12px 14px;
+          border: 1px dashed var(--divider-color);
+          border-radius: 10px;
+          background: var(--secondary-background-color);
+        }
+
+        .navigation-preview-row {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          margin-top: 8px;
+        }
+
+        .navigation-preview-chip {
+          border: 1px solid var(--divider-color);
+          border-radius: 8px;
+          padding: 8px 12px;
+          background: var(--card-background-color);
+          color: var(--primary-text-color);
+          font-weight: 600;
+        }
+
+        .navigation-preview-help {
+          margin-top: 8px;
+          color: var(--secondary-text-color);
         }
 
         .brand-header {
@@ -1492,6 +1521,35 @@ class TelegramMenuPanel extends HTMLElement {
         addButton.addEventListener("click", () => this._addButton(name));
         buttonsSection.appendChild(addButton);
         card.appendChild(buttonsSection);
+
+        if (name !== "main") {
+          const navigationSection = document.createElement("div");
+          navigationSection.className = "navigation-buttons-preview";
+          const navigationTitle = document.createElement("div");
+          navigationTitle.className = "buttons-title";
+          navigationTitle.textContent = navigationButtonsEnabled
+            ? "Automatische Navigationstasten"
+            : "Automatische Navigationstasten deaktiviert";
+          navigationSection.appendChild(navigationTitle);
+
+          if (navigationButtonsEnabled) {
+            const navigationRow = document.createElement("div");
+            navigationRow.className = "navigation-preview-row";
+            for (const label of ["⬅️ Zurück", "🏠 Hauptmenü"]) {
+              const chip = document.createElement("span");
+              chip.className = "navigation-preview-chip";
+              chip.textContent = label;
+              navigationRow.appendChild(chip);
+            }
+            navigationSection.appendChild(navigationRow);
+          } else {
+            const help = document.createElement("div");
+            help.className = "navigation-preview-help";
+            help.textContent = "Du kannst eigene Buttons anlegen und als Ziel Main oder ein anderes Menü auswählen.";
+            navigationSection.appendChild(help);
+          }
+          card.appendChild(navigationSection);
+        }
 
         content.appendChild(card);
       }
