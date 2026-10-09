@@ -55,9 +55,19 @@ class MenuManager:
     def default_chat_id(self) -> str:
         return str(self.entry.data[CONF_CHAT_ID])
 
-    def find_action(self, command: str) -> dict[str, Any] | None:
-        """Find the first configured action for a Telegram command."""
-        for menu in self.menus.values():
+    def find_action(
+        self, command: str, chat_id: str | None = None
+    ) -> dict[str, Any] | None:
+        """Find a command in the active menu first, then search all menus."""
+        menu_names: list[str] = []
+        chat = str(chat_id or self.default_chat_id)
+        stack = self._navigation_stacks.get(chat, [])
+        if stack and stack[-1] in self.menus:
+            menu_names.append(stack[-1])
+        menu_names.extend(name for name in self.menus if name not in menu_names)
+
+        for menu_name in menu_names:
+            menu = self.menus.get(menu_name)
             if not isinstance(menu, dict):
                 continue
             for row in menu.get("rows", []):
