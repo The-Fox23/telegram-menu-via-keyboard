@@ -11,6 +11,23 @@ from .const import CONF_CHAT_ID, CONF_MENUS, CONF_NOTIFY_ENTITY
 KEYBOARD_REPLY = "reply"
 KEYBOARD_INLINE = "inline"
 
+
+def normalize_telegram_command(value: Any) -> str:
+    """Normalize configured and incoming values to ASCII Telegram commands."""
+    command = str(value or "").strip().lower().split("@", 1)[0]
+    command = (
+        command.replace("ä", "ae")
+        .replace("ö", "oe")
+        .replace("ü", "ue")
+        .replace("ß", "ss")
+    )
+    command = "".join(
+        char for char in command
+        if char == "/" or (char.isascii() and (char.isalnum() or char == "_"))
+    )
+    command = command.lstrip("/")
+    return f"/{command}" if command else ""
+
 BACK_COMMAND = "/menue_back"
 MAIN_COMMAND = "/menue_main"
 BACK_LABEL = "⬅️ Zurück"
@@ -47,7 +64,7 @@ class MenuManager:
                 for button in row:
                     if not isinstance(button, dict):
                         continue
-                    if str(button.get("command", "")).strip() != command:
+                    if normalize_telegram_command(button.get("command", "")) != normalize_telegram_command(command):
                         continue
 
                     open_menu = str(button.get("open_menu", "")).strip()
@@ -170,16 +187,18 @@ class MenuManager:
             rendered_row: list[str] = []
             for button in row:
                 if isinstance(button, dict):
-                    command = str(button.get("command", "")).strip()
+                    command = normalize_telegram_command(button.get("command", ""))
                     if command:
                         rendered_row.append(command)
                 elif isinstance(button, str) and button.strip():
-                    rendered_row.append(button.strip())
+                    command = normalize_telegram_command(button)
+                    if command:
+                        rendered_row.append(command)
             if rendered_row:
                 keyboard.append(", ".join(rendered_row))
 
         if is_submenu:
-            keyboard.append(f"{BACK_LABEL}, {MAIN_LABEL}")
+            keyboard.append(f"{BACK_COMMAND}, {MAIN_COMMAND}")
         return keyboard
 
     @staticmethod
@@ -193,13 +212,14 @@ class MenuManager:
             rendered_row: list[list[str]] = []
             for button in row:
                 if isinstance(button, dict):
-                    command = str(button.get("command", "")).strip()
+                    command = normalize_telegram_command(button.get("command", ""))
                     label = str(button.get("label", command)).strip()
                     if command and label:
                         rendered_row.append([label, command])
                 elif isinstance(button, str) and button.strip():
-                    command = button.strip()
-                    rendered_row.append([command, command])
+                    command = normalize_telegram_command(button)
+                    if command:
+                        rendered_row.append([command, command])
             if rendered_row:
                 keyboard.append(rendered_row)
 
