@@ -331,9 +331,24 @@ class TelegramMenuPanel extends HTMLElement {
 
     if (!menu.rows.length) menu.rows.push([]);
 
-    menu.rows[menu.rows.length - 1].push({
-      command: "/neuer_button",
-    });
+    const usedCommands = new Set();
+    for (const configuredMenu of Object.values(menus)) {
+      for (const row of configuredMenu.rows || []) {
+        for (const button of row || []) {
+          const command = this._normalizeCommand(button?.command || "");
+          if (command) usedCommands.add(command);
+        }
+      }
+    }
+
+    let command = "/neuer_button";
+    let suffix = 2;
+    while (usedCommands.has(command)) {
+      command = "/neuer_button_" + suffix;
+      suffix += 1;
+    }
+
+    menu.rows[menu.rows.length - 1].push({ command });
 
     this._config = { ...this._config, menus };
     this._saved = false;
