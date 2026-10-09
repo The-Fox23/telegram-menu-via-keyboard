@@ -55,7 +55,7 @@ async def async_setup(hass: HomeAssistant, config: dict[str, Any]) -> bool:
 
             # Reply-keyboard commands are usually telegram_command events, but
             # accept the same slash-command if a bot setup reports telegram_text.
-            action = manager.find_action(command)
+            action = manager.find_action(command, chat_id)
             if action:
                 submenu = str(action.get("_open_menu", "")).strip()
                 if submenu:
