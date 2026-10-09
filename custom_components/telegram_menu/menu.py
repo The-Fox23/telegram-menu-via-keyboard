@@ -11,8 +11,8 @@ from .const import CONF_CHAT_ID, CONF_MENUS, CONF_NOTIFY_ENTITY
 KEYBOARD_REPLY = "reply"
 KEYBOARD_INLINE = "inline"
 
-BACK_COMMAND = "/_telegram_menu_back"
-MAIN_COMMAND = "/_telegram_menu_main"
+BACK_COMMAND = "/menue_back"
+MAIN_COMMAND = "/menue_main"
 BACK_LABEL = "⬅️ Zurück"
 MAIN_LABEL = "🏠 Hauptmenü"
 
