@@ -380,3 +380,16 @@ Für diesen Stand ist die Integrationsversion **0.0.16** gesetzt. Der GitHub-Rel
 **Status:** v0.0.32 bleibt unverändert; Korrekturen sind weiterhin im Test, kein Release/Tag erstellt.
 
 **Nächster Schritt:** `_renameMenu(oldName)` in `panel.js` wieder ergänzen und anschließend die Editor-Funktionen testen.
+
+
+### 0.0.32 – Automatische Zurück- und Hauptmenü-Navigation
+**Stand: 2026-10-09**
+
+- `menu.py`: Untermenüs erhalten automatisch die Tasten **⬅️ Zurück** und **🏠 Hauptmenü**. Das gilt für Reply- und Inline-Tastaturen.
+- Die Navigation wird pro Telegram-Chat als Menüpfad gespeichert. **Zurück** geht eine Ebene nach oben; **Hauptmenü** setzt den Pfad auf `main` zurück.
+- `__init__.py`: Telegram-Befehle und Inline-Callbacks werden auf die Navigationsbefehle geprüft. Reply-Keyboard-Texte werden über `telegram_text` abgefangen; nur die beiden reservierten Navigationstexte werden dort verarbeitet.
+- `panel.js`: Löschen eines Menüs wird verhindert, wenn andere Menüs darauf verweisen. Beim Umbenennen werden bestehende Untermenü-Verweise aktualisiert.
+- **Noch zu testen:** Event-Payloads von Reply-Keyboard und Inline-Callbacks auf der installierten Home-Assistant-/telegram_bot-Version prüfen; verschachtelte Navigation, Zurück, Hauptmenü und bestehende Aktions-Buttons testen.
+- Die Integrationsversion bleibt **0.0.32**. Keine Versionsanhebung und kein GitHub-Tag/Release.
+
+**Status:** Änderungen auf `main` eingespielt; Laufzeittest in Home Assistant steht noch aus.
