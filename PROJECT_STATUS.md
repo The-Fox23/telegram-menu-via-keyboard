@@ -372,14 +372,14 @@ Für diesen Stand ist die Integrationsversion **0.0.16** gesetzt. Der GitHub-Rel
 - **Untermenü konfigurieren** springt zum gewählten Menü, damit sich verschachtelte Menüstrukturen aufbauen lassen.
 - Das Löschen eines Menüs wird verhindert, wenn andere Buttons noch auf dieses Menü verweisen. Die Meldung nennt die referenzierenden Menüs/Buttons.
 - Die doppelte Einfügung von `actionHelp` wurde in der zuletzt geposteten `panel.js` entfernt.
-- **Noch offen:** In der zuletzt geposteten vollständigen `panel.js` fehlt `_renameMenu(oldName)`, obwohl der Umbenennen-Button diese Methode aufruft. Vor dem nächsten Test muss sie ergänzt werden. Beim Umbenennen sollen bestehende Untermenü-Verweise auf den neuen Namen aktualisiert werden.
+- **Behoben am 2026-10-09:** `_renameMenu(oldName)` ist vorhanden und aktualisiert beim Umbenennen auch bestehende Untermenü-Verweise auf den neuen Namen.
 - Anschließend die JavaScript-Datei auf Syntaxfehler prüfen, nach `/config/custom_components/telegram_menu` kopieren und Home Assistant bzw. das Panel neu laden. Danach Umbenennen, Löschen eines referenzierten Untermenüs und verschachtelte Navigation testen.
 
 **Letzte Aktualisierung:** 2026-10-09
 
 **Status:** v0.0.32 bleibt unverändert; Korrekturen sind weiterhin im Test, kein Release/Tag erstellt.
 
-**Nächster Schritt:** `_renameMenu(oldName)` in `panel.js` wieder ergänzen und anschließend die Editor-Funktionen testen.
+**Nächster Schritt:** Die neuen Änderungen in Home Assistant einspielen und Zurück-/Hauptmenü-Navigation sowie bestehende Aktions-Buttons praktisch testen.
 
 
 ### 0.0.32 – Automatische Zurück- und Hauptmenü-Navigation
