@@ -393,3 +393,29 @@ Für diesen Stand ist die Integrationsversion **0.0.16** gesetzt. Der GitHub-Rel
 - Die Integrationsversion bleibt **0.0.32**. Keine Versionsanhebung und kein GitHub-Tag/Release.
 
 **Status:** Änderungen auf `main` eingespielt; Laufzeittest in Home Assistant steht noch aus.
+
+
+### 0.0.32 – Optionale automatische Navigationstasten und Hauptmenü-Routing
+**Stand: 2026-10-09**
+
+- Entwicklung erfolgt auf dem Branch `feature/optional-navigation-buttons-0.0.32`; die Änderungen sind in [Pull Request #6](https://github.com/The-Fox23/telegram-menu-via-keyboard/pull/6) zur Prüfung vorbereitet.
+- Im Panel ist eine Checkbox **„Automatische Navigationstasten (Zurück / Hauptmenü)”** vorgesehen. Sie steuert, ob die Integration die automatischen Navigationstasten zu Reply- und Inline-Tastaturen hinzufügt.
+- Bei deaktivierten automatischen Navigationstasten können eigene Buttons angelegt werden, die auf ein beliebiges Menü einschließlich **Main** zeigen.
+- Die Suche nach Button-Aktionen berücksichtigt zuerst das aktuell aktive Menü, um gleichlautende Commands möglichst passend aufzulösen.
+- Ein eigener Button mit Ziel **Main** soll den Navigationspfad über `go_main(chat_id)` zurücksetzen, anstatt Main wie ein gewöhnliches Untermenü zu öffnen.
+- Die Einstellung wird über die WebSocket-Konfiguration geladen und gespeichert. Bei fehlendem gespeicherten Wert bleibt das bisherige Verhalten erhalten: automatische Navigationstasten sind standardmäßig aktiviert.
+- Die Dateien aus diesem Branch wurden in die laufende Installation unter `/config/custom_components/telegram_menu` kopiert.
+- **Backup vor dem Einspielen erstellt:** `/config/development/backups/telegram_menu-before-optional-navigation-20261009-081859` (getrennte Sicherungen für `dev` und `live`).
+- Die Integrationsversion bleibt **0.0.32**. Es wurde kein Tag und kein Release erstellt.
+
+**Noch zu testen in Home Assistant:**
+1. Home Assistant neu starten und das Panel im Browser mit `Ctrl+F5` neu laden.
+2. Prüfen, ob die Checkbox erscheint und ihre Einstellung nach Speichern und erneutem Öffnen erhalten bleibt.
+3. Mit aktivierter Option prüfen, ob **Zurück** und **Hauptmenü** automatisch angezeigt werden und funktionieren.
+4. Option deaktivieren und prüfen, dass keine automatischen Navigationstasten ergänzt werden.
+5. In einem Untermenü einen eigenen Button mit Ziel **Main** anlegen und prüfen, ob er zuverlässig zum Hauptmenü zurückkehrt.
+6. Bestehende Aktions-Buttons und die verschachtelte Untermenü-Navigation erneut prüfen.
+
+**Status:** Code ist in die lokale Home-Assistant-Installation kopiert; der Laufzeittest steht noch aus. PR #6 ist noch nicht gemergt.
+
+**Nächster Schritt:** Nach dem Neustart und Browser-Refresh die oben genannten Tests durchführen und die Ergebnisse dokumentieren.
