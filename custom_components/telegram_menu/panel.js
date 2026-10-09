@@ -40,7 +40,7 @@ class TelegramMenuPanel extends HTMLElement {
       en: {
         "Telegram Menu": "Telegram Menu",
         "Menüs und Buttons grafisch bearbeiten – jeder Button verwendet ausschließlich den Telegram-Command.": "Edit menus and buttons graphically – each button uses only the Telegram command.",
-        "+ Menü erstellen": "+ Create menu", "Konfiguration wird geladen …": "Loading configuration …", "Änderungen gespeichert.": "Changes saved.",
+        "+ Menü erstellen": "+ Create menu", "Automatische Navigationstasten (Zurück / Hauptmenü)": "Automatic navigation buttons (Back / Main menu)", "Konfiguration wird geladen …": "Loading configuration …", "Änderungen gespeichert.": "Changes saved.",
         "Noch kein Telegram-Menü vorhanden": "No Telegram menu yet", "Erstelle zuerst ein Menü. Danach kannst du darin beliebig viele Telegram-Buttons anlegen.": "Create a menu first. You can then add as many Telegram buttons as you like.",
         "+ Erstes Menü erstellen": "+ Create first menu", "Umbenennen": "Rename", "▶ Tastatur starten": "▶ Start keyboard", "Löschen": "Delete",
         "Hier kannst du die Menü-Nachricht, den Tastaturtyp und die Telegram-Buttons konfigurieren.": "Configure the menu message, keyboard type and Telegram buttons here.",
@@ -54,7 +54,7 @@ class TelegramMenuPanel extends HTMLElement {
       fr: {
         "Telegram Menu": "Menu Telegram",
         "Menüs und Buttons grafisch bearbeiten – jeder Button verwendet ausschließlich den Telegram-Command.": "Modifiez les menus et les boutons graphiquement – chaque bouton utilise uniquement la commande Telegram.",
-        "+ Menü erstellen": "+ Créer un menu", "Konfiguration wird geladen …": "Chargement de la configuration …", "Änderungen gespeichert.": "Modifications enregistrées.",
+        "+ Menü erstellen": "+ Créer un menu", "Automatische Navigationstasten (Zurück / Hauptmenü)": "Boutons de navigation automatiques (Retour / Menu principal)", "Konfiguration wird geladen …": "Chargement de la configuration …", "Änderungen gespeichert.": "Modifications enregistrées.",
         "Noch kein Telegram-Menü vorhanden": "Aucun menu Telegram", "Erstelle zuerst ein Menü. Danach kannst du darin beliebig viele Telegram-Buttons anlegen.": "Créez d'abord un menu. Vous pourrez ensuite ajouter autant de boutons Telegram que nécessaire.",
         "+ Erstes Menü erstellen": "+ Créer le premier menu", "Umbenennen": "Renommer", "▶ Tastatur starten": "▶ Démarrer le clavier", "Löschen": "Supprimer",
         "Hier kannst du die Menü-Nachricht, den Tastaturtyp und die Telegram-Buttons konfigurieren.": "Configurez ici le message du menu, le type de clavier et les boutons Telegram.",
@@ -128,6 +128,8 @@ class TelegramMenuPanel extends HTMLElement {
     if (!this._hass?.connection) return;
 
     const menus = this._collectMenus();
+    const navigationButtonsEnabled = this.querySelector("#navigation-buttons-enabled")?.checked
+      ?? (this._config?.navigation_buttons_enabled !== false);
     const saveButtons = this.querySelectorAll(".save-button");
     saveButtons.forEach((button) => {
       button.disabled = true;
@@ -138,8 +140,13 @@ class TelegramMenuPanel extends HTMLElement {
       const response = await this._hass.connection.sendMessagePromise({
         type: "telegram_menu/save_config",
         menus,
+        navigation_buttons_enabled: navigationButtonsEnabled,
       });
-      this._config = { ...this._config, menus: response.menus };
+      this._config = {
+        ...this._config,
+        menus: response.menus,
+        navigation_buttons_enabled: response.navigation_buttons_enabled ?? navigationButtonsEnabled,
+      };
       this._error = "";
       this._saved = true;
       this._render();
@@ -484,7 +491,7 @@ class TelegramMenuPanel extends HTMLElement {
     }
   }
 
-  _renderPreview(menu) {
+  _renderPreview(menu, isSubmenu = false, navigationButtonsEnabled = true) {
     const wrap = document.createElement("div");
     const phone = document.createElement("div");
     phone.className = "preview-phone";
@@ -520,7 +527,21 @@ class TelegramMenuPanel extends HTMLElement {
       kb.appendChild(rowElement);
     }
 
-    if (!(menu?.rows || []).length) {
+    if (isSubmenu && navigationButtonsEnabled) {
+      const navigationRow = document.createElement("div");
+      navigationRow.className = "preview-row";
+      for (const label of ["⬅️ Zurück", "🏠 Hauptmenü"]) {
+        const previewButton = document.createElement("button");
+        previewButton.type = "button";
+        previewButton.className = "preview-button navigation-preview-button";
+        previewButton.textContent = label;
+        previewButton.disabled = true;
+        navigationRow.appendChild(previewButton);
+      }
+      kb.appendChild(navigationRow);
+    }
+
+    if (!(menu?.rows || []).length && !(isSubmenu && navigationButtonsEnabled)) {
       const empty = document.createElement("div");
       empty.className = "preview-empty";
       empty.textContent = "Buttons erscheinen hier als Vorschau.";
@@ -544,6 +565,7 @@ class TelegramMenuPanel extends HTMLElement {
 
     const menus = this._config?.menus || {};
     const menuEntries = Object.entries(menus);
+    const navigationButtonsEnabled = this._config?.navigation_buttons_enabled !== false;
 
     this.innerHTML = `
       <style>
@@ -568,6 +590,25 @@ class TelegramMenuPanel extends HTMLElement {
         .container {
           max-width: 1500px;
           margin: 0 auto;
+        }
+
+        .navigation-setting {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          padding: 10px 14px;
+          border: 1px solid rgba(255,255,255,.65);
+          border-radius: 9px;
+          background: rgba(255,255,255,.94);
+          color: #183342;
+          font-weight: 600;
+          cursor: pointer;
+        }
+
+        .navigation-setting input {
+          width: 18px;
+          height: 18px;
+          accent-color: #229ED9;
         }
 
         .brand-header {
@@ -1131,6 +1172,10 @@ class TelegramMenuPanel extends HTMLElement {
 
         <div class="toolbar">
           <button id="add-menu">+ Menü erstellen</button>
+          <label class="navigation-setting">
+            <input id="navigation-buttons-enabled" type="checkbox" ${navigationButtonsEnabled ? "checked" : ""}>
+            <span>Automatische Navigationstasten (Zurück / Hauptmenü)</span>
+          </label>
         </div>
 
         ${this._loading ? '<div class="status">Konfiguration wird geladen …</div>' : ""}
@@ -1243,13 +1288,17 @@ class TelegramMenuPanel extends HTMLElement {
         card.appendChild(typeField);
 
         if (previewHost && !previewHost.childElementCount) {
-          previewHost.appendChild(this._renderPreview(menu));
+          previewHost.appendChild(this._renderPreview(menu, name !== "main", navigationButtonsEnabled));
         }
 
         const liveUpdate = () => {
           if (!previewHost) return;
           previewHost.innerHTML = "";
-          previewHost.appendChild(this._renderPreview(this._collectMenus()[name] || menu));
+          previewHost.appendChild(this._renderPreview(
+            this._collectMenus()[name] || menu,
+            name !== "main",
+            navigationButtonsEnabled,
+          ));
         };
         messageInput.addEventListener("input", liveUpdate);
         typeSelect.addEventListener("change", liveUpdate);
@@ -1452,6 +1501,17 @@ class TelegramMenuPanel extends HTMLElement {
       "click",
       () => this._createMenu(),
     );
+
+    this.querySelector("#navigation-buttons-enabled")?.addEventListener("change", (event) => {
+      const menus = this._collectMenus();
+      this._config = {
+        ...this._config,
+        menus,
+        navigation_buttons_enabled: event.target.checked,
+      };
+      this._saved = false;
+      this._render();
+    });
 
     this._localize();
   }
