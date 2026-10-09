@@ -151,12 +151,12 @@ In v0.0.17 wurden die nächsten UI-Schritte umgesetzt:
    - Für v0.0.17 ist damit die Anzeige im Panel auf die Integrationsversion gekoppelt.
 
 ## 9. Bekannte offene Punkte
-- Mehrere Aktionen pro Button fehlen noch.
-- Aktuell wird pro Button nur die erste konfigurierte Aktion gespeichert/ausgeführt.
-- Service-Datenfelder (z. B. Helligkeit, Farbe, Nachrichtentext) werden noch nicht grafisch bearbeitet.
-- Untermenüs fehlen noch.
+- Mehrere Aktionen pro Button fehlen noch; aktuell ist die Ausführung auf die erste konfigurierte Aktion ausgelegt.
+- Service-Datenfelder (z. B. Helligkeit, Farbe, Nachrichtentext) werden noch nicht vollständig grafisch bearbeitet.
 - Bedingungen fehlen noch.
-- Die native HA-Entity-Auswahl hängt vom aktuellen Lazy-Loading-Zustand des Home-Assistant-Frontends ab; der Such-Fallback verhindert dabei eine unbrauchbare leere Auswahl.
+- Die native HA-Entity-Auswahl hängt vom Lazy-Loading-Zustand des Home-Assistant-Frontends ab; der Such-Fallback bleibt deshalb wichtig.
+- Die Untermenü-Navigation wurde im Editor und in der Konfiguration ergänzt, muss aber noch vollständig im laufenden Home Assistant getestet werden.
+- In der zuletzt im Chat geprüften `panel.js` fehlt die Methode `_renameMenu(oldName)`, obwohl der Umbenennen-Button sie aufruft. Diese Methode muss wieder ergänzt und danach getestet werden.
 
 ## 10. Release-Prinzip
 
@@ -360,3 +360,23 @@ Für diesen Stand ist die Integrationsversion **0.0.16** gesetzt. Der GitHub-Rel
 - Der Button springt direkt zum ausgewählten Menü und hebt dieses kurz hervor.
 - Damit kann die Menüstruktur rekursiv aufgebaut werden: Menübutton → Untermenü → weiteres Untermenü → finaler Home-Assistant-Aktionsbutton.
 - Löschen-Buttons besitzen jetzt einen sichtbaren Rahmen.
+
+
+### 0.0.32 – Aktueller Entwicklungsstand: Untermenüs und Editor-Korrekturen
+**Stand: 2026-10-09**
+
+- Die aktuelle Entwicklungsbasis ist Version **0.0.32**. Es wird weiterhin lokal über Studio Code Server getestet.
+- **Kein neuer GitHub-Tag/Release und keine Versionsanhebung** sind für diese Korrekturen vorgesehen.
+- Der Editor unterstützt als Aktionstyp **Home-Assistant-Aktion** oder **Untermenü öffnen**.
+- Bei Untermenü-Buttons werden die Felder für Dienst/Aktion und Ziel-Entity ausgeblendet; stattdessen wird das Zielmenü ausgewählt.
+- **Untermenü konfigurieren** springt zum gewählten Menü, damit sich verschachtelte Menüstrukturen aufbauen lassen.
+- Das Löschen eines Menüs wird verhindert, wenn andere Buttons noch auf dieses Menü verweisen. Die Meldung nennt die referenzierenden Menüs/Buttons.
+- Die doppelte Einfügung von `actionHelp` wurde in der zuletzt geposteten `panel.js` entfernt.
+- **Noch offen:** In der zuletzt geposteten vollständigen `panel.js` fehlt `_renameMenu(oldName)`, obwohl der Umbenennen-Button diese Methode aufruft. Vor dem nächsten Test muss sie ergänzt werden. Beim Umbenennen sollen bestehende Untermenü-Verweise auf den neuen Namen aktualisiert werden.
+- Anschließend die JavaScript-Datei auf Syntaxfehler prüfen, nach `/config/custom_components/telegram_menu` kopieren und Home Assistant bzw. das Panel neu laden. Danach Umbenennen, Löschen eines referenzierten Untermenüs und verschachtelte Navigation testen.
+
+**Letzte Aktualisierung:** 2026-10-09
+
+**Status:** v0.0.32 bleibt unverändert; Korrekturen sind weiterhin im Test, kein Release/Tag erstellt.
+
+**Nächster Schritt:** `_renameMenu(oldName)` in `panel.js` wieder ergänzen und anschließend die Editor-Funktionen testen.
