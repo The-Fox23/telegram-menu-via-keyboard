@@ -1349,13 +1349,23 @@ class TelegramMenuPanel extends HTMLElement {
               configureMenuButton.hidden = !menuMode || !menuSelect.value.trim();
               liveUpdate();
             };
-            actionType.addEventListener("change", refreshActionMode);
+            actionType.addEventListener("change", () => {
+              refreshActionMode();
+              if (actionType.value === "menu" && menuSelect.value.trim()) {
+                this._focusMenu(menuSelect.value.trim());
+              }
+            });
             actionInput.addEventListener("input", liveUpdate);
             targetPicker.addEventListener("value-changed", liveUpdate);
             targetPicker.addEventListener("input", liveUpdate);
             menuSelect.addEventListener("change", () => {
-              configureMenuButton.hidden = actionType.value !== "menu" || !menuSelect.value.trim();
+              const targetMenu = menuSelect.value.trim();
+              configureMenuButton.hidden = actionType.value !== "menu" || !targetMenu;
               liveUpdate();
+              // Selecting a submenu immediately takes the user to its editor.
+              if (actionType.value === "menu" && targetMenu) {
+                this._focusMenu(targetMenu);
+              }
             });
             refreshActionMode();
 
