@@ -9,7 +9,14 @@ from homeassistant.core import Event, HomeAssistant, ServiceCall, callback
 from homeassistant.helpers import config_validation as cv
 import voluptuous as vol
 
-from .const import CONF_CHAT_ID, CONF_LANGUAGE, CONF_MENUS, CONF_NOTIFY_ENTITY, DOMAIN
+from .const import (
+    CONF_CHAT_ID,
+    CONF_LANGUAGE,
+    CONF_MENUS,
+    CONF_NAVIGATION_BUTTONS,
+    CONF_NOTIFY_ENTITY,
+    DOMAIN,
+)
 from .menu import BACK_COMMAND, MAIN_COMMAND, MenuManager, normalize_telegram_command
 from .panel import async_register_panel, async_unregister_panel
 
@@ -52,7 +59,11 @@ async def async_setup(hass: HomeAssistant, config: dict[str, Any]) -> bool:
             if action:
                 submenu = str(action.get("_open_menu", "")).strip()
                 if submenu:
-                    await manager.open_submenu(submenu, chat_id)
+                    # Selecting Main resets navigation history instead of pushing Main.
+                    if submenu.casefold() == "main":
+                        await manager.go_main(chat_id)
+                    else:
+                        await manager.open_submenu(submenu, chat_id)
                     return
                 await manager.execute_action(action)
                 return
@@ -154,6 +165,9 @@ def ws_get_config(
             "chat_id": manager.default_chat_id,
             "language": manager.entry.data.get(CONF_LANGUAGE, "en"),
             "menus": manager.menus,
+            "navigation_buttons_enabled": manager.entry.data.get(
+                CONF_NAVIGATION_BUTTONS, True
+            ),
         },
     )
 
@@ -162,6 +176,7 @@ def ws_get_config(
     {
         vol.Required("type"): WS_SAVE_CONFIG,
         vol.Required("menus"): dict,
+        vol.Optional("navigation_buttons_enabled"): bool,
     }
 )
 @callback
@@ -210,14 +225,25 @@ def ws_save_config(
         return
 
     entry = manager.entry
+    navigation_buttons_enabled = msg.get(
+        "navigation_buttons_enabled",
+        entry.data.get(CONF_NAVIGATION_BUTTONS, True),
+    )
     hass.config_entries.async_update_entry(
         entry,
         data={
             **entry.data,
             CONF_MENUS: menus,
+            CONF_NAVIGATION_BUTTONS: navigation_buttons_enabled,
         },
     )
-    connection.send_result(msg["id"], {"menus": menus})
+    connection.send_result(
+        msg["id"],
+        {
+            "menus": menus,
+            "navigation_buttons_enabled": navigation_buttons_enabled,
+        },
+    )
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
