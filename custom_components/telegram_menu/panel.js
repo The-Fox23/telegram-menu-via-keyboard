@@ -222,9 +222,25 @@ class TelegramMenuPanel extends HTMLElement {
   }
 
   _deleteMenu(name) {
-    if (!confirm(`Menü "${name}" wirklich löschen?`)) return;
-
     const menus = this._collectMenus();
+    const references = [];
+
+    for (const [sourceName, menu] of Object.entries(menus)) {
+      for (const row of menu.rows || []) {
+        for (const button of row || []) {
+          if (button.open_menu === name) {
+            references.push(`${sourceName} (${button.command || "ohne Command"})`);
+          }
+        }
+      }
+    }
+
+    if (references.length) {
+      alert(`Das Menü "${name}" kann nicht gelöscht werden. Es wird noch verwendet von: ${references.join(", ")}.`);
+      return;
+    }
+
+    if (!confirm(`Menü "${name}" wirklich löschen?`)) return;
     delete menus[name];
 
     this._config = { ...this._config, menus };
@@ -244,8 +260,24 @@ class TelegramMenuPanel extends HTMLElement {
       return;
     }
 
+    if (!menus[oldName]) {
+      alert("Das umzubenennende Menü wurde nicht gefunden.");
+      return;
+    }
+
     menus[name] = menus[oldName];
     delete menus[oldName];
+
+    // Keep every button that targets this submenu pointing to its new name.
+    for (const menu of Object.values(menus)) {
+      for (const row of menu.rows || []) {
+        for (const button of row || []) {
+          if (button.open_menu === oldName) {
+            button.open_menu = name;
+          }
+        }
+      }
+    }
 
     this._config = { ...this._config, menus };
     this._saved = false;
