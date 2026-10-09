@@ -10,7 +10,7 @@ from homeassistant.helpers import config_validation as cv
 import voluptuous as vol
 
 from .const import CONF_CHAT_ID, CONF_LANGUAGE, CONF_MENUS, CONF_NOTIFY_ENTITY, DOMAIN
-from .menu import MenuManager
+from .menu import BACK_COMMAND, BACK_LABEL, MAIN_COMMAND, MAIN_LABEL, MenuManager
 from .panel import async_register_panel, async_unregister_panel
 
 PLATFORMS: list[str] = []
@@ -24,25 +24,56 @@ async def async_setup(hass: HomeAssistant, config: dict[str, Any]) -> bool:
     hass.data.setdefault(DOMAIN, {})
 
     async def handle_telegram_event(event: Event) -> None:
-        """Execute a configured button action for a Telegram command."""
-        command = str(event.data.get("command", "")).strip()
-        if not command:
+        """Handle configured commands, inline callbacks, and navigation buttons."""
+        command = str(
+            event.data.get("command")
+            or event.data.get("data")
+            or ""
+        ).strip()
+        text_value = str(event.data.get("text") or "").strip()
+        chat_id = str(event.data.get("chat_id", ""))
+
+        for manager in hass.data[DOMAIN].values():
+            if chat_id != manager.default_chat_id:
+                continue
+
+            # Inline keyboard navigation uses callback data; reply keyboards
+            # return their visible labels as Telegram text.
+            if command == BACK_COMMAND or text_value == BACK_LABEL:
+                await manager.go_back(chat_id)
+                return
+            if command == MAIN_COMMAND or text_value == MAIN_LABEL:
+                await manager.go_main(chat_id)
+                return
+
+            if not command:
+                return
+
+            action = manager.find_action(command)
+            if action:
+                submenu = str(action.get("_open_menu", "")).strip()
+                if submenu:
+                    await manager.open_submenu(submenu, chat_id)
+                    return
+
+                await manager.execute_action(action)
+                return
+
+    async def handle_telegram_text(event: Event) -> None:
+        """Handle only the synthetic navigation labels on reply keyboards."""
+        text_value = str(event.data.get("text") or "").strip()
+        if text_value not in {BACK_LABEL, MAIN_LABEL}:
             return
 
         chat_id = str(event.data.get("chat_id", ""))
         for manager in hass.data[DOMAIN].values():
             if chat_id != manager.default_chat_id:
                 continue
-
-            action = manager.find_action(command)
-            if action:
-                submenu = str(action.get("_open_menu", "")).strip()
-                if submenu:
-                    await manager.show_menu(submenu, chat_id)
-                    return
-
-                await manager.execute_action(action)
-                return
+            if text_value == BACK_LABEL:
+                await manager.go_back(chat_id)
+            else:
+                await manager.go_main(chat_id)
+            return
 
     async def handle_show(call: ServiceCall) -> None:
         """Show a configured Telegram menu."""
@@ -88,6 +119,7 @@ async def async_setup(hass: HomeAssistant, config: dict[str, Any]) -> bool:
 
     hass.bus.async_listen("telegram_command", handle_telegram_event)
     hass.bus.async_listen("telegram_callback", handle_telegram_event)
+    hass.bus.async_listen("telegram_text", handle_telegram_text)
 
     websocket_api.async_register_command(hass, ws_get_config)
     websocket_api.async_register_command(hass, ws_save_config)
