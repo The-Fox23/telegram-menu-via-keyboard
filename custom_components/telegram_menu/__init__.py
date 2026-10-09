@@ -39,10 +39,10 @@ async def async_setup(hass: HomeAssistant, config: dict[str, Any]) -> bool:
             if chat_id != manager.default_chat_id:
                 continue
 
-            if command in {BACK_COMMAND, BACK_LABEL}:
+            if command in {BACK_COMMAND, "/zurueck"}:
                 await manager.go_back(chat_id)
                 return
-            if command in {MAIN_COMMAND, MAIN_LABEL}:
+            if command in {MAIN_COMMAND, "/hauptmenue"}:
                 await manager.go_main(chat_id)
                 return
 
