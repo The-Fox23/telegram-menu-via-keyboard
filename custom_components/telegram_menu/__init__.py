@@ -23,57 +23,54 @@ async def async_setup(hass: HomeAssistant, config: dict[str, Any]) -> bool:
     """Set up the Telegram Menu integration."""
     hass.data.setdefault(DOMAIN, {})
 
-    async def handle_telegram_event(event: Event) -> None:
-        """Handle configured commands, inline callbacks, and navigation buttons."""
-        command = str(
-            event.data.get("command")
-            or event.data.get("data")
-            or ""
-        ).strip()
-        text_value = str(event.data.get("text") or "").strip()
-        chat_id = str(event.data.get("chat_id", ""))
+    async def _process_telegram_input(value: Any, chat_id: str) -> None:
+        """Process a Telegram command, callback payload, or reply-keyboard text."""
+        incoming = str(value or "").strip()
+        if not incoming:
+            return
+
+        # Telegram can append @botname to commands in group chats. Normalize it
+        # to the slash-command configured in the menu editor.
+        command = incoming.split("@", 1)[0] if incoming.startswith("/") else incoming
 
         for manager in hass.data[DOMAIN].values():
             if chat_id != manager.default_chat_id:
                 continue
 
-            # Inline keyboard navigation uses callback data; reply keyboards
-            # return their visible labels as Telegram text.
-            if command == BACK_COMMAND or text_value == BACK_LABEL:
+            if command in {BACK_COMMAND, BACK_LABEL}:
                 await manager.go_back(chat_id)
                 return
-            if command == MAIN_COMMAND or text_value == MAIN_LABEL:
+            if command in {MAIN_COMMAND, MAIN_LABEL}:
                 await manager.go_main(chat_id)
                 return
 
-            if not command:
-                return
-
+            # Reply-keyboard commands are usually telegram_command events, but
+            # accept the same slash-command if a bot setup reports telegram_text.
             action = manager.find_action(command)
             if action:
                 submenu = str(action.get("_open_menu", "")).strip()
                 if submenu:
                     await manager.open_submenu(submenu, chat_id)
                     return
-
                 await manager.execute_action(action)
                 return
 
-    async def handle_telegram_text(event: Event) -> None:
-        """Handle only the synthetic navigation labels on reply keyboards."""
-        text_value = str(event.data.get("text") or "").strip()
-        if text_value not in {BACK_LABEL, MAIN_LABEL}:
-            return
+    async def handle_telegram_event(event: Event) -> None:
+        """Handle commands and inline keyboard callback data."""
+        value = (
+            event.data.get("command")
+            or event.data.get("data")
+            or event.data.get("text")
+            or ""
+        )
+        await _process_telegram_input(value, str(event.data.get("chat_id", "")))
 
-        chat_id = str(event.data.get("chat_id", ""))
-        for manager in hass.data[DOMAIN].values():
-            if chat_id != manager.default_chat_id:
-                continue
-            if text_value == BACK_LABEL:
-                await manager.go_back(chat_id)
-            else:
-                await manager.go_main(chat_id)
-            return
+    async def handle_telegram_text(event: Event) -> None:
+        """Handle reply-keyboard navigation labels and slash commands."""
+        await _process_telegram_input(
+            event.data.get("text", ""),
+            str(event.data.get("chat_id", "")),
+        )
 
     async def handle_show(call: ServiceCall) -> None:
         """Show a configured Telegram menu."""
