@@ -1244,7 +1244,7 @@ class TelegramMenuPanel extends HTMLElement {
 
             const commandInput = document.createElement("input");
             commandInput.className = "command-input";
-            commandInput.value = button?.command || "";
+            commandInput.value = this._normalizeCommand(button?.command || "") || (button?.command || "");
             commandInput.placeholder = "/licht_an";
             commandField.appendChild(commandInput);
 
