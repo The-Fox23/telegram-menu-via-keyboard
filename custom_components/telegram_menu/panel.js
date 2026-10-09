@@ -162,7 +162,7 @@ class TelegramMenuPanel extends HTMLElement {
         const rowButtons = [];
 
         for (const button of row.querySelectorAll(".button-editor")) {
-          let command = button.querySelector(".command-input")?.value.trim() || "";
+          let command = this._normalizeCommand(button.querySelector(".command-input")?.value || "");
           const actionType = button.querySelector(".button-action-type")?.value || "ha_action";
           const action = button.querySelector(".action-input")?.value.trim() || "";
           const target = button.querySelector(".target-input")?.value.trim() || "";
@@ -284,6 +284,39 @@ class TelegramMenuPanel extends HTMLElement {
     this._render();
   }
 
+  _normalizeCommand(value) {
+    let command = String(value || "").trim().toLowerCase();
+    command = command
+      .replace(/ä/g, "ae")
+      .replace(/ö/g, "oe")
+      .replace(/ü/g, "ue")
+      .replace(/ß/g, "ss")
+      .replace(/\s+/g, "");
+    command = command.replace(/^\/+/, "").replace(/[^a-z0-9_]/g, "");
+    return command ? "/" + command : "";
+  }
+
+  _createSubmenuForButton(sourceMenu, rowIndex, buttonIndex) {
+    const menus = this._collectMenus();
+    const source = menus[sourceMenu];
+    const button = source?.rows?.[rowIndex]?.[buttonIndex];
+    if (!source || !button) return;
+
+    let number = Object.keys(menus).length + 1;
+    let targetName = "menu_" + number;
+    while (menus[targetName]) {
+      number += 1;
+      targetName = "menu_" + number;
+    }
+
+    menus[targetName] = { message: "Bitte auswählen:", keyboard_type: "reply", rows: [] };
+    button.open_menu = targetName;
+    delete button.actions;
+    this._config = { ...this._config, menus };
+    this._saved = false;
+    this._render();
+    this._focusMenu(targetName);
+  }
   _addButton(name) {
     const menus = this._collectMenus();
     const menu = menus[name];
@@ -1351,8 +1384,14 @@ class TelegramMenuPanel extends HTMLElement {
             };
             actionType.addEventListener("change", () => {
               refreshActionMode();
-              if (actionType.value === "menu" && menuSelect.value.trim()) {
-                this._focusMenu(menuSelect.value.trim());
+              if (actionType.value === "menu") {
+                const targetMenu = menuSelect.value.trim();
+                if (targetMenu) {
+                  this._focusMenu(targetMenu);
+                } else {
+                  // Create and link a submenu as soon as this action type is selected.
+                  this._createSubmenuForButton(name, rowIndex, buttonIndex);
+                }
               }
             });
             actionInput.addEventListener("input", liveUpdate);
