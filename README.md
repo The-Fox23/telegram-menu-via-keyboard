@@ -1,241 +1,89 @@
 # Telegram Menu for Home Assistant
 
-Custom Home Assistant integration for managing Telegram menus on top of the official Home Assistant `telegram_bot` integration.
+Custom Home Assistant integration for managing Telegram keyboards and button actions on top of the official `telegram_bot` integration.
 
-## What this integration does
+## Features
 
-- Uses the existing Home Assistant `telegram_bot` integration
-- Does **not** replace or modify Telegram polling/webhooks
-- Does **not** replace `telegram_command` events
-- Supports normal Telegram **Reply Keyboards**
-- Supports Telegram **Inline Keyboards**
-- Allows multiple rows and buttons
-- Provides `telegram_menu.show` and `telegram_menu.hide` actions
+- Reuses the configured Home Assistant `telegram_bot` integration and its notify entity; it does not replace polling, webhooks, or Telegram command events.
+- Provides a Home Assistant sidebar panel for creating, editing, renaming, and deleting menus and buttons.
+- Includes a responsive dashboard with sidebar navigation, menu/button counts, a menu list, integration settings, and a live Telegram preview. Colors follow the Home Assistant theme.
+- Uses one language for the entire integration: German, English, or French, selected during initial setup. Menus do not have individual language settings; user-written menu names, messages, and commands are not translated.
+- Supports Reply Keyboards and Inline Keyboards, with configurable menu messages and button commands.
+- Supports submenu navigation with per-chat Back and Main menu controls.
+- Can run a Home Assistant service action directly from a matching button command.
+- Provides `telegram_menu.show` and `telegram_menu.hide` actions.
+- Keeps existing automations using `telegram_command` events usable.
 
-## Telegram Bot: Privacy Mode deaktivieren
+## Requirements and installation
 
-Damit der Telegram Bot die Nachrichten bzw. Befehle aus einer normalen **Reply Keyboard** zuverlässig an Home Assistant weitergeben kann, muss bei deinem Bot in **BotFather** der **Privacy Mode** deaktiviert werden.
+The official Home Assistant `telegram_bot` integration must already be configured, including a Telegram notify entity.
 
-### Privacy Mode auf Disable stellen
+### Install with HACS
 
-1. Telegram öffnen und **@BotFather** aufrufen.
-2. Den Befehl `/mybots` senden.
-3. Deinen Home-Assistant-Telegram-Bot auswählen.
-4. **Bot Settings** öffnen.
-5. **Group Privacy** auswählen.
-6. **Turn off** auswählen bzw. den Privacy Mode auf **Disable** stellen.
-7. Danach den Bot in Home Assistant weiter wie gewohnt verwenden.
+1. Add `https://github.com/The-Fox23/telegram-menu-via-keyboard` as a custom HACS repository.
+2. Select the **Integration** category and install **Telegram Menu via Keyboard**.
+3. Restart Home Assistant and add **Telegram Menu via Keyboard** under **Settings > Devices & services > Add integration**.
 
-Die Einstellung ist besonders wichtig, wenn der Bot in einer **Telegram-Gruppe** verwendet wird. Bei aktiviertem Privacy Mode verarbeitet Telegram in Gruppen nur bestimmte Nachrichten und Befehle. Dadurch können Nachrichten aus der Reply Keyboard bzw. die erwarteten `telegram_command`-Events unter Umständen nicht bei Home Assistant ankommen.
+### Configure
 
-**Empfehlung:** Stelle den Privacy Mode bereits vor dem ersten Test des Menüs auf **Disable**, damit die Fehlersuche nicht durch die Telegram-Bot-Einstellungen erschwert wird.
+First select German, English, or French. Then choose the existing Telegram notify entity and set the default chat ID. Open **Telegram Menu** (localized in the selected language) in the Home Assistant sidebar.
 
-> Hinweis: Diese Einstellung wird in **BotFather** vorgenommen und nicht in dieser Home-Assistant-Integration. Die offizielle `telegram_bot`-Integration von Home Assistant bleibt unverändert.
+The graphical editor lets you set the message and keyboard type, add or remove buttons, choose a Telegram command, optionally select a Home Assistant service and target entity, and save the configuration. The panel also includes a live keyboard preview; clicking a preview button tests its configured action or opens its submenu.
 
-## Important: Reply Keyboard compatibility
+Enter a unique menu name in the menu list to create a menu. Use **Edit** to jump to a menu and update the preview, or rename/delete it from the list. Renaming updates submenu references; deleting a referenced submenu is blocked.
 
-A normal Telegram Reply Keyboard sends the **visible button text** back to Telegram as a message.
+Under **Settings**, enable or disable automatic Back/Main menu buttons and click **Save**. This option applies to all menus, persists with the configuration, and defaults to enabled. With automatic navigation disabled, you can still create your own submenu buttons targeting `main` or another menu. Save menu changes before testing them in Telegram; the live preview can execute real Home Assistant actions.
 
-That means an existing automation such as:
+### GitHub and HACS download versions
 
-```yaml
-alias: Telegram - Tastatur anzeigen
-description: Zeigt die Telegram-Tastatur an
-triggers:
-  - trigger: event
-    event_type: telegram_command
-    event_data:
-      command: /tastatur
-  conditions: []
-actions:
-  - action: telegram_bot.send_message
-    data:
-      chat_id:
-        - xxxxxxxxx
-      message: '🏠 Bitte Funktion auswählen:'
-      keyboard:
-        - ' /Garage_Gross, /Garage_Klein'
-        - ' /Balkon_auf, /Terrasse_auf'
-        - ' /Haustuer, /spare'
-      entity_id:
-        - notify.telegram_bot_xxxxxxxxx_chat id
-      parse_mode: html
-mode: single
+The development workspace must be committed and pushed to GitHub before its changes are available for download. HACS release downloads use the selected GitHub release/tag, which can differ from `main`. For unreleased changes on `main`, explicitly select the default branch when re-downloading in HACS; otherwise install the release containing the desired changes. After updating, restart Home Assistant and refresh the browser.
 
-```
+## Keyboard behavior
 
-can only continue to work unchanged when the Reply Keyboard button itself contains `/Haustuer`.
+### Reply Keyboards
 
-For this reason, the integration deliberately keeps the configured `command` as the visible text for a **Reply Keyboard**.
+A Reply Keyboard sends the visible button text back as a message. The integration uses the configured Telegram command as that text, so existing automations listening for the same `telegram_command` can continue to work. The integration does not consume those events; if both an automation and a button action match, both may run.
 
-Example:
+### Inline Keyboards
 
-```yaml
-alias: Telegram - Aktion bei Tastendruck
-description: Reagiert auf den Tastendruck und führt je nach Befehl eine Aktion aus
-triggers:
-  - trigger: event
-    event_type: telegram_command
-    event_data:
-      command: /Haustuer
-    id: haustuer
-  - trigger: event
-    event_type: telegram_command
-    event_data:
-      command: /Garage_Gross
-    id: garage_gross
-  - trigger: event
-    event_type: telegram_command
-    event_data:
-      command: /Garage_Klein
-    id: garage_klein
-conditions: []
-actions:
-  - choose:
-      - conditions:
-          - condition: trigger
-            id: haustuer
-        sequence:
-          - action: homematicip_local.switch_set_on_time
-            target:
-              entity_id: switch.hm_lc_sw4_wm_neq1635462_ch2
-            data:
-              on_time: 1
-          - action: telegram_bot.send_message
-            data:
-              chat_id:
-                - xxxxxxxx
-              message: 🚪 Haustür-Aktion erfolgreich ausgeführt!
-      - conditions:
-          - condition: trigger
-            id: garage_gross
-        sequence:
-          - action: homematicip_local.switch_set_on_time
-            target:
-              entity_id: switch.hm_lc_sw4_wm_neq1635462_ch1
-            data:
-              on_time: 1
-          - action: telegram_bot.send_message
-            data:
-              chat_id:
-                - xxxxxxx
-              message: 🚗 Garage Groß wurde ausgelöst!
-      - conditions:
-          - condition: trigger
-            id: garage_klein
-        sequence:
-          - action: homematicip_local.switch_set_on_time
-            target:
-              entity_id: switch.4_fachaktor_garage_klein_ch1
-            data:
-              on_time: 1
-          - action: telegram_bot.send_message
-            data:
-              chat_id:
-                - xxxxxxxxx
-              message: 🚗 Garage Klein wurde ausgelöst!
-mode: single
-```
+Inline buttons send their configured command as callback data. The integration listens for Home Assistant `telegram_callback` events and routes matching commands to the configured button action or submenu.
 
-The `label` is stored for the menu definition, but a Reply Keyboard displays `command` so that existing `telegram_command` automations remain compatible.
+### Submenus
 
-## Inline Keyboard
+A button can open another configured menu. Navigation history is tracked per Telegram chat, and submenu keyboards can offer **Back** and **Main menu** controls. Test navigation with your bot and chat before relying on it in important automations.
 
-Inline keyboards can use a separate friendly label and command/callback value:
+## Button actions and current limitations
 
-```json
-{
-  "main": {
-    "message": "🏠 Bitte Funktion auswählen:",
-    "keyboard_type": "inline",
-    "rows": [
-      [
-        {"label": "🚪 Haustür", "command": "/Haustuer"},
-        {"label": "🚗 Garage Groß", "command": "/Garage_Gross"}
-      ]
-    ]
-  }
-}
-```
+A button can run a Home Assistant service directly, with an optional target entity. The graphical editor currently exposes one action and its target; it does not provide fields for arbitrary service data or multi-step action sequences. If a button configuration contains more than one action, only the first is executed.
 
-The visible button text is the configured `label`.
-
-**Note:** Inline keyboard callback handling will be expanded in a later development step. The current implementation prepares the inline keyboard structure while keeping the existing Telegram integration untouched.
-
-## Configuration
-
-The current config flow asks for:
-
-1. The existing Telegram notify entity
-2. A default Telegram chat ID
-3. Menu definitions
-
-The menu definition is currently entered as JSON. A visual menu editor is planned.
+Button commands are processed for the default chat ID configured in this integration. Existing `telegram_command` automations are not disabled or replaced.
 
 ## Actions
 
-Show a menu:
+Show the main menu (or another named menu):
 
 ```yaml
-action:
-  - action: telegram_menu.show
-    data:
-      menu: main
+action: telegram_menu.show
+data:
+  menu: main
 ```
 
 Hide the Reply Keyboard:
 
 ```yaml
-action:
-  - action: telegram_menu.hide
+action: telegram_menu.hide
 ```
 
-If more than one Telegram Menu config entry exists, specify its `entry_id`.
+Both actions also accept an optional `chat_id`. The `show` action defaults to the `main` menu when `menu` is omitted.
 
-## Existing Telegram automations remain usable
+## Telegram Bot privacy in groups
 
-For Reply Keyboard commands, existing automations can remain unchanged:
+Telegram's Group Privacy setting can affect which messages a bot receives in a group. If Reply Keyboard commands are not reaching Home Assistant in a group, check the bot's settings with **@BotFather** (`/mybots` > your bot > **Bot Settings** > **Group Privacy**). Disable privacy only if your use case requires the bot to receive group messages; this setting is managed in BotFather, not in this integration.
 
-```yaml
-triggers:
-  - trigger: event
-    event_type: telegram_command
-    event_data:
-      command: /Haustuer
-    id: haustuer
+## Development checks
 
-  - trigger: event
-    event_type: telegram_command
-    event_data:
-      command: /Garage_Gross
-    id: garage_gross
+To preview the panel with sample data and simulated, non-executing actions, serve the repository locally and open `http://127.0.0.1:8765/tests/panel-preview.html`.
 
-  - trigger: event
-    event_type: telegram_command
-    event_data:
-      command: /Garage_Klein
-    id: garage_klein
-```
+Run the focused navigation tests with `python -m unittest discover -s tests -p "test_*.py" -v`.
 
-The Telegram Menu integration does not consume, rename or replace these commands.
-
-## HACS installation
-
-This repository can be added as a custom HACS repository:
-
-```
-https://github.com/The-Fox23/telegram-menu-via-keyboard
-```
-
-Select category **Integration**, install **Telegram Menu**, and restart Home Assistant.
-
-## Roadmap
-
-- Visual menu editor instead of JSON
-- Submenu navigation
-- Back/Home buttons
-- Direct Home Assistant service actions
-- Inline callback query handling
-- Per-chat menus
-- Menu visibility and authorization rules
-- Tests and CI
+The dependency-free browser tests are at `http://127.0.0.1:8765/tests/panel.html`. They exercise menu creation, edit/save, submenu references, DE/EN/FR localization, draft preservation, and responsive light/dark styling using a mock Home Assistant connection. They never call your real bot or devices.

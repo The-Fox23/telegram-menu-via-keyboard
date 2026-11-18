@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="de">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Telegram Menu – UI-Vorschau</title>
+<style>
+  body { margin: 0; font-family: sans-serif; background: #f4f6fa; }
+  .preview-notice {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    padding: 10px 16px;
+    background: #fff3cd;
+    color: #594500;
+    text-align: center;
+  }
+</style>
+<div class="preview-notice">
+  Lokale Vorschau mit Beispieldaten – Speichern und Aktionen sind simuliert.
+</div>
+<telegram-menu-panel></telegram-menu-panel>
+<script>
+  (async () => {
+    const source = await (await fetch("../custom_components/telegram_menu/panel.js")).text();
+    window.eval(source);
+
+    const menus = {
+      main: {
+        message: "Was möchtest du steuern?",
+        keyboard_type: "reply",
+        rows: [[
+          { command: "/licht_an", actions: [{ action: "light.turn_on", target: { entity_id: ["light.wohnzimmer"] } }] },
+          { command: "/rollladen", open_menu: "Rolladen" },
+        ], [
+          { command: "/gute_nacht", actions: [{ action: "scene.turn_on", target: { entity_id: ["scene.gute_nacht"] } }] },
+        ]],
+      },
+      Rolladen: {
+        message: "Welchen Rollladen?",
+        keyboard_type: "inline",
+        rows: [[{ command: "/rollladen_wohnzimmer" }]],
+      },
+    };
+
+    const panel = document.querySelector("telegram-menu-panel");
+    panel._setLanguage("de");
+    panel._config = { menus, navigation_buttons_enabled: true };
+    panel._loaded = true;
+    panel._hass = {
+      services: { light: { turn_on: {} }, scene: { turn_on: {} } },
+      states: {
+        "light.wohnzimmer": { attributes: { friendly_name: "Wohnzimmer Licht" } },
+        "scene.gute_nacht": { attributes: { friendly_name: "Gute Nacht" } },
+      },
+      callService: async (...args) => console.info("Simulierte Aktion:", ...args),
+      connection: {
+        sendMessagePromise: async (request) => {
+          if (request.type === "telegram_menu/get_config") {
+            return { menus, language: "de", navigation_buttons_enabled: true };
+          }
+          return {
+            menus: request.menus,
+            navigation_buttons_enabled: request.navigation_buttons_enabled,
+          };
+        },
+      },
+    };
+    panel._render();
+  })().catch((error) => {
+    const message = document.createElement("pre");
+    message.setAttribute("role", "alert");
+    message.textContent = `Vorschau konnte nicht geladen werden: ${String(error.message)}`;
+    document.body.appendChild(message);
+    console.error(error);
+  });
+</script>

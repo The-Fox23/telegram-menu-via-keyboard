@@ -34,10 +34,34 @@ class TelegramMenuPanel extends HTMLElement {
     this._language = aliases[normalized] || "en";
   }
 
-  _localize() {
-    if (this._language === "de") return;
+  _translate(value) {
+    if (this._language === "de") return value;
     const map = {
       en: {
+        "Übersicht": "Overview", "Menüs": "Menus", "Buttons": "Buttons", "Einstellungen": "Settings",
+        "Integration aktiv": "Integration active", "Sprache": "Language",
+        "Dein Telegram-Menü auf einen Blick": "Your Telegram menu at a glance",
+        "Verwalte Menüs und Buttons zentral. Die Sprache gilt für die gesamte Integration.": "Manage menus and buttons in one place. The selected language applies to the whole integration.",
+        "Menüs gesamt": "Total menus", "Buttons gesamt": "Total buttons", "Menüname": "Menu name",
+        "Bestehende Menüs": "Existing menus", "Name": "Name", "Aktionen": "Actions", "Bearbeiten": "Edit",
+        "Noch keine Menüs angelegt.": "No menus created yet.",
+        "Sprache und Verhalten der Integration": "Integration language and behavior",
+        "Fügt Untermenüs automatisch Zurück- und Hauptmenü-Buttons hinzu.": "Automatically adds Back and Main menu buttons to submenus.",
+        "Die Sprache wurde bei der Einrichtung festgelegt.": "The language was selected during setup.",
+        "Menü erstellen": "Create menu", "Bitte einen Menünamen eingeben.": "Please enter a menu name.",
+        "Ein Menü mit diesem Namen existiert bereits.": "A menu with this name already exists.",
+        "Dieser Menüname ist reserviert.": "This menu name is reserved.",
+        "Neuer Menüname:": "New menu name:", "Das umzubenennende Menü wurde nicht gefunden.": "The menu to rename was not found.",
+        'Menü "{name}" wirklich löschen?': 'Really delete menu "{name}"?',
+        'Das Menü "{name}" kann nicht gelöscht werden. Es wird noch verwendet von: {references}.': 'Menu "{name}" cannot be deleted. It is still used by: {references}.',
+        "ohne Command": "no command", "Konfiguration konnte nicht geladen werden.": "Could not load configuration.",
+        "Speichern fehlgeschlagen.": "Saving failed.", "Untermenü konnte nicht geöffnet werden.": "Could not open submenu.",
+        "Für diesen Button ist keine Aktion konfiguriert.": "No action is configured for this button.",
+        "Aktion konnte nicht ausgeführt werden.": "Could not execute action.",
+        "Tastatur konnte nicht gestartet werden.": "Could not start keyboard.",
+        "Aktion testen": "Test action", "⬅️ Zurück": "⬅️ Back", "🏠 Hauptmenü": "🏠 Main menu",
+        "Beim Telegram-Befehl wird das ausgewählte Untermenü geöffnet. Dort kannst du weitere Untermenüs oder die endgültige Home-Assistant-Aktion konfigurieren.": "The Telegram command opens the selected submenu. Configure further submenus or the final Home Assistant action there.",
+        "z. B. light.turn_on": "e.g. light.turn_on",
         "Telegram Menu": "Telegram Menu",
         "Menüs und Buttons grafisch bearbeiten – jeder Button verwendet ausschließlich den Telegram-Command.": "Edit menus and buttons graphically – each button uses only the Telegram command.",
         "+ Menü erstellen": "+ Create menu", "Automatische Navigationstasten (Zurück / Hauptmenü)": "Automatic navigation buttons (Back / Main menu)", "Automatische Navigationstasten": "Automatic navigation buttons", "Automatische Navigationstasten deaktiviert": "Automatic navigation buttons disabled", "Du kannst eigene Buttons anlegen und als Ziel Main oder ein anderes Menü auswählen.": "You can create your own buttons and select Main or another menu as the target.", "Konfiguration wird geladen …": "Loading configuration …", "Änderungen gespeichert.": "Changes saved.",
@@ -52,6 +76,31 @@ class TelegramMenuPanel extends HTMLElement {
         "Speichern": "Save", "Speichern …": "Saving …", "Bitte auswählen:": "Please select:", "Nachricht schreiben …": "Type a message …", "Entity suchen …": "Search entity …", "Nach Anzeigename oder Entity-ID suchen.": "Search by display name or entity ID.", " (gespeichert)": " (saved)"
       },
       fr: {
+        "Übersicht": "Vue d’ensemble", "Menüs": "Menus", "Buttons": "Boutons", "Einstellungen": "Paramètres",
+        "Integration aktiv": "Intégration active", "Sprache": "Langue",
+        "Dein Telegram-Menü auf einen Blick": "Votre menu Telegram en un coup d’œil",
+        "Verwalte Menüs und Buttons zentral. Die Sprache gilt für die gesamte Integration.": "Gérez les menus et boutons au même endroit. La langue choisie s’applique à toute l’intégration.",
+        "Menüs gesamt": "Total des menus", "Buttons gesamt": "Total des boutons", "Menüname": "Nom du menu",
+        "Bestehende Menüs": "Menus existants", "Name": "Nom", "Aktionen": "Actions", "Bearbeiten": "Modifier",
+        "Noch keine Menüs angelegt.": "Aucun menu créé.",
+        "Sprache und Verhalten der Integration": "Langue et comportement de l’intégration",
+        "Fügt Untermenüs automatisch Zurück- und Hauptmenü-Buttons hinzu.": "Ajoute automatiquement les boutons Retour et Menu principal aux sous-menus.",
+        "Die Sprache wurde bei der Einrichtung festgelegt.": "La langue a été choisie lors de l’installation.",
+        "Menü erstellen": "Créer un menu", "Bitte einen Menünamen eingeben.": "Veuillez saisir un nom de menu.",
+        "Ein Menü mit diesem Namen existiert bereits.": "Un menu portant ce nom existe déjà.",
+        "Dieser Menüname ist reserviert.": "Ce nom de menu est réservé.",
+        "Neuer Menüname:": "Nouveau nom du menu :", "Das umzubenennende Menü wurde nicht gefunden.": "Le menu à renommer est introuvable.",
+        'Menü "{name}" wirklich löschen?': 'Supprimer le menu "{name}" ?',
+        'Das Menü "{name}" kann nicht gelöscht werden. Es wird noch verwendet von: {references}.': 'Le menu "{name}" ne peut pas être supprimé. Il est encore utilisé par : {references}.',
+        "ohne Command": "sans commande", "Konfiguration konnte nicht geladen werden.": "Impossible de charger la configuration.",
+        "Speichern fehlgeschlagen.": "Échec de l’enregistrement.", "Untermenü konnte nicht geöffnet werden.": "Impossible d’ouvrir le sous-menu.",
+        "Für diesen Button ist keine Aktion konfiguriert.": "Aucune action n’est configurée pour ce bouton.",
+        "Aktion konnte nicht ausgeführt werden.": "Impossible d’exécuter l’action.",
+        "Tastatur konnte nicht gestartet werden.": "Impossible de démarrer le clavier.",
+        "Aktion testen": "Tester l’action", "⬅️ Zurück": "⬅️ Retour", "🏠 Hauptmenü": "🏠 Menu principal",
+        "Untermenü konfigurieren": "Configurer le sous-menu",
+        "Beim Telegram-Befehl wird das ausgewählte Untermenü geöffnet. Dort kannst du weitere Untermenüs oder die endgültige Home-Assistant-Aktion konfigurieren.": "La commande Telegram ouvre le sous-menu sélectionné. Configurez-y d’autres sous-menus ou l’action Home Assistant finale.",
+        "z. B. light.turn_on": "p. ex. light.turn_on",
         "Telegram Menu": "Menu Telegram",
         "Menüs und Buttons grafisch bearbeiten – jeder Button verwendet ausschließlich den Telegram-Command.": "Modifiez les menus et les boutons graphiquement – chaque bouton utilise uniquement la commande Telegram.",
         "+ Menü erstellen": "+ Créer un menu", "Automatische Navigationstasten (Zurück / Hauptmenü)": "Boutons de navigation automatiques (Retour / Menu principal)", "Automatische Navigationstasten": "Boutons de navigation automatiques", "Automatische Navigationstasten deaktiviert": "Boutons de navigation automatiques désactivés", "Du kannst eigene Buttons anlegen und als Ziel Main oder ein anderes Menü auswählen.": "Vous pouvez créer vos propres boutons et sélectionner Main ou un autre menu comme cible.", "Konfiguration wird geladen …": "Chargement de la configuration …", "Änderungen gespeichert.": "Modifications enregistrées.",
@@ -66,19 +115,24 @@ class TelegramMenuPanel extends HTMLElement {
         "Speichern": "Enregistrer", "Speichern …": "Enregistrement …", "Bitte auswählen:": "Veuillez sélectionner :", "Nachricht schreiben …": "Écrire un message …", "Entity suchen …": "Rechercher une entité …", "Nach Anzeigename oder Entity-ID suchen.": "Rechercher par nom d'affichage ou ID d'entité.", " (gespeichert)": " (enregistré)"
       }
     }[this._language] || {};
+    return map[value] || value;
+  }
+
+  _localize(root = this) {
     const walk = (node) => {
       if (node.nodeType === Node.TEXT_NODE) {
         const value = node.nodeValue.trim();
-        if (map[value]) node.nodeValue = node.nodeValue.replace(value, map[value]);
+        node.nodeValue = node.nodeValue.replace(value, this._translate(value));
         return;
       }
       if (node.nodeType !== Node.ELEMENT_NODE) return;
-      if (node.placeholder && map[node.placeholder]) node.placeholder = map[node.placeholder];
-      if (node.title && map[node.title]) node.title = map[node.title];
-      if (node.label && map[node.label]) node.label = map[node.label];
+      if (node.matches("style, [data-user-content]")) return;
+      for (const property of ["placeholder", "title", "label", "helper"]) {
+        if (node[property]) node[property] = this._translate(node[property]);
+      }
       for (const child of node.childNodes) walk(child);
     };
-    walk(this);
+    walk(root);
   }
 
   async _ensureNativeEntitySelector() {
@@ -115,12 +169,11 @@ class TelegramMenuPanel extends HTMLElement {
       this._setLanguage(response?.language || this._panelConfig?.language);
       this._loaded = true;
       this._error = "";
-      this._render();
     } catch (error) {
-      this._error = error?.message || "Konfiguration konnte nicht geladen werden.";
-      this._render();
+      this._error = error?.message || this._translate("Konfiguration konnte nicht geladen werden.");
     } finally {
       this._loading = false;
+      this._render();
     }
   }
 
@@ -133,7 +186,7 @@ class TelegramMenuPanel extends HTMLElement {
     const saveButtons = this.querySelectorAll(".save-button");
     saveButtons.forEach((button) => {
       button.disabled = true;
-      button.textContent = "Speichern …";
+      button.textContent = this._translate("Speichern …");
     });
 
     try {
@@ -152,13 +205,13 @@ class TelegramMenuPanel extends HTMLElement {
       this._render();
     } catch (error) {
       this._saved = false;
-      this._error = error?.message || "Speichern fehlgeschlagen.";
+      this._error = error?.message || this._translate("Speichern fehlgeschlagen.");
       this._render();
     }
   }
 
   _collectMenus() {
-    const menus = {};
+    const menus = Object.create(null);
 
     for (const card of this.querySelectorAll(".menu-card")) {
       const name = card.dataset.name?.trim();
@@ -169,6 +222,7 @@ class TelegramMenuPanel extends HTMLElement {
         const rowButtons = [];
 
         for (const button of row.querySelectorAll(".button-editor")) {
+          const stored = button._buttonConfig || {};
           let command = this._normalizeCommand(button.querySelector(".command-input")?.value || "");
           const actionType = button.querySelector(".button-action-type")?.value || "ha_action";
           const action = button.querySelector(".action-input")?.value.trim() || "";
@@ -179,14 +233,16 @@ class TelegramMenuPanel extends HTMLElement {
             command = "/" + command;
           }
 
-          const buttonConfig = { command };
+          const buttonConfig = { ...stored, command };
+          delete buttonConfig.actions;
+          delete buttonConfig.open_menu;
           if (actionType === "menu" && openMenu) {
             buttonConfig.open_menu = openMenu;
-          } else if (action) {
-            buttonConfig.actions = [{
-              action,
-              ...(target ? { target: { entity_id: [target] } } : {}),
-            }];
+          } else if (actionType !== "menu" && action) {
+            const actionConfig = { ...stored.actions?.[0], action };
+            delete actionConfig.target;
+            if (target) actionConfig.target = { entity_id: [target] };
+            buttonConfig.actions = [actionConfig, ...(stored.actions || []).slice(1)];
           }
 
           if (command) {
@@ -198,6 +254,7 @@ class TelegramMenuPanel extends HTMLElement {
       }
 
       menus[name] = {
+        ...this._config?.menus?.[name],
         message: card.querySelector(".message-input")?.value || "",
         keyboard_type: card.querySelector(".keyboard-type")?.value || "reply",
         rows,
@@ -207,7 +264,7 @@ class TelegramMenuPanel extends HTMLElement {
     return menus;
   }
 
-  _createMenu() {
+  _createMenu(requestedName) {
     const menus = this._collectMenus();
     let number = Object.keys(menus).length + 1;
     let name = number === 1 ? "main" : `menu_${number}`;
@@ -217,15 +274,32 @@ class TelegramMenuPanel extends HTMLElement {
       name = `menu_${number}`;
     }
 
+    if (requestedName !== undefined) {
+      name = requestedName.trim();
+      if (!name || Object.hasOwn(menus, name) || ["__proto__", "constructor", "prototype"].includes(name)) {
+        this._error = this._translate(!name
+          ? "Bitte einen Menünamen eingeben."
+          : Object.hasOwn(menus, name)
+            ? "Ein Menü mit diesem Namen existiert bereits."
+            : "Dieser Menüname ist reserviert.");
+        const status = this.querySelector("#menu-create-error");
+        status.textContent = this._error;
+        status.hidden = false;
+        return;
+      }
+    }
+
     menus[name] = {
-      message: "Bitte auswählen:",
+      message: this._translate("Bitte auswählen:"),
       keyboard_type: "reply",
       rows: [],
     };
 
     this._config = { ...this._config, menus };
+    this._error = "";
     this._saved = false;
     this._render();
+    this._focusMenu(name);
   }
 
   _deleteMenu(name) {
@@ -236,18 +310,19 @@ class TelegramMenuPanel extends HTMLElement {
       for (const row of menu.rows || []) {
         for (const button of row || []) {
           if (button.open_menu === name) {
-            references.push(`${sourceName} (${button.command || "ohne Command"})`);
+            references.push(`${sourceName} (${button.command || this._translate("ohne Command")})`);
           }
         }
       }
     }
 
     if (references.length) {
-      alert(`Das Menü "${name}" kann nicht gelöscht werden. Es wird noch verwendet von: ${references.join(", ")}.`);
+      alert(this._translate('Das Menü "{name}" kann nicht gelöscht werden. Es wird noch verwendet von: {references}.')
+        .replace("{name}", () => name).replace("{references}", () => references.join(", ")));
       return;
     }
 
-    if (!confirm(`Menü "${name}" wirklich löschen?`)) return;
+    if (!confirm(this._translate('Menü "{name}" wirklich löschen?').replace("{name}", () => name))) return;
     delete menus[name];
 
     this._config = { ...this._config, menus };
@@ -256,19 +331,20 @@ class TelegramMenuPanel extends HTMLElement {
   }
 
   _renameMenu(oldName) {
-    const newName = prompt("Neuer Menüname:", oldName);
+    const newName = prompt(this._translate("Neuer Menüname:"), oldName);
     if (!newName?.trim() || newName.trim() === oldName) return;
 
     const menus = this._collectMenus();
     const name = newName.trim();
 
-    if (menus[name]) {
-      alert("Ein Menü mit diesem Namen existiert bereits.");
+    if (Object.hasOwn(menus, name) || ["__proto__", "constructor", "prototype"].includes(name)) {
+      alert(this._translate(Object.hasOwn(menus, name)
+        ? "Ein Menü mit diesem Namen existiert bereits." : "Dieser Menüname ist reserviert."));
       return;
     }
 
     if (!menus[oldName]) {
-      alert("Das umzubenennende Menü wurde nicht gefunden.");
+      alert(this._translate("Das umzubenennende Menü wurde nicht gefunden."));
       return;
     }
 
@@ -316,7 +392,7 @@ class TelegramMenuPanel extends HTMLElement {
       targetName = "menu_" + number;
     }
 
-    menus[targetName] = { message: "Bitte auswählen:", keyboard_type: "reply", rows: [] };
+    menus[targetName] = { message: this._translate("Bitte auswählen:"), keyboard_type: "reply", rows: [] };
     button.open_menu = targetName;
     delete button.actions;
     this._config = { ...this._config, menus };
@@ -360,6 +436,7 @@ class TelegramMenuPanel extends HTMLElement {
       .find((element) => element.dataset.name === menuName);
     if (!card) return;
 
+    this._updatePreview(menuName);
     card.scrollIntoView({ behavior: "smooth", block: "start" });
     card.classList.remove("submenu-target-highlight");
     requestAnimationFrame(() => {
@@ -484,14 +561,14 @@ class TelegramMenuPanel extends HTMLElement {
         this._error = "";
         this._render();
       } catch (e) {
-        this._error = e?.message || "Untermenü konnte nicht geöffnet werden.";
+        this._error = e?.message || this._translate("Untermenü konnte nicht geöffnet werden.");
         this._render();
       }
       return;
     }
     const a = button?.actions?.[0];
     if (!a?.action) {
-      this._error = "Für diesen Button ist keine Aktion konfiguriert.";
+      this._error = this._translate("Für diesen Button ist keine Aktion konfiguriert.");
       this._render();
       return;
     }
@@ -501,7 +578,7 @@ class TelegramMenuPanel extends HTMLElement {
       this._error = "";
       this._render();
     } catch (e) {
-      this._error = e?.message || "Aktion konnte nicht ausgeführt werden.";
+      this._error = e?.message || this._translate("Aktion konnte nicht ausgeführt werden.");
       this._render();
     }
   }
@@ -519,7 +596,8 @@ class TelegramMenuPanel extends HTMLElement {
 
     const msg = document.createElement("div");
     msg.className = "preview-message";
-    msg.textContent = menu?.message || "Bitte auswählen:";
+    msg.dataset.userContent = "";
+    msg.textContent = menu?.message || this._translate("Bitte auswählen:");
     screen.appendChild(msg);
 
     const kb = document.createElement("div");
@@ -533,6 +611,7 @@ class TelegramMenuPanel extends HTMLElement {
         const previewButton = document.createElement("button");
         previewButton.type = "button";
         previewButton.className = "preview-button";
+        previewButton.dataset.userContent = "";
         previewButton.textContent = button?.command || "Button";
         previewButton.title = button?.command || "Aktion testen";
         previewButton.addEventListener("click", () => this._previewButton(button));
@@ -575,16 +654,29 @@ class TelegramMenuPanel extends HTMLElement {
     return wrap;
   }
 
+  _updatePreview(name) {
+    const host = this.querySelector("#preview");
+    const menu = this._collectMenus()[name];
+    if (!host || !menu) return;
+    this._previewMenu = name;
+    host.replaceChildren(this._renderPreview(menu, name !== "main",
+      this._config?.navigation_buttons_enabled !== false));
+    this._localize(host);
+  }
+
   _render() {
     if (!this.isConnected) return;
 
     const menus = this._config?.menus || {};
     const menuEntries = Object.entries(menus);
     const navigationButtonsEnabled = this._config?.navigation_buttons_enabled !== false;
+    const totalButtons = menuEntries.reduce((total, [, menu]) =>
+      total + (menu.rows || []).reduce((count, row) => count + row.length, 0), 0);
 
     this.innerHTML = `
       <style>
-        :host {
+        telegram-menu-panel {
+        & {
           --telegram-blue: #229ED9;
           --telegram-blue-dark: #168AC0;
           --telegram-blue-deep: #0D7DB5;
@@ -592,12 +684,7 @@ class TelegramMenuPanel extends HTMLElement {
           box-sizing: border-box;
           padding: 24px;
           min-height: 100vh;
-          background:
-            radial-gradient(circle at 8% 8%, rgba(255,255,255,.13) 0 2px, transparent 3px),
-            radial-gradient(circle at 92% 16%, rgba(255,255,255,.10) 0 2px, transparent 3px),
-            linear-gradient(135deg, var(--telegram-blue-deep) 0%, var(--telegram-blue) 48%, var(--telegram-blue-dark) 100%);
-          background-size: 92px 92px, 118px 118px, 100% 100%;
-          background-attachment: fixed;
+          background: var(--primary-background-color, #f4f6fa);
           color: var(--primary-text-color);
           font-family: var(--paper-font-body1_-_font-family, sans-serif);
         }
@@ -759,7 +846,14 @@ class TelegramMenuPanel extends HTMLElement {
         }
 
         .preview-message {
-          display:none;
+          display:block;
+          padding: 12px;
+          margin-bottom: 16px;
+          border-radius: 12px;
+          background: var(--card-background-color, white);
+          color: var(--primary-text-color, #263238);
+          white-space: pre-wrap;
+          overflow-wrap: anywhere;
         }
 
         .preview-keyboard {
@@ -1180,7 +1274,7 @@ class TelegramMenuPanel extends HTMLElement {
         }
 
         @media (max-width: 600px) {
-          :host {
+          & {
             padding: 12px;
           }
 
@@ -1203,9 +1297,138 @@ class TelegramMenuPanel extends HTMLElement {
             min-width: 100%;
           }
         }
-      </style>
+        .container {
+          display: grid;
+          grid-template-columns: 214px minmax(0, 1fr);
+          gap: 18px 24px;
+          max-width: 1680px;
+          margin: 0 auto;
+        }
+        .container > :not(.app-sidebar) { grid-column: 2; min-width: 0; margin-bottom: 0; }
+        .app-sidebar {
+        position: sticky;
+        grid-column: 1;
+        grid-row: 1 / span 6;
+        align-self: start;
+        top: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        width: 214px;
+        min-height: calc(100vh - 48px);
+        box-sizing: border-box;
+        padding: 22px 16px;
+        border: 1px solid var(--divider-color, rgba(0,0,0,.08));
+        border-radius: 20px;
+        background: var(--card-background-color, #fff);
+        box-shadow: 0 12px 34px rgba(20, 35, 55, .10);
+        }
+        .side-brand { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 750; }
+        .side-logo { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 12px; background: #229ed9; color: #fff; font-size: 22px; }
+        .side-nav { display: grid; gap: 8px; }
+        .side-nav button {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        border: 0;
+        border-radius: 12px;
+        padding: 12px 14px;
+        background: transparent;
+        color: var(--secondary-text-color, #687786);
+        text-align: left;
+        font: inherit;
+        font-weight: 650;
+        cursor: pointer;
+        }
+        .side-nav button:hover, .side-nav button.active { background: rgba(34,158,217,.12); color: #168ac0; }
+        .side-footer { display: grid; grid-template-columns: 10px 1fr; align-items: center; gap: 4px 8px; margin-top: auto; font-size: 13px; font-weight: 650; }
+        .side-footer small { grid-column: 2; color: var(--secondary-text-color, #687786); font-weight: 450; }
+        .side-dot { width: 8px; height: 8px; border-radius: 50%; background: #32b67a; }
+        .brand-header { margin: 0 0 18px; padding: 16px 20px; border-radius: 18px; background: var(--card-background-color, #fff); box-shadow: 0 8px 26px rgba(20,35,55,.07); }
+        .brand-header h1 { color: var(--primary-text-color, #263238); }
+        .brand-header .subtitle { color: var(--secondary-text-color, #687786); }
+        .overview-panel, .menu-manager-card, .settings-card {
+        margin: 0 0 18px;
+        padding: 22px;
+        border: 1px solid var(--divider-color, rgba(0,0,0,.08));
+        border-radius: 18px;
+        background: var(--card-background-color, #fff);
+        box-shadow: 0 8px 26px rgba(20,35,55,.06);
+        scroll-margin-top: 20px;
+        }
+        .overview-panel { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; }
+        .overview-panel > div:first-child { flex: 1 1 260px; }
+        .overview-panel h2, .section-heading h2 { margin: 4px 0 8px; font-size: 22px; }
+        .overview-panel p, .section-heading p, .settings-hint { margin: 0; color: var(--secondary-text-color, #687786); }
+        .eyebrow { color: #168ac0; font-size: 12px; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, minmax(92px, 1fr)); gap: 10px; min-width: 360px; }
+        .stat-card { display: grid; gap: 8px; padding: 14px; border-radius: 14px; background: var(--secondary-background-color, #f5f7fa); }
+        .stat-card span { color: var(--secondary-text-color, #687786); font-size: 12px; }
+        .stat-card strong { font-size: 24px; }
+        .section-heading { margin-bottom: 18px; }
+        .menu-create-row { display: flex; align-items: end; gap: 12px; margin-bottom: 18px; }
+        .menu-create-row label { display: grid; gap: 6px; flex: 1; min-width: 0; font-size: 13px; font-weight: 650; }
+        .menu-create-row input { box-sizing: border-box; width: 100%; border: 1px solid var(--divider-color, #dce2e8); border-radius: 10px; padding: 11px 12px; background: var(--primary-background-color, #fff); color: var(--primary-text-color); font: inherit; }
+        .primary-button, .menu-action { border: 0; border-radius: 10px; padding: 11px 15px; background: #229ed9; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+        .primary-button:hover, .menu-action:hover { background: #168ac0; }
+        .menu-table-wrap { overflow-x: auto; }
+        .menu-table { width: 100%; border-collapse: collapse; }
+        .menu-table th, .menu-table td { border-bottom: 1px solid var(--divider-color, #e6eaee); padding: 12px 10px; text-align: left; }
+        .menu-table th { color: var(--secondary-text-color, #687786); font-size: 12px; font-weight: 700; }
+        .menu-table td:first-child { overflow-wrap: anywhere; }
+        .menu-table td:last-child { min-width: 150px; }
+        .menu-action { margin-right: 6px; padding: 7px 10px; font-size: 12px; }
+        .menu-action.danger { background: transparent; color: var(--error-color, #c62828); border: 1px solid var(--divider-color, #e6eaee); }
+        .menu-empty { padding: 20px 10px; color: var(--secondary-text-color, #687786); text-align: center; }
+        .settings-card .navigation-setting { display: flex; align-items: center; gap: 10px; font-weight: 650; }
+        .navigation-setting { background: var(--secondary-background-color, #f5f7fa); color: var(--primary-text-color, #263238); border-color: var(--divider-color, #ddd); }
+        .navigation-setting input { flex: 0 0 18px; }
+        .settings-card .save-button { margin-top: 16px; }
+        [hidden] { display: none !important; }
+        .menu-title { overflow-wrap: anywhere; min-width: 100px; }
+        .editor-layout, .editor-layout > div { min-width: 0; }
+        .button-editor { min-width: 0; overflow-wrap: anywhere; }
+        .preview-screen { overflow-y: auto; }
+        .settings-hint { margin: 8px 0 0 26px; font-size: 13px; }
+        #buttons { scroll-margin-top: 20px; }
+        .preview-column { position: sticky; top: 20px; }
+        @media (max-width: 1200px) {
+        .editor-layout { grid-template-columns: 1fr; }
+        .preview-column { position: static; }
+        }
+        @media (max-width: 900px) {
+        .container { display: block; margin: 0 0 20px; }
+        .container > :not(.app-sidebar) { margin-bottom: 18px; }
+        .app-sidebar { position: relative; top: auto; left: auto; width: auto; min-height: auto; margin: 0 0 16px; }
+        .side-nav { display: flex; gap: 6px; overflow-x: auto; }
+        .side-nav button { width: auto; white-space: nowrap; }
+        .side-footer { display: none; }
+        .overview-panel { align-items: stretch; flex-direction: column; }
+        .stats-grid { min-width: 0; }
+        .preview-column { position: static; }
+        }
+        @media (max-width: 600px) {
+        & { padding: 12px; }
+        .overview-panel, .menu-manager-card, .settings-card { padding: 16px; }
+        .stats-grid { grid-template-columns: 1fr; }
+        .menu-create-row { align-items: stretch; flex-direction: column; }
+        .primary-button { width: 100%; }
+        .menu-header { margin: -14px -14px 18px; }
+        }
+        }
+        </style>
 
       <div class="container">
+        <aside class="app-sidebar">
+          <div class="side-brand"><span class="side-logo">➤</span><span>Telegram Menu</span></div>
+          <nav class="side-nav" aria-label="Telegram Menu">
+            <button type="button" class="active" aria-current="true" data-section="overview">Übersicht</button>
+            <button type="button" data-section="menus">Menüs</button>
+            <button type="button" data-section="buttons">Buttons</button>
+            <button type="button" data-section="settings">Einstellungen</button>
+          </nav>
+          <div class="side-footer"><span class="side-dot"></span><span>Integration aktiv</span><small><span>Sprache</span>: ${(this._language || "en").toUpperCase()}</small></div>
+        </aside>
         <div class="brand-header">
           <div class="brand-icon">➤</div>
           <div>
@@ -1214,19 +1437,51 @@ class TelegramMenuPanel extends HTMLElement {
           </div>
         </div>
 
-        <div class="toolbar">
-          <button id="add-menu">+ Menü erstellen</button>
+        ${this._loading ? '<div class="status" role="status">Konfiguration wird geladen …</div>' : ""}
+        ${this._error ? `<div class="status error" role="alert" data-user-content>${this._escape(this._error)}</div>` : ""}
+        ${this._saved ? '<div class="status success">Änderungen gespeichert.</div>' : ""}
+
+        <section class="overview-panel" id="overview" tabindex="-1">
+          <div>
+            <div class="eyebrow">Telegram Menu</div>
+            <h2>Dein Telegram-Menü auf einen Blick</h2>
+            <p>Verwalte Menüs und Buttons zentral. Die Sprache gilt für die gesamte Integration.</p>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-card"><span>Menüs gesamt</span><strong>${menuEntries.length}</strong></div>
+            <div class="stat-card"><span>Buttons gesamt</span><strong id="button-total">${totalButtons}</strong></div>
+            <div class="stat-card"><span>Sprache</span><strong>${(this._language || "en").toUpperCase()}</strong></div>
+          </div>
+        </section>
+        <section class="menu-manager-card" id="menus" tabindex="-1">
+          <div class="section-heading"><h2>Bestehende Menüs</h2></div>
+          <form class="menu-create-row" id="menu-create-form">
+            <label for="new-menu-name"><span>Menüname</span>
+              <input id="new-menu-name" type="text" placeholder="Menüname" maxlength="64" required>
+            </label>
+            <button type="submit" class="primary-button" id="add-menu">+ Menü erstellen</button>
+          </form>
+          <p class="error" id="menu-create-error" role="alert" hidden data-user-content></p>
+          <div class="menu-table-wrap">
+            <table class="menu-table">
+              <thead><tr><th scope="col">Name</th><th scope="col">Buttons</th><th scope="col">Aktionen</th></tr></thead>
+              <tbody id="menu-list"></tbody>
+            </table>
+            <div class="menu-empty" ${menuEntries.length ? "hidden" : ""}>Noch keine Menüs angelegt.</div>
+          </div>
+        </section>
+        <section class="settings-card" id="settings" tabindex="-1">
+          <div class="section-heading"><h2>Einstellungen</h2><p>Sprache und Verhalten der Integration</p></div>
           <label class="navigation-setting">
             <input id="navigation-buttons-enabled" type="checkbox" ${navigationButtonsEnabled ? "checked" : ""}>
             <span>Automatische Navigationstasten (Zurück / Hauptmenü)</span>
           </label>
-        </div>
-
-        ${this._loading ? '<div class="status">Konfiguration wird geladen …</div>' : ""}
-        ${this._error ? `<div class="status error">${this._escape(this._error)}</div>` : ""}
-        ${this._saved ? '<div class="status success">Änderungen gespeichert.</div>' : ""}
-
-        <div class="editor-layout">
+          <p class="settings-hint">Fügt Untermenüs automatisch Zurück- und Hauptmenü-Buttons hinzu.</p>
+          <p class="settings-hint"><span>Sprache</span>: ${(this._language || "en").toUpperCase()}.
+            <span>Die Sprache wurde bei der Einrichtung festgelegt.</span></p>
+          <button type="button" class="save-button">Speichern</button>
+        </section>
+        <div class="editor-layout" id="buttons" tabindex="-1">
           <div id="content"></div>
           <div class="preview-column">
             <div class="preview-card">
@@ -1241,6 +1496,33 @@ class TelegramMenuPanel extends HTMLElement {
 
     const content = this.querySelector("#content");
     const previewHost = this.querySelector("#preview");
+    const menuList = this.querySelector("#menu-list");
+
+    for (const [name, menu] of menuEntries) {
+      const row = document.createElement("tr");
+      row.dataset.name = name;
+      const title = document.createElement("td");
+      title.textContent = name;
+      title.dataset.userContent = "";
+      const count = document.createElement("td");
+      count.className = "menu-button-count";
+      count.textContent = (menu.rows || []).reduce((total, buttons) => total + buttons.length, 0);
+      const actions = document.createElement("td");
+      for (const [text, action, danger] of [
+        ["Bearbeiten", () => this._focusMenu(name), false],
+        ["Umbenennen", () => this._renameMenu(name), false],
+        ["Löschen", () => this._deleteMenu(name), true],
+      ]) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = danger ? "menu-action danger" : "menu-action";
+        button.textContent = text;
+        button.addEventListener("click", action);
+        actions.appendChild(button);
+      }
+      row.append(title, count, actions);
+      menuList.appendChild(row);
+    }
 
     if (!menuEntries.length && !this._loading && !this._error) {
       content.innerHTML = `
@@ -1268,6 +1550,7 @@ class TelegramMenuPanel extends HTMLElement {
 
         const title = document.createElement("div");
         title.className = "menu-title";
+        title.dataset.userContent = "";
         title.textContent = name;
 
         const rename = document.createElement("button");
@@ -1285,7 +1568,7 @@ class TelegramMenuPanel extends HTMLElement {
             this._started = name;
             this._render();
           } catch (error) {
-            this._error = error?.message || "Tastatur konnte nicht gestartet werden.";
+            this._error = error?.message || this._translate("Tastatur konnte nicht gestartet werden.");
             this._render();
           }
         });
@@ -1298,7 +1581,6 @@ class TelegramMenuPanel extends HTMLElement {
         const save = document.createElement("button");
         save.className = "secondary header-save save-button";
         save.textContent = "Speichern";
-        save.addEventListener("click", () => this._saveConfig());
         header.append(title, start, save, rename, remove);
         card.appendChild(header);
 
@@ -1331,18 +1613,8 @@ class TelegramMenuPanel extends HTMLElement {
         typeField.appendChild(typeSelect);
         card.appendChild(typeField);
 
-        if (previewHost && !previewHost.childElementCount) {
-          previewHost.appendChild(this._renderPreview(menu, name !== "main", navigationButtonsEnabled));
-        }
-
         const liveUpdate = () => {
-          if (!previewHost) return;
-          previewHost.innerHTML = "";
-          previewHost.appendChild(this._renderPreview(
-            this._collectMenus()[name] || menu,
-            name !== "main",
-            navigationButtonsEnabled,
-          ));
+          this._updatePreview(name);
         };
         messageInput.addEventListener("input", liveUpdate);
         typeSelect.addEventListener("change", liveUpdate);
@@ -1363,6 +1635,7 @@ class TelegramMenuPanel extends HTMLElement {
             const button = row[buttonIndex];
             const editor = document.createElement("div");
             editor.className = "button-editor";
+            editor._buttonConfig = button;
 
             const commandField = document.createElement("div");
             commandField.className = "field";
@@ -1413,6 +1686,7 @@ class TelegramMenuPanel extends HTMLElement {
               const option = document.createElement("option");
               option.value = storedAction;
               option.textContent = storedAction + " (gespeichert)";
+              option.dataset.userContent = "";
               actionSelect.appendChild(option);
             }
             actionSelect.value = storedAction;
@@ -1442,12 +1716,14 @@ class TelegramMenuPanel extends HTMLElement {
               const option = document.createElement("option");
               option.value = menuName;
               option.textContent = menuName;
+              option.dataset.userContent = "";
               menuSelect.appendChild(option);
             }
             if (storedMenu && !otherMenus.some(([menuName]) => menuName === storedMenu)) {
               const option = document.createElement("option");
               option.value = storedMenu;
               option.textContent = storedMenu + " (gespeichert)";
+              option.dataset.userContent = "";
               menuSelect.appendChild(option);
             }
             menuSelect.value = storedMenu;
@@ -1464,19 +1740,20 @@ class TelegramMenuPanel extends HTMLElement {
             actionTypeField.appendChild(actionType);
             menuField.append(menuLabel, menuSelect, configureMenuButton);
 
-            const refreshActionMode = () => {
+            const refreshActionMode = (update = true) => {
               const menuMode = actionType.value === "menu";
               actionHelp.textContent = menuMode
                 ? "Beim Telegram-Befehl wird das ausgewählte Untermenü geöffnet. Dort kannst du weitere Untermenüs oder die endgültige Home-Assistant-Aktion konfigurieren."
                 : "Optional: einen Home-Assistant-Dienst direkt mit diesem Button ausführen.";
+              this._localize(actionHelp);
               actionField.hidden = menuMode;
               targetField.hidden = menuMode;
               menuField.hidden = !menuMode;
               configureMenuButton.hidden = !menuMode || !menuSelect.value.trim();
-              liveUpdate();
+              if (update) liveUpdate();
             };
             actionType.addEventListener("change", () => {
-              refreshActionMode();
+              refreshActionMode(false);
               if (actionType.value === "menu") {
                 const targetMenu = menuSelect.value.trim();
                 if (targetMenu) {
@@ -1516,7 +1793,6 @@ class TelegramMenuPanel extends HTMLElement {
             editor.append(
               commandField,
               actionTitle,
-              actionHelp,
               actionTypeField,
               actionHelp,
               actionField,
@@ -1570,10 +1846,53 @@ class TelegramMenuPanel extends HTMLElement {
       }
     }
 
-    this.querySelector("#add-menu")?.addEventListener(
-      "click",
-      () => this._createMenu(),
-    );
+    this.querySelector("#menu-create-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      this._createMenu(this.querySelector("#new-menu-name").value);
+    });
+
+    this.querySelectorAll(".save-button").forEach((button) => {
+      button.addEventListener("click", () => this._saveConfig());
+    });
+
+    this.querySelectorAll(".side-nav button").forEach((button) => {
+      const active = button.dataset.section === (this._activeSection || "overview");
+      button.classList.toggle("active", active);
+      if (active) button.setAttribute("aria-current", "true");
+      else button.removeAttribute("aria-current");
+      button.addEventListener("click", () => {
+        this._activeSection = button.dataset.section;
+        this.querySelectorAll(".side-nav button").forEach((item) => {
+          item.classList.toggle("active", item === button);
+          if (item === button) item.setAttribute("aria-current", "true");
+          else item.removeAttribute("aria-current");
+        });
+        const section = this.querySelector("#" + button.dataset.section);
+        section.scrollIntoView({ behavior: "smooth", block: "start" });
+        section.focus({ preventScroll: true });
+      });
+    });
+
+    const captureDraft = (event) => {
+      if (!content.isConnected) return;
+      const card = event.target.closest(".menu-card");
+      if (!card) return;
+      const menus = this._collectMenus();
+      this._config = { ...this._config, menus };
+      this._saved = false;
+      this.querySelector(".status.success")?.remove();
+      let total = 0;
+      for (const row of menuList.children) {
+        const count = menus[row.dataset.name].rows.reduce((sum, buttons) => sum + buttons.length, 0);
+        row.querySelector(".menu-button-count").textContent = count;
+        total += count;
+      }
+      this.querySelector("#button-total").textContent = total;
+      this._updatePreview(card.dataset.name);
+    };
+    for (const event of ["input", "change", "value-changed"]) {
+      content.addEventListener(event, captureDraft);
+    }
 
     this.querySelector("#navigation-buttons-enabled")?.addEventListener("change", (event) => {
       const menus = this._collectMenus();
@@ -1586,6 +1905,13 @@ class TelegramMenuPanel extends HTMLElement {
       this._render();
     });
 
+    if (menuEntries.length) {
+      const selected = Object.hasOwn(menus, this._previewMenu)
+        ? this._previewMenu : menuEntries[0][0];
+      this._updatePreview(selected);
+    } else {
+      previewHost.appendChild(this._renderPreview({ rows: [] }, false, navigationButtonsEnabled));
+    }
     this._localize();
   }
 

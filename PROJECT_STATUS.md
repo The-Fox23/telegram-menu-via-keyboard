@@ -3,11 +3,10 @@
 > Zentrale Projektdokumentation für die Weiterentwicklung der Home-Assistant-Integration **Telegram Menu via Keyboard**. Diese Datei wird bei größeren Entwicklungsschritten aktualisiert.
 
 ## 1. Repository
-- GitHub Repository: `The-Fox23/telegram-menu-via-keybord`
-- Geplanter Zielname: `telegram-menu-via-keyboard`
+- GitHub Repository: `The-Fox23/telegram-menu-via-keyboard`
 - Integration Domain: `telegram_menu`
 - Anzeigename: **Telegram Menu via Keyboard**
-- Aktuelle Version: 0.0.23
+- Aktuelle Version: 0.0.33
 - Home Assistant Mindestversion laut `hacs.json`: **2026.1.0**
 - Abhängigkeiten: `telegram_bot`, `websocket_api`, `http`, `frontend`
 - Integrationstyp: `service`
@@ -419,3 +418,28 @@ Für diesen Stand ist die Integrationsversion **0.0.16** gesetzt. Der GitHub-Rel
 **Status:** Code ist in die lokale Home-Assistant-Installation kopiert; der Laufzeittest steht noch aus. PR #6 ist noch nicht gemergt.
 
 **Nächster Schritt:** Nach dem Neustart und Browser-Refresh die oben genannten Tests durchführen und die Ergebnisse dokumentieren.
+
+## 12. UI-Neugestaltung und GitHub-Abgleich (2026-11-18)
+
+- Grundlage ist das vorab erstellte Home-Assistant-Backup `3431b783`.
+- Zusätzliches vollständiges Git-/Änderungsbackup: `/config/development/backups/github-sync-20261118-073025` sowie Git-Stash der ursprünglichen UI-Entwürfe.
+- Die UI-Sprache bleibt global und wird bei der Einrichtung gewählt (`de`, `en` oder `fr`); Menüs erhalten keine eigene Sprache.
+- Dashboard mit Seitenleiste, Kennzahlen, benannter Menüerstellung, Menü-Tabelle, Bearbeiten/Umbenennen/Löschen und globalen Einstellungen fertiggestellt. Altes Toolbar-Markup und Syntaxfehler des Entwurfs entfernt.
+- Vorschau folgt der Menüauswahl; Änderungen an Nachricht, Commands und Aktionen bleiben bei Einstellungswechseln erhalten. Bestehende Aktionsdaten werden beim Speichern nicht entfernt.
+- Generierte Telegram-Navigationstasten und Standardnachrichten verwenden ebenfalls die Integrationssprache. Benutzerdefinierte Inhalte werden nicht übersetzt.
+- `README.md` beschreibt Einrichtung, Oberfläche, Einstellungen und den Unterschied zwischen `main` und einem HACS-Release-Download.
+- **Geprüft:** zwei Python-Navigationstests und sechs Browser-Testgruppen mit Mock-Verbindung: DE/EN/FR, sichere Menünamen/Validierung, Vorschau/Entwürfe/Speicherpayload, Untermenü-Verweise, leere Konfiguration und responsive Darstellung bei 1440/768/375 Pixeln einschließlich dunklem Theme.
+- **GitHub-Abgleich:** Das neuere Statusupdate des Remote-Entwicklungsbranches wird erhalten; die bisherigen Navigationskorrekturen werden nicht überschrieben. Veröffentlichung des geprüften Gesamtstands auf `main` ist der nächste Schritt.
+- **Verbleibender Praxistest:** Download/Update in HACS, Neustart von Home Assistant und Prüfung mit dem echten Telegram-Bot. Keine echten Geräteaktionen oder Telegram-Nachrichten wurden für die UI-Tests ausgelöst.
+- Integrationsversion zunächst **0.0.32**; ein neues GitHub-Release wird nicht stillschweigend mit einer Branch-Aktualisierung gleichgesetzt.
+
+## 13. v0.0.33 – UI-Abgleich und Vorschau-Tests (2026-11-18)
+
+- `manifest.json` auf **0.0.33** erhöht.
+- Aktualisiertes Sidebar-Panel mit Dashboard, DE/EN/FR, Menü-/Button-Editor, Untermenüs, Einstellungen und Telegram-Vorschau vorbereitet.
+- `tests/panel-preview.html` ergänzt eine sichere Beispielvorschau; Aktionen und Speichern sind simuliert.
+- Browser-Test-Harness und Python-Navigationstests geprüft: zwei Python-Tests und sechs Browser-Testgruppen bestanden.
+- `README.md` beschreibt Entwicklungschecks, sichere Vorschau und den Unterschied zwischen Branch- und HACS-Release-Download.
+- Vor dem Übertragen ist ein Backup im Verzeichnis `/config/development/backups` vorhanden; der Feature-Branch war davor sauber und synchron mit `origin`.
+- **Nächster Schritt:** Änderungen in den Feature-Branch übertragen, gezielt testen, PR #6 aktualisieren und erst nach Merge einen HACS-Release/Tag veröffentlichen.
+- **Praxistest:** HACS-Installation, Home-Assistant-Neustart und Test mit dem echten Telegram-Bot stehen noch aus.

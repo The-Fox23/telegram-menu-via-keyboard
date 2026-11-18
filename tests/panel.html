@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Telegram Menu panel tests</title>
+<pre id="results">Running…</pre>
+<script type="module">
+  const source = await (await fetch("../custom_components/telegram_menu/panel.js")).text();
+  const results = document.querySelector("#results");
+  const passed = [];
+  const assert = (condition, message) => {
+    if (!condition) throw new Error(message);
+  };
+  const fixture = async (language = "en", menus = {
+    main: { message: "Speichern", keyboard_type: "reply", rows: [[{ command: "/test", actions: [{
+      action: "light.turn_on", data: { brightness: 42 }, target: { entity_id: ["light.test"] },
+    }] }]] },
+    submenu: { message: "User message", keyboard_type: "inline", rows: [] },
+  }) => {
+    const frame = document.createElement("iframe");
+    frame.style.cssText = "width:1440px;height:1100px;border:0";
+    document.body.appendChild(frame);
+    const win = frame.contentWindow;
+    win.eval(source);
+    const panel = win.document.createElement("telegram-menu-panel");
+    panel._setLanguage(language);
+    panel._loaded = true;
+    panel._config = { menus, navigation_buttons_enabled: true };
+    const calls = [];
+    panel._hass = {
+      services: { light: { turn_on: {} } }, states: {},
+      callService: async (...args) => { calls.push(args); },
+      connection: { sendMessagePromise: async (request) => {
+        if (request.type === "telegram_menu/get_config") {
+          return { menus, language, navigation_buttons_enabled: true };
+        }
+        calls.push(request);
+        return { menus: request.menus, navigation_buttons_enabled: request.navigation_buttons_enabled };
+      } },
+    };
+    win.document.body.style.margin = "0";
+    win.document.body.style.setProperty("--primary-text-color", "#263238");
+    win.document.body.style.setProperty("--card-background-color", "#ffffff");
+    win.document.body.style.setProperty("--secondary-background-color", "#f5f7fa");
+    win.document.body.style.setProperty("--divider-color", "#dce2e8");
+    win.document.body.style.setProperty("--error-color", "#c62828");
+    win.document.body.appendChild(panel);
+    const input = (selector, value, event = "input") => {
+      const field = panel.querySelector(selector);
+      field.value = value;
+      field.dispatchEvent(new win.Event(event, { bubbles: true }));
+    };
+    return { frame, win, panel, calls, input };
+  };
+  try {
+    for (const [language, heading, save, back] of [
+      ["de", "Bestehende Menüs", "Speichern", "⬅️ Zurück"],
+      ["en", "Existing menus", "Save", "⬅️ Back"],
+      ["fr", "Menus existants", "Enregistrer", "⬅️ Retour"],
+    ]) {
+      const { frame, panel } = await fixture(language);
+      assert(panel.querySelector("#menus h2").textContent === heading, language + ": heading");
+      assert(panel.querySelector(".save-button").textContent === save, language + ": save");
+      assert(panel.querySelector(".navigation-preview-chip").textContent === back, language + ": navigation");
+      assert(panel.querySelector("#preview .preview-message").textContent === "Speichern", language + ": user message changed");
+      assert(panel.querySelector("#menu-list").children.length === 2, language + ": table");
+      assert(panel.querySelectorAll('select[name="language"]').length === 0, language + ": per-menu language");
+      const ids = [...panel.querySelectorAll("[id]")].map(node => node.id);
+      assert(new Set(ids).size === ids.length, language + ": duplicate IDs");
+      frame.remove();
+    }
+    passed.push("DE/EN/FR labels, user-content preservation, unique IDs and menu table");
+
+    {
+      const { frame, panel, win, input } = await fixture();
+      input("#new-menu-name", "Kitchen");
+      panel.querySelector("#menu-create-form").dispatchEvent(new win.Event("submit", { bubbles: true, cancelable: true }));
+      assert(panel._config.menus.Kitchen, "Named menu was not created");
+      panel._createMenu("Kitchen");
+      assert(!panel.querySelector("#menu-create-error").hidden, "Duplicate name was silently accepted");
+      panel._createMenu("__proto__");
+      assert(!Object.hasOwn(panel._config.menus, "__proto__"), "Reserved name was accepted");
+      const name = '<img src=x onerror="throw 1">';
+      panel._createMenu(name);
+      assert(panel.querySelector("#menu-list").textContent.includes(name), "Menu name missing");
+      assert(!panel.querySelector("#menu-list img"), "Menu name was interpreted as markup");
+      frame.remove();
+    }
+    passed.push("Named menu creation, duplicates, reserved names and literal user markup");
+
+    {
+      const { frame, panel, calls, input, win } = await fixture();
+      input('.menu-card[data-name="main"] .message-input', "Draft message");
+      input('.menu-card[data-name="main"] .command-input', "/changed");
+      assert(panel.querySelector("#preview .preview-message").textContent === "Draft message", "Preview is stale");
+      panel._focusMenu("submenu");
+      assert(panel._previewMenu === "submenu", "Menu selection did not update preview");
+      panel.querySelector("#navigation-buttons-enabled").click();
+      assert(panel._config.menus.main.message === "Draft message", "Setting change lost draft");
+      assert(!panel.querySelector(".navigation-preview-chip"), "Disabled navigation is still shown");
+      panel._createMenu("Another");
+      await panel._saveConfig();
+      const request = calls.find(call => call.type === "telegram_menu/save_config");
+      assert(request && request.navigation_buttons_enabled === false, "Save lost navigation setting");
+      assert(request.menus.main.rows[0][0].actions[0].data.brightness === 42, "Save lost existing action data");
+      assert(request.menus.main.rows[0][0].command === "/changed", "Save lost command");
+      assert(panel.querySelector(".save-button").textContent === "Save", "Save button language changed");
+      win.prompt = () => "Renamed";
+      panel._renameMenu("Another");
+      assert(panel._config.menus.Renamed && !panel._config.menus.Another, "Rename failed");
+      win.confirm = () => true;
+      panel._deleteMenu("Renamed");
+      assert(!panel._config.menus.Renamed, "Delete failed");
+      frame.remove();
+    }
+    passed.push("Drafts, preview selection, navigation toggle, save payload, rename and delete");
+
+    {
+      const { frame, panel, input, win } = await fixture();
+      input(".button-action-type", "menu", "change");
+      const name = panel._config.menus.main.rows[0][0].open_menu;
+      assert(name && panel._config.menus[name], "Submenu was not created and linked");
+      win.prompt = () => "Renamed submenu";
+      panel._renameMenu(name);
+      assert(panel._config.menus.main.rows[0][0].open_menu === "Renamed submenu", "Rename broke submenu link");
+      let warning = "";
+      win.alert = text => { warning = text; };
+      panel._deleteMenu("Renamed submenu");
+      assert(warning && panel._config.menus["Renamed submenu"], "Referenced submenu was deleted");
+      frame.remove();
+    }
+    passed.push("Automatic submenu creation, reference rename and delete protection");
+
+    {
+      const { frame, panel, calls } = await fixture("fr", {});
+      panel.querySelector("#navigation-buttons-enabled").click();
+      await panel._saveConfig();
+      assert(calls[0].navigation_buttons_enabled === false && !Object.keys(calls[0].menus).length, "Empty configuration cannot be saved");
+      panel._createMenu();
+      assert(panel._config.menus.main.message === "Veuillez sélectionner :", "New menu message ignores global language");
+      frame.remove();
+    }
+    passed.push("Empty configuration saving and localized new-menu message");
+
+    {
+      const { frame, panel, win } = await fixture("fr");
+      for (const width of [1440, 768, 375]) {
+        frame.style.width = width + "px";
+        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+        assert(win.document.documentElement.scrollWidth <= width, "Horizontal overflow at " + width + "px");
+        const sidebar = panel.querySelector(".app-sidebar").getBoundingClientRect();
+        const header = panel.querySelector(".brand-header").getBoundingClientRect();
+        assert(width > 900 ? sidebar.right <= header.left : sidebar.bottom <= header.top, "Sidebar overlaps at " + width + "px");
+      }
+      win.document.body.style.setProperty("--primary-text-color", "#eeeeee");
+      win.document.body.style.setProperty("--card-background-color", "#202124");
+      assert(win.getComputedStyle(panel.querySelector(".brand-header h1")).color === "rgb(238, 238, 238)", "Dark theme heading unreadable");
+      panel.querySelector('[data-section="settings"]').click();
+      assert(panel.querySelector('[data-section="settings"]').getAttribute("aria-current") === "true", "Sidebar navigation state");
+      frame.remove();
+    }
+    passed.push("1440/768/375px layout, sidebar navigation and dark-theme heading");
+    results.textContent = passed.map(name => "PASS " + name).join("\n");
+    results.dataset.status = "passed";
+  } catch (error) {
+    results.textContent = passed.map(name => "PASS " + name).join("\n") + "\nFAIL " + error.stack;
+    results.dataset.status = "failed";
+    throw error;
+  }
+</script>
+</html>
