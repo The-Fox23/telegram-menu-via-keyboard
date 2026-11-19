@@ -153,7 +153,15 @@
       }
       win.document.body.style.setProperty("--primary-text-color", "#eeeeee");
       win.document.body.style.setProperty("--card-background-color", "#202124");
-      assert(win.getComputedStyle(panel.querySelector(".brand-header h1")).color === "rgb(238, 238, 238)", "Dark theme heading unreadable");
+            assert(win.getComputedStyle(panel.querySelector(".brand-header h1")).color === "rgb(238, 238, 238)", "Dark theme heading unreadable");
+            win.document.body.style.setProperty("--primary-text-color", "#f5f5f5");
+            win.document.body.style.setProperty("--secondary-text-color", "#f5f5f5");
+            win.document.body.style.setProperty("--card-background-color", "#ffffff");
+            assert(win.getComputedStyle(panel.querySelector(".menu-title")).color === "rgb(17, 24, 39)", "Menu title is not dark");
+            assert(win.getComputedStyle(panel.querySelector(".menu-help")).color === "rgb(55, 65, 81)", "Menu help is not dark");
+            assert(win.getComputedStyle(panel.querySelector(".field label")).color === "rgb(55, 65, 81)", "Menu label is not dark");
+            assert(win.getComputedStyle(panel.querySelector(".preview-title")).color === "rgb(17, 24, 39)", "Preview title is not dark");
+            assert(win.getComputedStyle(panel.querySelector(".preview-subtitle")).color === "rgb(55, 65, 81)", "Preview subtitle is not dark");
       panel.querySelector('[data-section="settings"]').click();
       assert(panel.querySelector('[data-section="settings"]').getAttribute("aria-current") === "true", "Sidebar navigation state");
       frame.remove();
