@@ -778,8 +778,8 @@ class TelegramMenuPanel extends HTMLElement {
         .editor-layout { display:grid; grid-template-columns:minmax(0,1.55fr) minmax(300px,.75fr); gap:22px; align-items:start; }
         .preview-column { position:sticky; top:20px; }
         .preview-card { background:var(--card-background-color); border:2px solid rgba(255,255,255,.32); border-radius:18px; padding:18px; box-shadow:0 14px 35px rgba(0,0,0,.20); }
-        .preview-title { font-size:19px; font-weight:700; margin-bottom:5px; }
-        .preview-subtitle { font-size:12px; line-height:1.45; color:var(--secondary-text-color); margin-bottom:16px; }
+        .preview-title { font-size:19px; font-weight:700; margin-bottom:5px; color:#111827; }
+        .preview-subtitle { font-size:12px; line-height:1.45; color:#374151; margin-bottom:16px; }
         .preview-phone {
           width: min(100%, 350px);
           height: 650px;
@@ -1047,10 +1047,10 @@ class TelegramMenuPanel extends HTMLElement {
           padding: 9px 12px;
           border-radius: 8px;
           background: color-mix(in srgb, var(--primary-color) 16%, var(--card-background-color));
-          border-left: 5px solid var(--primary-color);
+          border-left: 5px solid var(--primary-color); color: #111827;
         }
 
-        .header-save { font-weight:700; border-color:var(--primary-color)!important; }
+        .header-save { font-weight:700; border-color:var(--primary-color)!important; } .menu-card > .menu-help, .menu-card > .field > label { color:#374151; } .menu-card .menu-header button.secondary, .menu-card > .field input, .menu-card > .field select { color:#111827; }
         .buttons-editor-section {
           margin-top:20px; padding:14px; border-radius:14px;
           background:linear-gradient(135deg,var(--telegram-blue-deep),var(--telegram-blue-dark));
